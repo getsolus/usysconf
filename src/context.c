@@ -137,6 +137,19 @@ UscContext *usc_context_new()
                 ret->flags |= USC_FLAGS_LIVE_MEDIUM;
         }
 
+#ifdef HAVE_SYSTEMD
+        char *detect_virt[] = {
+                "/usr/bin/systemd-detect-virt",
+                "-q", /* Be quiet */
+                "-c", /* We only want to detect containers */
+                NULL, /* Terminator */
+        };
+
+        if (!usc_exec_command(detect_virt)) {
+                ret->flags |= USC_FLAGS_CONTAINER;
+        }
+#endif
+
         /* Useful for build environments to forcibly bypass isatty detection */
         if (getenv("USYSCONF_LOG_STDOUT")) {
                 ret->have_tty = true;

@@ -51,7 +51,8 @@ static UscHandlerStatus usc_handler_udev_rules_exec(UscContext *ctx, const char 
 
         /* First up, reload the rules */
         usc_context_emit_task_start(ctx, "Reloading udev rules");
-        if (usc_context_has_flag(ctx, USC_FLAGS_CHROOTED)) {
+        if (usc_context_has_flag(ctx, USC_FLAGS_CHROOTED) ||
+            usc_context_has_flag(ctx, USC_FLAGS_CONTAINER)) {
                 usc_context_emit_task_finish(ctx, USC_HANDLER_SKIP);
                 return USC_HANDLER_SKIP | USC_HANDLER_BREAK;
         }
