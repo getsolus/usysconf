@@ -56,6 +56,6 @@ The two cert handlers will eventually merge to use a full system trust store tha
 
 ## Authors
 
-Copyright © 2017-2018 Solus Project
+Copyright © 2017-2019 Solus Project
 
 `usysconf` is available under the terms of the `GPL-2.0` license.

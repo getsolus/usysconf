@@ -1,7 +1,7 @@
 /*
  * This file is part of usysconf.
  *
- * Copyright © 2017-2018 Solus Project
+ * Copyright © 2017-2019 Solus Project
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 
 static const char *apparmor_paths[] = {
         "/etc/apparmor.d",
+        "/var/lib/snapd/apparmor/profiles",
 };
 
 /**
@@ -26,30 +27,18 @@ static const char *apparmor_paths[] = {
  */
 static UscHandlerStatus usc_handler_apparmor_exec(UscContext *ctx, __usc_unused__ const char *path)
 {
-        char *compile_command[] = {
-                "/usr/sbin/aa-lsm-hook-compile", NULL, /* Terminator */
-        };
-        char *load_command[] = {
-                "/usr/sbin/aa-lsm-hook-load", NULL, /* Terminator */
+        char *aa_lsm_command[] = {
+                "/usr/sbin/aa-lsm-hook", NULL, /* Terminator */
         };
 
-        usc_context_emit_task_start(ctx, "Compiling AppArmor profiles");
+        usc_context_emit_task_start(ctx, "Compiling and Reloading AppArmor profiles");
         if (usc_context_has_flag(ctx, USC_FLAGS_CHROOTED)) {
                 usc_context_emit_task_finish(ctx, USC_HANDLER_SKIP);
                 return USC_HANDLER_SKIP | USC_HANDLER_BREAK;
         }
 
-        /* Compile */
-        int ret = usc_exec_command(compile_command);
-        if (ret != 0) {
-                usc_context_emit_task_finish(ctx, USC_HANDLER_FAIL);
-                return USC_HANDLER_FAIL;
-        }
-        usc_context_emit_task_finish(ctx, USC_HANDLER_SUCCESS);
-
-        /* Load */
-        usc_context_emit_task_start(ctx, "Reloading AppArmor profiles");
-        ret = usc_exec_command(load_command);
+        /* Compile & Reload */
+        int ret = usc_exec_command(aa_lsm_command);
         if (ret != 0) {
                 usc_context_emit_task_finish(ctx, USC_HANDLER_FAIL);
                 return USC_HANDLER_FAIL;
@@ -63,7 +52,7 @@ static UscHandlerStatus usc_handler_apparmor_exec(UscContext *ctx, __usc_unused_
 const UscHandler usc_handler_apparmor = {
         .name = "apparmor",
         .description = "Compile AppArmor profiles",
-        .required_bin = "/usr/sbin/aa-lsm-hook-compile",
+        .required_bin = "/usr/sbin/aa-lsm-hook",
         .exec = usc_handler_apparmor_exec,
         .paths = apparmor_paths,
         .n_paths = ARRAY_SIZE(apparmor_paths),
