@@ -2,7 +2,7 @@
 
 > Universal system configuration interface
 
-[![Go Report Card](https://goreportcard.com/badge/github.com/chrisppy/usysconf)](https://goreportcard.com/report/github.com/chrisppy/usysconf) [![license](https://img.shields.io/github/license/chrisppy/usysconf.svg)](https://raw.githubusercontent.com/chrisppy/usysconf/master/LICENSE)
+[![Go Report Card](https://goreportcard.com/badge/github.com/getsolus/usysconf)](https://goreportcard.com/report/github.com/getsolus/usysconf) [![license](https://img.shields.io/github/license/getsolus/usysconf.svg)](https://raw.githubusercontent.com/getsolus/usysconf/master/LICENSE)
 
 `usysconf` is a stateless binary to provide a centralised configuration system to replace "package hooks" and post-installation triggers.  It involves using TOML based config files for running other binaries, that allow for the capacity to skip running based on either existing or missing paths.
 
