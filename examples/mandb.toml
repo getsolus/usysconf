@@ -1,0 +1,13 @@
+description = "Update manpages database"
+
+[[bins]]
+task = "Updating manpages database"
+bin = "/usr/bin/mandb"
+args = [
+    "-q"
+]
+
+[check]
+paths = [
+    "/usr/share/man"
+]

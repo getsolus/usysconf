@@ -1,0 +1,18 @@
+description = "Register QoL migration"
+
+[[bins]]
+task = "Registering QoL migration on next boot"
+bin = "/usr/sbin/qol-assist"
+args = [
+    "trigger"
+]
+
+[check]
+paths = [
+    "/usr/sbin/qol-assist",
+    "/usr/lib/systemd/system/qol-assist-migration.service"
+]
+
+[skip]
+chroot = true
+live = true

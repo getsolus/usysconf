@@ -1,0 +1,18 @@
+description = "Update boot configuration + kernels"
+
+[[bins]]
+task = "Updating clr-boot-manager"
+bin = "/usr/bin/clr-boot-manager"
+args = [
+    "update"
+]
+
+[check]
+paths = [
+    "/usr/lib/systemd/boot/efi",
+    "/usr/lib/kernel"
+]
+
+[skip]
+chroot = true
+live_media = true

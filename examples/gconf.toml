@@ -1,0 +1,34 @@
+description = "Update gconf database"
+
+[env]
+GCONF_CONFIG_SOURCE = "xml:merged:/etc/gconf/gconf.xml.defaults"
+
+[remove]
+paths = [
+    "/etc/gconf/gconf.xml.defaults/*"
+]
+exclude = [
+    "*.xml"
+]
+
+[[bins]]
+task = "Preparing gconf tree"
+bin = "mkdir"
+args = [
+    "-p",
+    "/etc/gconf/gconf.xml.defaults"
+]
+
+[[bins]]
+task = "Rebuilding gconf database"
+bin = "/usr/bin/gconftool-2"
+args = [
+    "--makefile-install-rule"
+]
+
+[check]
+paths = [
+    "/etc/gconf/schemas",
+    "/etc/gconf/gconf.xml.defaults",
+    "/usr/share/gconf/schemas"
+]

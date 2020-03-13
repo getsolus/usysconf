@@ -1,0 +1,25 @@
+description = "Reload udev rules"
+
+[[bins]]
+task = "Reloading udev rules"
+bin = "/usr/bin/udevadm"
+args = [
+    "control",
+    "--reload-rules"
+]
+
+[[bins]]
+task = "Applying udev rules"
+bin = "/usr/bin/udevadm"
+args = [
+    "trigger"
+]
+
+[check]
+paths = [
+    "/usr/lib/udev/rules.d",
+    "/etc/udev/rules.d"
+]
+
+[skip]
+chroot = true

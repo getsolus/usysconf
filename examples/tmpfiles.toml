@@ -1,0 +1,15 @@
+description = "Update systemd tmpfiles"
+
+[[bins]]
+task = "Updating systemd tmpfiles"
+bin = "/usr/bin/systemd-tmpfiles"
+args = [
+    "--root=/",
+    "--create"
+]
+
+[check]
+paths = [
+    "/etc/systemd/system",
+    "/usr/lib/systemd/system"
+]
