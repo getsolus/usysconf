@@ -22,7 +22,6 @@ import (
 	"strings"
 
 	wlog "github.com/DataDrake/waterlog"
-	"github.com/DataDrake/waterlog/level"
 )
 
 func run() {
@@ -36,10 +35,6 @@ func run() {
 		wlog.Fatal(err.Error())
 	}
 	wlog.SetOutput(f)
-
-	if *isDebug {
-		wlog.SetLevel(level.Debug)
-	}
 
 	wlog.Debugln("Started usysconf")
 	defer wlog.Debugln("Exiting usysconf")

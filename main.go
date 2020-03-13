@@ -61,6 +61,10 @@ func init() {
 	names = flag.StringSliceP("names", "n", []string{}, "Specify the config names to run")
 
 	flag.Parse()
+
+	if *isDebug {
+		wlog.SetLevel(level.Debug)
+	}
 }
 
 func main() {
