@@ -36,7 +36,7 @@ const (
 
 type skip struct {
 	Chroot    bool     `toml:"chroot,omitempty"`
-	LiveMedia bool     `toml:"live_media,omitempty"`
+	LiveMedia bool     `toml:"live,omitempty"`
 	Paths     []string `toml:"paths"`
 }
 

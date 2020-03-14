@@ -45,7 +45,7 @@ The configuration includes the following sections:
 		Pass true if the configuration will be skipped in a chrooted
 		environment
 	
-	*live_media*
+	*live*
 		Pass true if the configuration will be skipped in a live medium
 		environment
 

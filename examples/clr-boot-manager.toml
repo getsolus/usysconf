@@ -15,4 +15,4 @@ paths = [
 
 [skip]
 chroot = true
-live_media = true
+live = true
