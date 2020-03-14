@@ -35,9 +35,9 @@ const (
 )
 
 type skip struct {
-	Chroot    bool     `toml:"chroot,omitempty"`
-	LiveMedia bool     `toml:"live,omitempty"`
-	Paths     []string `toml:"paths"`
+	Chroot bool     `toml:"chroot,omitempty"`
+	Live   bool     `toml:"live,omitempty"`
+	Paths  []string `toml:"paths"`
 }
 
 type check struct {
@@ -173,7 +173,7 @@ func (c *content) skipProcessing() bool {
 		return true
 	}
 
-	if skip.LiveMedia && *isLiveMedium {
+	if skip.Live && *isLive {
 		return true
 	}
 

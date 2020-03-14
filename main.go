@@ -35,14 +35,14 @@ var (
 	// LogDir is the path defined during build i.e. /var/log/usysconf
 	LogDir string
 
-	isDebug      *bool
-	isForced     *bool
-	isChroot     *bool
-	isLiveMedium *bool
-	isNoRun      *bool
-	isHelp       *bool
-	isVersion    *bool
-	names        *[]string
+	isDebug   *bool
+	isForced  *bool
+	isChroot  *bool
+	isLive    *bool
+	isNoRun   *bool
+	isHelp    *bool
+	isVersion *bool
+	names     *[]string
 )
 
 func init() {
@@ -53,7 +53,7 @@ func init() {
 	isDebug = flag.BoolP("debug", "d", false, "Run in debug mode")
 	isForced = flag.BoolP("force", "f", false, "Force run the binaries with the config file(s) regardless if skipped is set")
 	isChroot = flag.BoolP("chroot", "c", false, "Specify that command is being run from a chrooted environment")
-	isLiveMedium = flag.BoolP("live", "l", false, "Specify that command is being run from a live medium")
+	isLive = flag.BoolP("live", "l", false, "Specify that command is being run from a live medium")
 	isNoRun = flag.Bool("norun", false, "Test the loading of the config file(s) without executing the bin(s)")
 	isVersion = flag.BoolP("version", "v", false, "Print the version number of usysconf")
 	isHelp = flag.BoolP("help", "h", false, "Print usage information")
