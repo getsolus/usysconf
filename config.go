@@ -178,7 +178,7 @@ func (c *content) skipProcessing() bool {
 	}
 
 	for _, p := range skip.Paths {
-		if _, err := os.Stat(filepath.Clean(p)); !os.IsNotExist(err) && !*isForced {
+		if _, err := os.Stat(filepath.Clean(p)); !os.IsNotExist(err) {
 			return true
 		}
 	}
