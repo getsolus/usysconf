@@ -156,6 +156,7 @@ func (c *content) skipProcessing() bool {
 	check := c.Check
 	if check != nil {
 		if err := check.checkPaths(); err != nil {
+			wlog.Errorln(err.Error())
 			return true
 		}
 	}
