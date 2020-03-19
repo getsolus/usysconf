@@ -16,7 +16,6 @@ This replaces the previous version written in C that hardcoded the handlers, to 
 Install the dependencies:
 
 - go (>=1.13)
-- [scdoc](https://git.sr.ht/~sircmpwn/scdoc)
 
 Then compile usysconf:
 
