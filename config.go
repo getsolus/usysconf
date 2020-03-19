@@ -26,29 +26,40 @@ import (
 	wlog "github.com/DataDrake/waterlog"
 )
 
+// Status indicates if the state of the configuration.
 type Status int
 
 const (
+	// Skipped - The configuration will not be executed.
 	Skipped Status = iota
+	// Success - The configuration has been executed, without error.
 	Success
+	// Failure - The configuration will not be executed, due to error.
 	Failure
 )
 
+// Skip contains details for when the configuration will not be executed, due
+// to existing paths, or possible flags passed.  This supports globbing.
 type Skip struct {
 	Chroot bool     `toml:"chroot,omitempty"`
 	Live   bool     `toml:"live,omitempty"`
 	Paths  []string `toml:"paths"`
 }
 
+// Check contains paths that must exixt to execute the configuration.  This
+// supports globbing.
 type Check struct {
 	Paths []string `toml:"paths"`
 }
 
+// Replace contains details to replace a single argument with a path in the
+// executed binary.  This supports globbing.
 type Replace struct {
 	Paths   []string `toml:"paths"`
 	Exclude []string `toml:"exclude"`
 }
 
+// Bin contains the details of the binary to be executed.
 type Bin struct {
 	Task    string   `toml:"task"`
 	Bin     string   `toml:"bin"`
@@ -56,11 +67,13 @@ type Bin struct {
 	Replace *Replace `toml:"replace"`
 }
 
+// Remove contains paths to be removed from the system.  Tis supports globbing.
 type Remove struct {
 	Paths   []string `toml:"paths"`
 	Exclude []string `toml:"exclude"`
 }
 
+// Content contains all the details of the configuration file to be executed.
 type Content struct {
 	Description string            `toml:"description"`
 	Bins        []*Bin            `toml:"bins"`
@@ -70,6 +83,8 @@ type Content struct {
 	RemoveDirs  *Remove           `toml:"remove,omitempty"`
 }
 
+// Output contains the details necessary to output the configuration details
+// to the user.
 type Output struct {
 	Name    string
 	SubTask string
@@ -77,6 +92,8 @@ type Output struct {
 	Status  Status
 }
 
+// Config contains all the information for a configuration to be executed and
+// output to the user.
 type Config struct {
 	Name    string
 	Path    string
@@ -84,6 +101,9 @@ type Config struct {
 	Content *Content
 }
 
+// Load will check the system and user directories, in that order, for a
+// configuration file that has the passed name parameter, without the
+// extension and will create a config with the specified valus.
 func Load(name string) *Config {
 	c := &Config{
 		Name:   name,
@@ -91,6 +111,8 @@ func Load(name string) *Config {
 		Output: []*Output{{Status: Skipped, Name: name}},
 	}
 
+	// Check if the configuration exists in the system path, if not check
+	// the usr path, otherwise return failure
 	if _, err := os.Stat(c.Path); os.IsNotExist(err) {
 		c.Path = filepath.Clean(filepath.Join(UsrDir, name+".toml"))
 		if _, err := os.Stat(c.Path); os.IsNotExist(err) {
@@ -100,6 +122,7 @@ func Load(name string) *Config {
 		}
 	}
 
+	// Read the configuration into the program
 	cfg, err := ioutil.ReadFile(c.Path)
 	if err != nil {
 		c.Output[0].Status = Failure
@@ -107,6 +130,7 @@ func Load(name string) *Config {
 		return c
 	}
 
+	// Save the configuration into the content structure
 	cnt := &Content{}
 	if err := toml.Unmarshal(cfg, cnt); err != nil {
 		c.Output[0].Status = Failure
@@ -115,6 +139,8 @@ func Load(name string) *Config {
 	}
 	c.Content = cnt
 
+	// Verify that there is at least one binary to execute, otherwise there
+	// is no need to continue
 	bins := c.Content.Bins
 	if len(bins) == 0 {
 		c.Output[0].Status = Failure
@@ -122,6 +148,8 @@ func Load(name string) *Config {
 		return c
 	}
 
+	// Verify that the text to be outputed to the user does not exceed 42
+	// characters to make the outputed lines uniform in length
 	for _, bin := range bins {
 		if len(bin.Task) > 42 {
 			c.Output[0].Status = Failure
@@ -133,6 +161,8 @@ func Load(name string) *Config {
 	return c
 }
 
+// Finish is the last function to be exexuted by any configuration to output
+// details to the user.
 func (c *Config) Finish() {
 	for _, out := range c.Output {
 		t := time.Now()
@@ -152,7 +182,11 @@ func (c *Config) Finish() {
 	}
 }
 
+// SkipProcessing will process the skip and check elements of the configuration
+// and see if it should not be executed.
 func (c *Content) SkipProcessing() bool {
+
+	// Check if the paths exist, if not skip
 	if c.Check != nil {
 		if err := c.Check.CheckPaths(); err != nil {
 			wlog.Errorln(err.Error())
@@ -160,6 +194,8 @@ func (c *Content) SkipProcessing() bool {
 		}
 	}
 
+	// Even if the skip element exists, if the force flag is present,
+	// continue processing
 	if *isForced {
 		return false
 	}
@@ -168,14 +204,18 @@ func (c *Content) SkipProcessing() bool {
 		return false
 	}
 
+	// If the skip element exists and the chroot flag is present, skip
 	if c.Skip.Chroot && *isChroot {
 		return true
 	}
 
+	// If the skip element exists and the live flag is present, skip
 	if c.Skip.Live && *isLive {
 		return true
 	}
 
+	// Process through the skip paths, and if one is present within the
+	// system, skip
 	for _, p := range c.Skip.Paths {
 		if _, err := os.Stat(filepath.Clean(p)); !os.IsNotExist(err) {
 			return true
@@ -185,7 +225,9 @@ func (c *Content) SkipProcessing() bool {
 	return false
 }
 
+// Execute the binary from the confuration
 func (b *Bin) Execute() error {
+	// if the norun flag is present do not execute the configuration
 	if *isNoRun {
 		return nil
 	}
@@ -198,6 +240,8 @@ func (b *Bin) Execute() error {
 	return nil
 }
 
+// CheckPaths will glob the paths and if the path does not exist in the system,
+// an error is returned
 func (c *Check) CheckPaths() error {
 	for _, path := range c.Paths {
 		p, err := filepath.Glob(path)
@@ -219,8 +263,10 @@ func (c *Check) CheckPaths() error {
 	return nil
 }
 
+// RemovePaths will glob the paths and if it exists it will remove it from the
+// system
 func (r *Remove) RemovePaths() error {
-	paths := filterPaths(r.Paths, r.Exclude)
+	paths := FilterPaths(r.Paths, r.Exclude)
 	for _, p := range paths {
 		if err := os.Remove(p); err != nil {
 			return err

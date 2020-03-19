@@ -3,18 +3,10 @@ package main
 import (
 	"fmt"
 	"os"
-
-	wlog "github.com/DataDrake/waterlog"
-	flag "github.com/spf13/pflag"
 )
 
+// Help will output the help usage to the user.
 func Help(args []string) {
-	helpCommand := flag.NewFlagSet("help", flag.ContinueOnError)
-
-	if err := helpCommand.Parse(args[2:]); err != nil {
-		wlog.Fatalln(err.Error())
-	}
-
 	if len(args) < 3 {
 		Usage()
 		return
@@ -28,6 +20,7 @@ func Help(args []string) {
 	}
 }
 
+// RunUsage will print the usage for the run command to the user.
 func RunUsage() {
 	const runHelpText = `Run specified configuration file(s) to update the system configuration.
 It prints the status of each execution: SUCCESS(🗸)/FAILURE(✗)/SKIPPED(⁓)	
@@ -53,6 +46,7 @@ Flags:
 	fmt.Fprintln(os.Stdout, runHelpText)
 }
 
+// Usage will print the program usage to the user.
 func Usage() {
 	const helpText = `usysconf is a tool for managing universal system configurations using TOML
 based configuration files.	

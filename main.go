@@ -99,6 +99,7 @@ func main() {
 	os.Exit(0)
 }
 
+// PrintVersion will output the program version to the user.
 func PrintVersion() {
 	fmt.Fprintf(os.Stdout, "usysconf v%s\n", Version)
 }

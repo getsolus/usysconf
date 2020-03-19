@@ -20,7 +20,8 @@ import (
 	"path/filepath"
 )
 
-func setEnv(env map[string]string) error {
+// SetEnv will set environment variables based on the key values
+func SetEnv(env map[string]string) error {
 	for key, value := range env {
 		if err := os.Setenv(key, value); err != nil {
 			return fmt.Errorf("unable to set %s environment variable", key)
@@ -29,7 +30,9 @@ func setEnv(env map[string]string) error {
 	return nil
 }
 
-func filterPaths(include []string, exclude []string) []string {
+// FilterPaths will process through globbed paths and remove any paths from the
+// resulting slice if they are present in the exclude slice.
+func FilterPaths(include []string, exclude []string) []string {
 	paths := make([]string, 0)
 
 	ipaths := make([]string, 0)

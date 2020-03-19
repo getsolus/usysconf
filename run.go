@@ -24,11 +24,13 @@ import (
 	wlog "github.com/DataDrake/waterlog"
 )
 
+// Run will read the specified configurations and execute them.
 func Run() {
 	if os.Geteuid() != 0 {
-		wlog.Fatalln("You must be root to run triggers")
+		wlog.Fatalln("You must have root privileges to run triggers")
 	}
 
+	// Load the system log file
 	path := filepath.Clean(filepath.Join(LogDir, "usysconf.log"))
 	f, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 00600)
 	if err != nil {
@@ -39,6 +41,8 @@ func Run() {
 	wlog.Debugln("Started usysconf")
 	defer wlog.Debugln("Exiting usysconf")
 
+	// If the names flag is not present, retrieve the names of the
+	// configurations in the system and usr directories.
 	n := *names
 	if len(n) == 0 {
 		nm := make(map[string]bool)
@@ -73,6 +77,7 @@ func Run() {
 	}
 }
 
+// RunConfig will process a single configuration.
 func RunConfig(name string) {
 	cfg := Load(name)
 	defer cfg.Finish()
@@ -87,7 +92,8 @@ func RunConfig(name string) {
 		return
 	}
 
-	if err := setEnv(c.Env); err != nil {
+	// Set any environment variables needed to execute the configuratio.
+	if err := SetEnv(c.Env); err != nil {
 		cfg.Output[0].Message = err.Error()
 		cfg.Output[0].Status = Failure
 		return
@@ -116,6 +122,9 @@ func RunConfig(name string) {
 	}
 }
 
+// GetAllBins Process through the binaries of the configuration and check if
+// the "***" replace sequence exists in the arguments and create separate
+// binaries to be executed.
 func GetAllBins(bins []*Bin) ([]*Bin, []*Output) {
 	nbins := make([]*Bin, 0)
 	outputs := make([]*Output, 0)
@@ -149,7 +158,7 @@ func GetAllBins(bins []*Bin) ([]*Bin, []*Output) {
 
 		wlog.Debugf("replace string exists at arg: %d\n", phIndex)
 
-		paths := filterPaths(r.Paths, r.Exclude)
+		paths := FilterPaths(r.Paths, r.Exclude)
 		for _, p := range paths {
 			out := &Output{
 				Name:    b.Task,
