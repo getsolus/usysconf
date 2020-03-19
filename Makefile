@@ -1,18 +1,15 @@
 .POSIX:
 .SUFFIXES:
-.SUFFIXES: .1 .5 .1.scd .5.scd
 
 PKGNAME=usysconf
 
 VERSION=0.6.0
 
-VPATH=doc
 PREFIX?=/usr/local
 BINDIR?=$(DESTDIR)$(PREFIX)/bin
 SYSDIR?=$(DESTDIR)/etc/$(PKGNAME).d
 USRDIR?=$(DESTDIR)$(PREFIX)/share/default/$(PKGNAME).d
 LOGDIR?=$(DESTDIR)/var/log/$(PKGNAME)
-MANDIR?=$(DESTDIR)$(PREFIX)/share/man
 GO?=go
 GOFLAGS?=
 
@@ -28,20 +25,7 @@ usysconf: $(GOSRC)
 		-X main.UsrDir=$(USRDIR)" \
 		-o $@
 
-DOCS := \
-	$(PKGNAME).1 \
-	$(PKGNAME)-run.1 \
-	$(PKGNAME)-config.5
-
-.1.scd.1:
-	scdoc < $< > $@
-
-.5.scd.5:
-	scdoc < $< > $@
-
-doc: $(DOCS)
-
-all: usysconf doc 
+all: usysconf 
 
 # Exists in GNUMake but not in NetBSD make and others.
 RM?=rm -f
@@ -52,12 +36,8 @@ clean:
 	$(RM) -r vendor
 
 install: all
-	mkdir -m755 -p $(BINDIR) $(USRDIR) $(SYSDIR) $(LOGDIR) $(MANDIR)/man1 \
-		$(MANDIR)/man5
+	mkdir -m755 -p $(BINDIR) $(USRDIR) $(SYSDIR) $(LOGDIR)
 	install -m755 $(PKGNAME) $(BINDIR)/$(PKGNAME)
-	install -m644 $(PKGNAME).1 $(MANDIR)/man1/$(PKGNAME).1
-	install -m644 $(PKGNAME)-run.1 $(MANDIR)/man1/$(PKGNAME)-run.1
-	install -m644 $(PKGNAME)-config.5 $(MANDIR)/man5/$(PKGNAME)-config.5
 
 RMDIR_IF_EMPTY:=sh -c '\
 if test -d $$0 && ! ls -1qA $$0 | grep -q . ; then \
@@ -66,15 +46,10 @@ fi'
 
 uninstall:
 	$(RM) $(BINDIR)/$(PKGNAME)
-	$(RM) $(MANDIR)/man1/$(PKGNAME).1
-	$(RM) $(MANDIR)/man5/$(PKGNAME).5
 	$(RM) -r $(LOGDIR)
 	$(RM) -r $(SYSDIR)
 	$(RM) -r $(USRDIR)
 	$(RMDIR_IF_EMPTY) $(BINDIR)
-	$(RMDIR_IF_EMPTY) $(MANDIR)/man1
-	$(RMDIR_IF_EMPTY) $(MANDIR)/man5
-	$(RMDIR_IF_EMPTY) $(MANDIR)
 
 check:
 	$(GO) get -u golang.org/x/lint/golint
@@ -103,4 +78,4 @@ package: vendor
 
 .DEFAULT_GOAL := all
 
-.PHONY: all doc clean install uninstall check vendor package
+.PHONY: all clean install uninstall check vendor package
