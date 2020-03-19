@@ -164,20 +164,28 @@ func Load(name string) *Config {
 // Finish is the last function to be exexuted by any configuration to output
 // details to the user.
 func (c *Config) Finish() {
+	ansiYellow := "\033[30;48;5;226m"
+	ansiGreen := "\033[30;48;5;034m"
+	ansiRed := "\033[30;48;5;160m"
+	ansiInverse := "\033[7m"
+	ansiInverseReset := "\033[27m"
+	ansiReset := "\033[0m"
+
 	for _, out := range c.Output {
 		t := time.Now()
 		now := t.Format("15:04:05")
+		name := fmt.Sprintf(" %-42s ", out.Name)
 
 		switch out.Status {
 		case Skipped:
 			wlog.Infof("Skipped %s\n", out.Name)
-			fmt.Fprintf(os.Stdout, "\033[30;48;5;220m ⁓ \033[7m %s \033[27m %-42s \033[49;38;5;220m %s\033[0m\n", now, out.Name, out.SubTask)
+			fmt.Fprintln(os.Stdout, ansiYellow+" ⁓ "+ansiInverse+" "+now+" "+ansiInverseReset+name+" "+ansiInverse+" "+out.SubTask+ansiReset)
 		case Failure:
 			wlog.Errorf("Failure for %s due to %s\n", out.Name, out.Message)
-			fmt.Fprintf(os.Stdout, "\033[30;48;5;208m ✗ \033[7m %s \033[27m %-42s \033[49;38;5;208m %s\033[0m\n", now, out.Name, out.SubTask)
+			fmt.Fprintln(os.Stdout, ansiRed+" ✗ "+ansiInverse+" "+now+" "+ansiInverseReset+name+" "+ansiInverse+" "+out.SubTask+ansiReset)
 		case Success:
 			wlog.Goodln(out.Name)
-			fmt.Fprintf(os.Stdout, "\033[30;48;5;040m 🗸 \033[7m %s \033[27m %-42s \033[49;38;5;040m %s\033[0m\n", now, out.Name, out.SubTask)
+			fmt.Fprintln(os.Stdout, ansiGreen+" 🗸 "+ansiInverse+" "+now+" "+ansiInverseReset+name+" "+ansiInverse+" "+out.SubTask+ansiReset)
 		}
 	}
 }
