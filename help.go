@@ -8,7 +8,7 @@ import (
 	flag "github.com/spf13/pflag"
 )
 
-func help(args []string) {
+func Help(args []string) {
 	helpCommand := flag.NewFlagSet("help", flag.ContinueOnError)
 
 	if err := helpCommand.Parse(args[2:]); err != nil {
@@ -16,19 +16,19 @@ func help(args []string) {
 	}
 
 	if len(args) < 3 {
-		usage()
+		Usage()
 		return
 	}
 
 	switch args[2] {
 	case "run":
-		runUsage()
+		RunUsage()
 	default:
-		usage()
+		Usage()
 	}
 }
 
-func runUsage() {
+func RunUsage() {
 	const runHelpText = `Run specified configuration file(s) to update the system configuration.
 It prints the status of each execution: SUCCESS(🗸)/FAILURE(✗)/SKIPPED(⁓)	
 
@@ -53,7 +53,7 @@ Flags:
 	fmt.Fprintln(os.Stdout, runHelpText)
 }
 
-func usage() {
+func Usage() {
 	const helpText = `usysconf is a tool for managing universal system configurations using TOML
 based configuration files.	
  	

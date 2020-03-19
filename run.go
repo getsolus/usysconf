@@ -24,7 +24,7 @@ import (
 	wlog "github.com/DataDrake/waterlog"
 )
 
-func run() {
+func Run() {
 	if os.Geteuid() != 0 {
 		wlog.Fatalln("You must be root to run triggers")
 	}
@@ -53,13 +53,13 @@ func run() {
 			wlog.Fatalln(err.Error)
 		}
 
-		for _, f := range ufi {
+		for _, f := range sfi {
 			name := strings.Replace(f.Name(), ".toml", "", -1)
 			nm[name] = true
 			n = append(n, name)
 		}
 
-		for _, f := range sfi {
+		for _, f := range ufi {
 			name := strings.Replace(f.Name(), ".toml", "", -1)
 			if _, ok := nm[name]; !ok {
 				nm[name] = true
@@ -69,56 +69,56 @@ func run() {
 	}
 
 	for _, name := range n {
-		runConfig(name)
+		RunConfig(name)
 	}
 }
 
-func runConfig(name string) {
-	cfg := load(name)
-	defer cfg.finish()
+func RunConfig(name string) {
+	cfg := Load(name)
+	defer cfg.Finish()
 
-	if cfg.Output[0].Status == failure {
+	if cfg.Output[0].Status == Failure {
 		return
 	}
 
 	c := cfg.Content
 
-	if c.skipProcessing() {
+	if c.SkipProcessing() {
 		return
 	}
 
 	if err := setEnv(c.Env); err != nil {
 		cfg.Output[0].Message = err.Error()
-		cfg.Output[0].Status = failure
+		cfg.Output[0].Status = Failure
 		return
 	}
 
 	rmDirs := c.RemoveDirs
 	if rmDirs != nil {
-		if err := rmDirs.removePaths(); err != nil {
+		if err := rmDirs.RemovePaths(); err != nil {
 			cfg.Output[0].Message = fmt.Sprintf("error removing path: %s\n", err.Error())
-			cfg.Output[0].Status = failure
+			cfg.Output[0].Status = Failure
 			return
 		}
 	}
 
 	bins := c.Bins
-	bins, cfg.Output = getAllBins(bins)
+	bins, cfg.Output = GetAllBins(bins)
 
 	for i, b := range bins {
-		if err := b.execute(); err != nil {
+		if err := b.Execute(); err != nil {
 			cfg.Output[i].Message = err.Error()
-			cfg.Output[i].Status = failure
+			cfg.Output[i].Status = Failure
 			return
 		}
 
-		cfg.Output[i].Status = success
+		cfg.Output[i].Status = Success
 	}
 }
 
-func getAllBins(bins []*bin) ([]*bin, []*output) {
-	nbins := make([]*bin, 0)
-	outputs := make([]*output, 0)
+func GetAllBins(bins []*Bin) ([]*Bin, []*Output) {
+	nbins := make([]*Bin, 0)
+	outputs := make([]*Output, 0)
 
 	for _, b := range bins {
 		r := b.Replace
@@ -139,9 +139,9 @@ func getAllBins(bins []*bin) ([]*bin, []*output) {
 
 		if !phExists {
 			nbins = append(nbins, b)
-			out := &output{
+			out := &Output{
 				Name:   b.Task,
-				Status: skipped,
+				Status: Skipped,
 			}
 			outputs = append(outputs, out)
 			continue
@@ -151,9 +151,9 @@ func getAllBins(bins []*bin) ([]*bin, []*output) {
 
 		paths := filterPaths(r.Paths, r.Exclude)
 		for _, p := range paths {
-			out := &output{
+			out := &Output{
 				Name:    b.Task,
-				Status:  skipped,
+				Status:  Skipped,
 				SubTask: p,
 			}
 			b.Args[phIndex] = p

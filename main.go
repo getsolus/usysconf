@@ -72,12 +72,12 @@ func main() {
 	wlog.Debugf("args: %s\n", args)
 
 	if *isVersion {
-		version()
+		PrintVersion()
 		os.Exit(0)
 	}
 
 	if *isHelp {
-		usage()
+		Usage()
 		os.Exit(0)
 	}
 
@@ -87,11 +87,11 @@ func main() {
 
 	switch args[1] {
 	case "run":
-		run()
+		Run()
 	case "version":
-		version()
+		PrintVersion()
 	case "help":
-		help(args)
+		Help(args)
 	default:
 		wlog.Fatalf("%s is an unknown command\n", args[1])
 	}
@@ -99,6 +99,6 @@ func main() {
 	os.Exit(0)
 }
 
-func version() {
+func PrintVersion() {
 	fmt.Fprintf(os.Stdout, "usysconf v%s\n", Version)
 }

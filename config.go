@@ -26,75 +26,75 @@ import (
 	wlog "github.com/DataDrake/waterlog"
 )
 
-type status int
+type Status int
 
 const (
-	skipped status = iota
-	success
-	failure
+	Skipped Status = iota
+	Success
+	Failure
 )
 
-type skip struct {
+type Skip struct {
 	Chroot bool     `toml:"chroot,omitempty"`
 	Live   bool     `toml:"live,omitempty"`
 	Paths  []string `toml:"paths"`
 }
 
-type check struct {
+type Check struct {
 	Paths []string `toml:"paths"`
 }
 
-type replace struct {
+type Replace struct {
 	Paths   []string `toml:"paths"`
 	Exclude []string `toml:"exclude"`
 }
 
-type bin struct {
+type Bin struct {
 	Task    string   `toml:"task"`
 	Bin     string   `toml:"bin"`
 	Args    []string `toml:"args"`
-	Replace *replace `toml:"replace"`
+	Replace *Replace `toml:"replace"`
 }
 
-type remove struct {
+type Remove struct {
 	Paths   []string `toml:"paths"`
 	Exclude []string `toml:"exclude"`
 }
 
-type content struct {
+type Content struct {
 	Description string            `toml:"description"`
-	Bins        []*bin            `toml:"bins"`
-	Skip        *skip             `toml:"skip,omitempty"`
-	Check       *check            `toml:"check,omitempty"`
+	Bins        []*Bin            `toml:"bins"`
+	Skip        *Skip             `toml:"skip,omitempty"`
+	Check       *Check            `toml:"check,omitempty"`
 	Env         map[string]string `toml:"env"`
-	RemoveDirs  *remove           `toml:"remove,omitempty"`
+	RemoveDirs  *Remove           `toml:"remove,omitempty"`
 }
 
-type output struct {
+type Output struct {
 	Name    string
 	SubTask string
 	Message string
-	Status  status
+	Status  Status
 }
 
-type config struct {
+type Config struct {
 	Name    string
 	Path    string
-	Output  []*output
-	Content *content
+	Output  []*Output
+	Content *Content
 }
 
-func load(name string) *config {
-	c := &config{
+func Load(name string) *Config {
+	c := &Config{
 		Name:   name,
-		Path:   filepath.Clean(filepath.Join(UsrDir, name+".toml")),
-		Output: []*output{{Status: skipped, Name: name}},
+		Path:   filepath.Clean(filepath.Join(SysDir, name+".toml")),
+		Output: []*Output{{Status: Skipped, Name: name}},
 	}
 
 	if _, err := os.Stat(c.Path); os.IsNotExist(err) {
-		c.Path = filepath.Clean(filepath.Join(SysDir, name+".toml"))
+		c.Path = filepath.Clean(filepath.Join(UsrDir, name+".toml"))
 		if _, err := os.Stat(c.Path); os.IsNotExist(err) {
-			c.Output[0].Status = failure
+			c.Output[0].Status = Failure
 			c.Output[0].Message = fmt.Sprintf("Unable to find config file located at %s", c.Path)
 			return c
 		}
@@ -102,14 +102,14 @@ func load(name string) *config {
 
 	cfg, err := ioutil.ReadFile(c.Path)
 	if err != nil {
-		c.Output[0].Status = failure
+		c.Output[0].Status = Failure
 		c.Output[0].Message = fmt.Sprintf("Unable to read config file located at %s", c.Path)
 		return c
 	}
 
-	cnt := &content{}
+	cnt := &Content{}
 	if err := toml.Unmarshal(cfg, cnt); err != nil {
-		c.Output[0].Status = failure
+		c.Output[0].Status = Failure
 		c.Output[0].Message = fmt.Sprintf("Unable to read config file located at %s due to %s", c.Path, err.Error())
 		return c
 	}
@@ -117,14 +117,14 @@ func load(name string) *config {
 
 	bins := c.Content.Bins
 	if len(bins) == 0 {
-		c.Output[0].Status = failure
+		c.Output[0].Status = Failure
 		c.Output[0].Message = fmt.Sprintf("%s must contain at least one [[bin]]", c.Name)
 		return c
 	}
 
 	for _, bin := range bins {
 		if len(bin.Task) > 42 {
-			c.Output[0].Status = failure
+			c.Output[0].Status = Failure
 			c.Output[0].Message = fmt.Sprintf("The task: `%s` text cannot exceed the length of 42", bin.Task)
 			return c
 		}
@@ -133,29 +133,28 @@ func load(name string) *config {
 	return c
 }
 
-func (c *config) finish() {
+func (c *Config) Finish() {
 	for _, out := range c.Output {
 		t := time.Now()
-		now := fmt.Sprintf("%02d:%02d:%02d", t.Hour(), t.Minute(), t.Second())
+		now := t.Format("15:04:05")
 
 		switch out.Status {
-		case skipped:
+		case Skipped:
 			wlog.Infof("Skipped %s\n", out.Name)
 			fmt.Fprintf(os.Stdout, "\033[30;48;5;220m ⁓ \033[7m %s \033[27m %-42s \033[49;38;5;220m %s\033[0m\n", now, out.Name, out.SubTask)
-		case failure:
+		case Failure:
 			wlog.Errorf("Failure for %s due to %s\n", out.Name, out.Message)
 			fmt.Fprintf(os.Stdout, "\033[30;48;5;208m ✗ \033[7m %s \033[27m %-42s \033[49;38;5;208m %s\033[0m\n", now, out.Name, out.SubTask)
-		case success:
+		case Success:
 			wlog.Goodln(out.Name)
 			fmt.Fprintf(os.Stdout, "\033[30;48;5;040m 🗸 \033[7m %s \033[27m %-42s \033[49;38;5;040m %s\033[0m\n", now, out.Name, out.SubTask)
 		}
 	}
 }
 
-func (c *content) skipProcessing() bool {
-	check := c.Check
-	if check != nil {
-		if err := check.checkPaths(); err != nil {
+func (c *Content) SkipProcessing() bool {
+	if c.Check != nil {
+		if err := c.Check.CheckPaths(); err != nil {
 			wlog.Errorln(err.Error())
 			return true
 		}
@@ -165,20 +164,19 @@ func (c *content) skipProcessing() bool {
 		return false
 	}
 
-	skip := c.Skip
-	if skip == nil {
+	if c.Skip == nil {
 		return false
 	}
 
-	if skip.Chroot && *isChroot {
+	if c.Skip.Chroot && *isChroot {
 		return true
 	}
 
-	if skip.Live && *isLive {
+	if c.Skip.Live && *isLive {
 		return true
 	}
 
-	for _, p := range skip.Paths {
+	for _, p := range c.Skip.Paths {
 		if _, err := os.Stat(filepath.Clean(p)); !os.IsNotExist(err) {
 			return true
 		}
@@ -187,7 +185,7 @@ func (c *content) skipProcessing() bool {
 	return false
 }
 
-func (b *bin) execute() error {
+func (b *Bin) Execute() error {
 	if *isNoRun {
 		return nil
 	}
@@ -200,7 +198,7 @@ func (b *bin) execute() error {
 	return nil
 }
 
-func (c *check) checkPaths() error {
+func (c *Check) CheckPaths() error {
 	for _, path := range c.Paths {
 		p, err := filepath.Glob(path)
 		if err != nil {
@@ -221,7 +219,7 @@ func (c *check) checkPaths() error {
 	return nil
 }
 
-func (r *remove) removePaths() error {
+func (r *Remove) RemovePaths() error {
 	paths := filterPaths(r.Paths, r.Exclude)
 	for _, p := range paths {
 		if err := os.Remove(p); err != nil {

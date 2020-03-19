@@ -30,8 +30,8 @@ For information on the how to run configuration files, see *usysconf-run*(1).
 
 usysconf searches for config files in the following location, in this order:
 
-. /usr/share/defaults/usysconf.d (or whatever path is set for USRDIR)
 . /etc/usysconf.d (or whatever path is set for SYSDIR)
+. /usr/share/defaults/usysconf.d (or whatever path is set for USRDIR)
 
 For information on the config file format, see *usysconf-config*(5).
 
