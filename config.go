@@ -26,7 +26,7 @@ import (
 	wlog "github.com/DataDrake/waterlog"
 )
 
-// Status indicates if the state of the configuration.
+// Status indicates the state of the configuration.
 type Status int
 
 const (
