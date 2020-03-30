@@ -164,9 +164,9 @@ func Load(name string) *Config {
 // Finish is the last function to be exexuted by any configuration to output
 // details to the user.
 func (c *Config) Finish() {
-	ansiYellow := "\033[30;48;5;226m"
-	ansiGreen := "\033[30;48;5;034m"
-	ansiRed := "\033[30;48;5;160m"
+	ansiYellow := "\033[30;48;5;220m"
+	ansiGreen := "\033[30;48;5;040m"
+	ansiRed := "\033[30;48;5;208m"
 	ansiInverse := "\033[7m"
 	ansiInverseReset := "\033[27m"
 	ansiReset := "\033[0m"
@@ -178,8 +178,8 @@ func (c *Config) Finish() {
 
 		switch out.Status {
 		case Skipped:
-			wlog.Infof("Skipped %s\n", out.Name)
-			fmt.Fprintln(os.Stdout, ansiYellow+" ⁓ "+ansiInverse+" "+now+" "+ansiInverseReset+name+" "+ansiInverse+" "+out.SubTask+ansiReset)
+			wlog.Warnf("Skipped %s\n", out.Name)
+			fmt.Fprintln(os.Stdout, ansiYellow+" 🗲 "+ansiInverse+" "+now+" "+ansiInverseReset+name+" "+ansiInverse+" "+out.SubTask+ansiReset)
 		case Failure:
 			wlog.Errorf("Failure for %s due to %s\n", out.Name, out.Message)
 			fmt.Fprintln(os.Stdout, ansiRed+" ✗ "+ansiInverse+" "+now+" "+ansiInverseReset+name+" "+ansiInverse+" "+out.SubTask+ansiReset)
