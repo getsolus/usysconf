@@ -35,14 +35,14 @@ var (
 	// LogDir is the path defined during build i.e. /var/log/usysconf
 	LogDir string
 
-	isDebug   *bool
-	isForced  *bool
-	isChroot  *bool
-	isLive    *bool
-	isNoRun   *bool
-	isHelp    *bool
-	isVersion *bool
-	names     *[]string
+	isDebug   bool
+	isForced  bool
+	isChroot  bool
+	isLive    bool
+	isNoRun   bool
+	isHelp    bool
+	isVersion bool
+	names     []string
 )
 
 func init() {
@@ -50,33 +50,31 @@ func init() {
 	wlog.SetFormat(format.Un)
 	wlog.SetFlags(log.Ltime | log.Ldate | log.LUTC)
 
-	isDebug = flag.BoolP("debug", "d", false, "Run in debug mode")
-	isForced = flag.BoolP("force", "f", false, "Force run the binaries with the config file(s) regardless if skipped is set")
-	isChroot = flag.BoolP("chroot", "c", false, "Specify that command is being run from a chrooted environment")
-	isLive = flag.BoolP("live", "l", false, "Specify that command is being run from a live medium")
-	isNoRun = flag.Bool("norun", false, "Test the loading of the config file(s) without executing the bin(s)")
-	isVersion = flag.BoolP("version", "v", false, "Print the version number of usysconf")
-	isHelp = flag.BoolP("help", "h", false, "Print usage information")
-
-	names = flag.StringSliceP("names", "n", []string{}, "Specify the config names to run")
-
+	flag.BoolVarP(&isDebug, "debug", "d", false, "Run in debug mode")
+	flag.BoolVarP(&isForced, "force", "f", false, "Force run the binaries with the config file(s) regardless if skipped is set")
+	flag.BoolVarP(&isChroot, "chroot", "c", false, "Specify that command is being run from a chrooted environment")
+	flag.BoolVarP(&isLive, "live", "l", false, "Specify that command is being run from a live medium")
+	flag.BoolVar(&isNoRun, "norun", false, "Test the loading of the config file(s) without executing the bin(s)")
+	flag.BoolVarP(&isVersion, "version", "v", false, "Print the version number of usysconf")
+	flag.BoolVarP(&isHelp, "help", "h", false, "Print usage information")
+	flag.StringSliceVarP(&names, "names", "n", []string{}, "Specify the config names to run")
 	flag.Parse()
 
-	if *isDebug {
+	if isDebug {
 		wlog.SetLevel(level.Debug)
 	}
 }
 
 func main() {
-	args := os.Args
+	args := flag.Args()
 	wlog.Debugf("args: %s\n", args)
 
-	if *isVersion {
+	if isVersion {
 		PrintVersion()
 		os.Exit(0)
 	}
 
-	if *isHelp {
+	if isHelp {
 		Usage()
 		os.Exit(0)
 	}

@@ -43,7 +43,7 @@ func Run() {
 
 	// If the names flag is not present, retrieve the names of the
 	// configurations in the system and usr directories.
-	n := *names
+	n := names
 	if len(n) == 0 {
 		nm := make(map[string]bool)
 		n = make([]string, 0)

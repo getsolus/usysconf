@@ -204,7 +204,7 @@ func (c *Content) SkipProcessing() bool {
 
 	// Even if the skip element exists, if the force flag is present,
 	// continue processing
-	if *isForced {
+	if isForced {
 		return false
 	}
 
@@ -213,12 +213,12 @@ func (c *Content) SkipProcessing() bool {
 	}
 
 	// If the skip element exists and the chroot flag is present, skip
-	if c.Skip.Chroot && *isChroot {
+	if c.Skip.Chroot && isChroot {
 		return true
 	}
 
 	// If the skip element exists and the live flag is present, skip
-	if c.Skip.Live && *isLive {
+	if c.Skip.Live && isLive {
 		return true
 	}
 
@@ -236,7 +236,7 @@ func (c *Content) SkipProcessing() bool {
 // Execute the binary from the confuration
 func (b *Bin) Execute() error {
 	// if the norun flag is present do not execute the configuration
-	if *isNoRun {
+	if isNoRun {
 		return nil
 	}
 

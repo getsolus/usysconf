@@ -55,15 +55,15 @@ Usage:
   usysconf [command]
 
 Flags:
-  -h, --help                   help for usysconf
-  -v, --version                print the version number of usysconf
+  -h, --help             help for usysconf
+  -v, --version          print the version number of usysconf
 
 Available Commands:
-  help       Help about any command
-  run        Run the configuration files
-  version    Print the version number of usysconf
+  help      		 Help about any command
+  run      		 Run the configuration files
+  version   		 Print the version number of usysconf
 	
-Use "usysconf help [command] for more information about a command.	
+Use usysconf help [command] for more information about a command.	
 `
 
 	fmt.Fprintln(os.Stdout, helpText)
