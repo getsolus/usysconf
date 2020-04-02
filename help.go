@@ -7,12 +7,14 @@ import (
 
 // Help will output the help usage to the user.
 func Help(args []string) {
-	if len(args) < 3 {
+	if len(args) == 0 {
 		Usage()
 		return
 	}
 
-	switch args[2] {
+	fmt.Println(args)
+
+	switch args[0] {
 	case "run":
 		RunUsage()
 	default:

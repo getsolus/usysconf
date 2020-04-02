@@ -79,19 +79,19 @@ func main() {
 		os.Exit(0)
 	}
 
-	if len(args) < 2 {
+	if len(args) < 1 {
 		wlog.Fatalln("invalid number of arguments")
 	}
 
-	switch args[1] {
+	switch args[0] {
 	case "run":
 		Run()
 	case "version":
 		PrintVersion()
 	case "help":
-		Help(args)
+		Help(args[1:])
 	default:
-		wlog.Fatalf("%s is an unknown command\n", args[1])
+		wlog.Fatalf("%s is an unknown command\n", args[0])
 	}
 
 	os.Exit(0)
