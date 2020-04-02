@@ -12,8 +12,6 @@ func Help(args []string) {
 		return
 	}
 
-	fmt.Println(args)
-
 	switch args[0] {
 	case "run":
 		RunUsage()
