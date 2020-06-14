@@ -12,13 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package config
+package triggers
 
-var (
-	// UsrDir is the path defined during build (Makefile) i.e. /usr/share/defaults/usysconf.d
-	UsrDir string
-	// SysDir is the path defined during build (Makefile) i.e. /etc/usysconf.d
-	SysDir string
-	// LogDir is the path defined during build (Makefile) i.e. /var/log/usysconf
-	LogDir string
-)
+// Replace contains details to replace a single argument with a path in the
+// executed binary.  This supports globbing.
+type Replace struct {
+	Paths   []string `toml:"paths"`
+	Exclude []string `toml:"exclude"`
+}

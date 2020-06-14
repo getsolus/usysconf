@@ -12,13 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package config
+package triggers
 
-var (
-	// UsrDir is the path defined during build (Makefile) i.e. /usr/share/defaults/usysconf.d
-	UsrDir string
-	// SysDir is the path defined during build (Makefile) i.e. /etc/usysconf.d
-	SysDir string
-	// LogDir is the path defined during build (Makefile) i.e. /var/log/usysconf
-	LogDir string
-)
+// Output contains the details necessary to output the configuration details
+// to the user.
+type Output struct {
+	Name    string
+	SubTask string
+	Message string
+	Status  Status
+}

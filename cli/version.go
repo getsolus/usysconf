@@ -24,19 +24,19 @@ var VersionNumber string
 
 // Version fulfills the "version" subcommand
 var Version = cmd.CMD{
-    Name:  "version",
-    Alias: "v",
-    Short: "Get the version number",
-    Args:  &VersionArgs{},
-    Run:   VersionRun,
+	Name:  "version",
+	Alias: "v",
+	Short: "Get the version number",
+	Args:  &VersionArgs{},
+	Run:   VersionRun,
 }
 
 // VersionArgs contains the arguments for the "version" subcommand
-type VersionArgs struct {}
+type VersionArgs struct{}
 
 // VersionRun prints the version of Usysconf and exits
 func VersionRun(r *cmd.RootCMD, c *cmd.CMD) {
-    //gFlags := r.Flags.(*GlobalFlags)
-    // args := c.Args.(*VersionArgs)
+	//gFlags := r.Flags.(*GlobalFlags)
+	// args := c.Args.(*VersionArgs)
 	wlog.Printf("usysconf %s\n", VersionNumber)
 }

@@ -23,7 +23,7 @@ import (
 )
 
 // GlobalFlags contains the flags for all commands
-type GlobalFlags struct{
+type GlobalFlags struct {
 	Debug  bool `short:"d" long:"debug"  desc:"Run in debug mode"`
 	Chroot bool `short:"c" long:"chroot" desc:"Specify that command is being run from a chrooted environment"`
 	Live   bool `short:"l" long:"live"   desc:"Specify that command is being run from a live medium"`
@@ -47,6 +47,6 @@ func init() {
 
 	//Set up logging
 	wlog.SetLevel(level.Info)
-    wlog.SetFormat(format.Un)
-    wlog.SetFlags(log.Ltime | log.Ldate | log.LUTC)
+	wlog.SetFormat(format.Un)
+	wlog.SetFlags(log.Ltime | log.Ldate | log.LUTC)
 }

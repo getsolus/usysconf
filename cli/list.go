@@ -15,33 +15,40 @@
 package cli
 
 import (
-	// "fmt"
 	"github.com/DataDrake/cli-ng/cmd"
-	// "github.com/getsolus/usysconf/config"
-	"github.com/DataDrake/waterlog/level"
 	wlog "github.com/DataDrake/waterlog"
+	"github.com/DataDrake/waterlog/level"
+	"github.com/getsolus/usysconf/config"
+	"github.com/getsolus/usysconf/triggers"
 )
 
 // List fulfills the "list" subcommand
 var List = cmd.CMD{
-    Name:  "list",
-    Alias: "ls",
-    Short: "List available triggers to run (user-specific)",
-    Args:  &ListArgs{},
-    Run:   ListRun,
+	Name:  "list",
+	Alias: "ls",
+	Short: "List available triggers to run (user-specific)",
+	Args:  &ListArgs{},
+	Run:   ListRun,
 }
 
 // ListArgs contains the arguments for the "list" subcommand
-type ListArgs struct {}
+type ListArgs struct{}
 
 // ListRun prints the usage for the requested command
 func ListRun(r *cmd.RootCMD, c *cmd.CMD) {
-    gFlags := r.Flags.(*GlobalFlags)
-    // args := c.Args.(*ListArgs)
+	gFlags := r.Flags.(*GlobalFlags)
+	// args := c.Args.(*ListArgs)
 
 	// Enable Debug Output
-    if gFlags.Debug {
-        wlog.SetLevel(level.Debug)
-    }
+	if gFlags.Debug {
+		wlog.SetLevel(level.Debug)
+	}
 
+	// Load Triggers
+	tm, err := config.LoadAll()
+	if err != nil {
+		wlog.Fatalf("Failed to load triggers, reason: %s\n", err.Error())
+	}
+	// Print triggers
+	triggers.Print(tm)
 }

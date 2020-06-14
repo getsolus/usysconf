@@ -15,44 +15,41 @@
 package cli
 
 import (
-    "fmt"
 	"github.com/DataDrake/cli-ng/cmd"
+	wlog "github.com/DataDrake/waterlog"
 	"github.com/DataDrake/waterlog/level"
 	"github.com/getsolus/usysconf/config"
-	"github.com/getsolus/usysconf/util"
-    "io/ioutil"
-    "os"
-    "path/filepath"
-    "strings"
-	wlog "github.com/DataDrake/waterlog"
+	"github.com/getsolus/usysconf/triggers"
+	"os"
+	"path/filepath"
 )
 
 // Run fulfills the "run" subcommand
 var Run = cmd.CMD{
-    Name:  "run",
-    Alias: "r",
-    Short: "Run specified configuration file(s) to update the system configuration. It prints the status of each execution: SUCCESS(🗸)/FAILURE(✗)/SKIPPED(⁓)",
-    Flags: &RunFlags{},
-    Args:  &RunArgs{},
-    Run:   RunRun,
+	Name:  "run",
+	Alias: "r",
+	Short: "Run specified configuration file(s) to update the system configuration. It prints the status of each execution: SUCCESS(🗸)/FAILURE(✗)/SKIPPED(⁓)",
+	Flags: &RunFlags{},
+	Args:  &RunArgs{},
+	Run:   RunRun,
 }
 
 // RunFlags contains the additional flags for the "run" subcommand
 type RunFlags struct {
-    Force  bool `short:"f" long:"force"   desc:"Force run the configuration regardless if it should be skipped."`
+	Force  bool `short:"f" long:"force"   desc:"Force run the configuration regardless if it should be skipped."`
 	DryRun bool `short:"n" long:"dry-run" desc:"Test the configuration files without executing the specified binaries and arguments"`
 }
 
 // RunArgs contains the arguments for the "run" subcommand
 type RunArgs struct {
-    Triggers []string `desc:"Names of the triggers to run"`
+	Triggers []string `desc:"Names of the triggers to run"`
 }
 
 // RunRun prints the usage for the requested command
 func RunRun(r *cmd.RootCMD, c *cmd.CMD) {
-    gFlags := r.Flags.(*GlobalFlags)
-    args := c.Args.(*RunArgs)
-    flags := c.Flags.(*RunFlags)
+	gFlags := r.Flags.(*GlobalFlags)
+	args := c.Args.(*RunArgs)
+	flags := c.Flags.(*RunFlags)
 
 	// Root user check
 	if !flags.DryRun && os.Geteuid() != 0 {
@@ -60,9 +57,9 @@ func RunRun(r *cmd.RootCMD, c *cmd.CMD) {
 	}
 
 	// Enable Debug Output
-    if gFlags.Debug {
-        wlog.SetLevel(level.Debug)
-    }
+	if gFlags.Debug {
+		wlog.SetLevel(level.Debug)
+	}
 
 	if !flags.DryRun {
 		// Load the system log file
@@ -77,135 +74,27 @@ func RunRun(r *cmd.RootCMD, c *cmd.CMD) {
 	wlog.Debugln("Started usysconf")
 	defer wlog.Debugln("Exiting usysconf")
 
+	// Load Triggers
+	tm, err := config.LoadAll()
+	if err != nil {
+		wlog.Fatalf("Failed to load triggers, reason: %s\n", err.Error())
+	}
+
 	// If the names flag is not present, retrieve the names of the
 	// configurations in the system and usr directories.
 	n := args.Triggers
 	if len(n) == 0 {
-		nm := make(map[string]bool)
-		n = make([]string, 0)
-		ufi, err := ioutil.ReadDir(config.UsrDir)
-		if err != nil {
-			wlog.Fatalln(err.Error)
-		}
-
-		sfi, err := ioutil.ReadDir(config.SysDir)
-		if err != nil {
-			wlog.Fatalln(err.Error)
-		}
-
-		for _, f := range sfi {
-			name := strings.Replace(f.Name(), ".toml", "", -1)
-			nm[name] = true
-			n = append(n, name)
-		}
-
-		for _, f := range ufi {
-			name := strings.Replace(f.Name(), ".toml", "", -1)
-			if _, ok := nm[name]; !ok {
-				nm[name] = true
-				n = append(n, name)
-			}
+		for k := range tm {
+			n = append(n, k)
 		}
 	}
-
-	for _, name := range n {
-		RunConfig(name, flags.Force, gFlags.Chroot, gFlags.Live, flags.DryRun)
+	// Establish scope of operations
+	s := triggers.Scope{
+		Chroot: gFlags.Chroot,
+		DryRun: flags.DryRun,
+		Forced: flags.Force,
+		Live:   gFlags.Live,
 	}
-}
-
-// RunConfig will process a single configuration.
-func RunConfig(name string, isForced, isChroot, isLive, isDryRun bool) {
-	cfg := config.Load(name)
-	defer cfg.Finish()
-
-	if cfg.Output[0].Status == config.Failure {
-		return
-	}
-
-	c := cfg.Content
-
-	if c.SkipProcessing(isForced, isChroot, isLive) {
-		return
-	}
-
-	// Set any environment variables needed to execute the configuratio.
-	if err := util.SetEnv(c.Env); err != nil {
-		cfg.Output[0].Message = err.Error()
-		cfg.Output[0].Status = config.Failure
-		return
-	}
-
-	rmDirs := c.RemoveDirs
-	if rmDirs != nil {
-		if err := rmDirs.RemovePaths(); err != nil {
-			cfg.Output[0].Message = fmt.Sprintf("error removing path: %s\n", err.Error())
-			cfg.Output[0].Status = config.Failure
-			return
-		}
-	}
-
-	bins := c.Bins
-	bins, cfg.Output = GetAllBins(bins)
-
-	for i, b := range bins {
-		if err := b.Execute(isDryRun); err != nil {
-			cfg.Output[i].Message = err.Error()
-			cfg.Output[i].Status = config.Failure
-			return
-		}
-
-		cfg.Output[i].Status = config.Success
-	}
-}
-
-// GetAllBins Process through the binaries of the configuration and check if
-// the "***" replace sequence exists in the arguments and create separate
-// binaries to be executed.
-func GetAllBins(bins []*config.Bin) ([]*config.Bin, []*config.Output) {
-	nbins := make([]*config.Bin, 0)
-	outputs := make([]*config.Output, 0)
-
-	for _, b := range bins {
-		r := b.Replace
-
-		phExists := false
-		phIndex := 0
-		for i, arg := range b.Args {
-			if r == nil {
-				break
-			}
-
-			if arg == "***" {
-				phExists = true
-				phIndex = i
-				break
-			}
-		}
-
-		if !phExists {
-			nbins = append(nbins, b)
-			out := &config.Output{
-				Name:   b.Task,
-				Status: config.Skipped,
-			}
-			outputs = append(outputs, out)
-			continue
-		}
-
-		wlog.Debugf("replace string exists at arg: %d\n", phIndex)
-
-		paths := util.FilterPaths(r.Paths, r.Exclude)
-		for _, p := range paths {
-			out := &config.Output{
-				Name:    b.Task,
-				Status:  config.Skipped,
-				SubTask: p,
-			}
-			b.Args[phIndex] = p
-			nbins = append(nbins, b)
-			outputs = append(outputs, out)
-		}
-	}
-
-	return nbins, outputs
+	// Run triggers
+	triggers.Run(tm, s, n)
 }

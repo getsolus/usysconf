@@ -12,13 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package config
+package triggers
 
-var (
-	// UsrDir is the path defined during build (Makefile) i.e. /usr/share/defaults/usysconf.d
-	UsrDir string
-	// SysDir is the path defined during build (Makefile) i.e. /etc/usysconf.d
-	SysDir string
-	// LogDir is the path defined during build (Makefile) i.e. /var/log/usysconf
-	LogDir string
-)
+// Skip contains details for when the configuration will not be executed, due
+// to existing paths, or possible flags passed.  This supports globbing.
+type Skip struct {
+	Chroot bool     `toml:"chroot,omitempty"`
+	Live   bool     `toml:"live,omitempty"`
+	Paths  []string `toml:"paths"`
+}

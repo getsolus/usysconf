@@ -12,13 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package config
+package triggers
 
-var (
-	// UsrDir is the path defined during build (Makefile) i.e. /usr/share/defaults/usysconf.d
-	UsrDir string
-	// SysDir is the path defined during build (Makefile) i.e. /etc/usysconf.d
-	SysDir string
-	// LogDir is the path defined during build (Makefile) i.e. /var/log/usysconf
-	LogDir string
+// Status indicates the state of the configuration.
+type Status int
+
+const (
+	// Skipped - The configuration will not be executed.
+	Skipped Status = iota
+	// Success - The configuration has been executed, without error.
+	Success
+	// Failure - The configuration will not be executed, due to error.
+	Failure
 )
