@@ -33,15 +33,21 @@ func Merge(left, right Map) {
 // Print renders a Map in a human-readable format
 func Print(tm Map) {
 	var keys []string
+	max := 0
 	for k := range tm {
 		keys = append(keys, k)
+		if len(k) > max {
+			max = len(k)
+		}
 	}
 	sort.Strings(keys)
 	var t Trigger
+	f := fmt.Sprintf("\t%%%ds - %%s\n", max)
 	for _, key := range keys {
 		t = tm[key]
-		fmt.Printf("%-42s - %s\n", t.Name, t.Config.Description)
+		fmt.Printf(f, t.Name, t.Config.Description)
 	}
+	fmt.Println()
 }
 
 // Run executes a list of triggers, where available

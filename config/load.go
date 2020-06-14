@@ -26,9 +26,10 @@ import (
 
 // Load reads in all of the trigger files in a directory
 func Load(path string) (tm triggers.Map, err error) {
+	tm = make(triggers.Map)
 	entries, err := ioutil.ReadDir(path)
 	if err != nil {
-		wlog.Warnf("Failed to read triggers in %s, reason: %s\n", path, err.Error())
+		wlog.Debugf("Failed to read triggers in %s, reason: %s\n", path, err.Error())
 		err = nil
 		return
 	}

@@ -15,6 +15,7 @@
 package cli
 
 import (
+	"fmt"
 	"github.com/DataDrake/cli-ng/cmd"
 	wlog "github.com/DataDrake/waterlog"
 	"github.com/DataDrake/waterlog/level"
@@ -43,12 +44,12 @@ func ListRun(r *cmd.RootCMD, c *cmd.CMD) {
 	if gFlags.Debug {
 		wlog.SetLevel(level.Debug)
 	}
-
 	// Load Triggers
 	tm, err := config.LoadAll()
 	if err != nil {
 		wlog.Fatalf("Failed to load triggers, reason: %s\n", err.Error())
 	}
 	// Print triggers
+	fmt.Print("Available Triggers:\n\n")
 	triggers.Print(tm)
 }
