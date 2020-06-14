@@ -12,12 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package main
+package config
 
-import (
-	"github.com/getsolus/usysconf/cli"
+var (
+    // UsrDir is the path defined during build (Makefile) i.e. /usr/share/defaults/usysconf.d
+    UsrDir string
+    // SysDir is the path defined during build (Makefile) i.e. /etc/usysconf.d
+    SysDir string
+    // LogDir is the path defined during build (Makefile) i.e. /var/log/usysconf
+    LogDir string
 )
-
-func main() {
-	cli.Root.Run()
-}

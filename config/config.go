@@ -12,17 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package main
+package config
 
 import (
 	"fmt"
+	"github.com/BurntSushi/toml"
+	"github.com/getsolus/usysconf/util"
 	"io/ioutil"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"time"
-
-	"github.com/BurntSushi/toml"
 	wlog "github.com/DataDrake/waterlog"
 )
 
@@ -192,7 +192,7 @@ func (c *Config) Finish() {
 
 // SkipProcessing will process the skip and check elements of the configuration
 // and see if it should not be executed.
-func (c *Content) SkipProcessing() bool {
+func (c *Content) SkipProcessing(isForced, isChroot, isLive bool) bool {
 
 	// Check if the paths exist, if not skip
 	if c.Check != nil {
@@ -234,9 +234,9 @@ func (c *Content) SkipProcessing() bool {
 }
 
 // Execute the binary from the confuration
-func (b *Bin) Execute() error {
+func (b *Bin) Execute(dryRun bool) error {
 	// if the norun flag is present do not execute the configuration
-	if isNoRun {
+	if dryRun {
 		return nil
 	}
 
@@ -274,7 +274,7 @@ func (c *Check) CheckPaths() error {
 // RemovePaths will glob the paths and if it exists it will remove it from the
 // system
 func (r *Remove) RemovePaths() error {
-	paths := FilterPaths(r.Paths, r.Exclude)
+	paths := util.FilterPaths(r.Paths, r.Exclude)
 	for _, p := range paths {
 		if err := os.Remove(p); err != nil {
 			return err

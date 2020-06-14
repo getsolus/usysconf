@@ -3,7 +3,7 @@
 
 PKGNAME=usysconf
 
-VERSION=0.6.0
+VERSION="1.0.0"
 
 PREFIX?=/usr/local
 BINDIR?=$(DESTDIR)$(PREFIX)/bin
@@ -19,10 +19,10 @@ GOSRC+=go.mod go.sum
 usysconf: $(GOSRC)
 	$(GO) build $(GOFLAGS) \
 		-ldflags "-X main.Prefix=$(PREFIX) \
-		-X main.Version=$(VERSION) \
-		-X main.LogDir=$(LOGDIR) \
-		-X main.SysDir=$(SYSDIR) \
-		-X main.UsrDir=$(USRDIR)" \
+		-X cli.VersionNumber=$(VERSION) \
+		-X config.LogDir=$(LOGDIR) \
+		-X config.SysDir=$(SYSDIR) \
+		-X config.UsrDir=$(USRDIR)" \
 		-o $@
 
 all: usysconf 
