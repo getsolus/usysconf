@@ -1,0 +1,17 @@
+description = "Reload systemd configuration"
+
+[[bins]]
+task = "Reloading systemd configuration"
+bin = "/usr/bin/systemctl"
+args = [
+    "daemon-reload"
+]
+
+[check]
+paths = [
+    "/etc/systemd/system",
+    "/usr/lib/systemd/system"
+]
+
+[skip]
+chroot = true

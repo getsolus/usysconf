@@ -1,0 +1,13 @@
+description = "Update GTK2 input module cache"
+
+[[bins]]
+task = "Updating GTK2 input module cache"
+bin = "/usr/bin/gtk-query-immodules-2.0"
+args = [
+    "--update-cache"
+]
+
+[check]
+paths = [
+    "/usr/lib/gtk-2.0/2.*/immodules"
+]

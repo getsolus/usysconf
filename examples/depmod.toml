@@ -1,0 +1,13 @@
+description = "Run depmod"
+
+[[bins]]
+task = "Running depmod on kernel"
+bin = "/sbin/depmod"
+args = [
+    "-a"
+]
+
+[check]
+paths = [
+    "/lib/modules/*/kernel"
+]

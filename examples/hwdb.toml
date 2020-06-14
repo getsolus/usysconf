@@ -1,0 +1,14 @@
+description = "Update hardware database"
+
+[[bins]]
+task = "Updating hardware database"
+bin = "/usr/bin/systemd-hwdb"
+args = [
+    "update"
+]
+
+[check]
+paths = [
+    "/usr/lib/udev/hwdb.d",
+    "/etc/udev/hwdb.d"
+]

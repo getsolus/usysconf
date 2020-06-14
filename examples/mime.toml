@@ -1,0 +1,20 @@
+description = "Update mimetype database"
+
+[[bins]]
+task = "Updating mimetype database"
+bin = "/usr/bin/update-mime-database"
+args = [
+    "-n",
+    "***"
+]
+
+    [bins.replace]
+    paths = [
+        "/usr/share/mime"
+    ]
+
+
+[check]
+paths = [
+    "/usr/share/mime"
+]

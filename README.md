@@ -1,61 +1,47 @@
 # usysconf
 
-[![License](https://img.shields.io/badge/License-GPL%202.0-blue.svg)](https://opensource.org/licenses/GPL-2.0)
+> Universal system configuration interface
 
-Universal system configuration interface for operating systems (i.e. Solus)
+[![Go Report Card](https://goreportcard.com/badge/github.com/getsolus/usysconf)](https://goreportcard.com/report/github.com/getsolus/usysconf) [![license](https://img.shields.io/github/license/getsolus/usysconf.svg)](https://raw.githubusercontent.com/getsolus/usysconf/master/LICENSE)
 
-`usysconf` provides a centralised configuration system to replace "package hooks" and post-installation triggers with a reentrant binary, suitable for use in recovery situations. It requires a certain development approach, by throwing away traditional postinstalls, and centralising/minimising the amount of system delta generated during these steps.
-
-The binary replaces the legacy [COMAR system](https://solus-project.com/2017/11/12/this-week-in-solus-install-48/) in Solus with a single point for all configuration to take place. A simple state file tracks the `mtime` for interesting file paths, and when those are invalidated triggers are run in response. This allows `usysconf` to be the final execution step in any package/update operation, and incremently apply trigger steps to the system.
-
-Lastly, a CLI interface is provided allowing users to forcibly run well known triggers by name (or all) to assist in recovery. This allows users to not worry about the inaccessible triggers of the past, and instead request usysconf run all triggers that need running. Optionally, all triggers can be run, bypassing update time checks:
-
-```bash
-$ sudo usysconf run -f
-```
-
-`usysconf` is a [Solus project](https://solus-project.com/)
-
-![logo](https://build.solus-project.com/logo.png)
-
-## Supported triggers
-
-| Trigger        | Description                             | Notes                                         |
-|----------------|-----------------------------------------|-----------------------------------------------|
-| ldconfig       | Update dynamic library cache            |                                               |
-| boot           | Update boot configuration + kernels     | Uses `clr-boot-manager`                       |
-| qol-assist     | Register QoL migration                  | Uses `qol-assist`                             |
-| depmod         | Run depmod for each kernel              |                                               |
-| hwdb           | Update hardware database                |                                               |
-| drivers        | Update graphical driver configuration   | Uses `linux-driver-management`                |
-| sysusers       | Update systemd sysusers                 |                                               |
-| tmpfiles       | Update systemd tmpfiles                 |                                               |
-| systemd-reload | Reload systemd configuration            |                                               |
-| systemd-reexec | Re-execute systemd                      |                                               |
-| vbox-restart   | Restart VirtualBox services             | Will be replaced with generic service handler |
-| apparmor       | Compile AppArmor profiles               | Uses `aa-lsm-hook`                            |
-| glib2          | Compile glib-schemas                    |                                               |
-| fonts          | Rebuild font cache                      |                                               |
-| mime           | Update mimetype database                |                                               |
-| icon-caches    | Update icon theme caches                |                                               |
-| desktop-files  | Update desktop database                 |                                               |
-| gconf          | Update GConf schemas                    |                                               |
-| dconf          | Update dconf database                   |                                               |
-| gtk2-immodules | Update GTK2 input module cache          |                                               |
-| gtk3-immodules | Update GTK3 input module cache          |                                               |
-| mandb          | Updating manpages database              |                                               |
-| ssl-certs      | Update SSL certificate configuration    | Only uses `c_rehash` right now                |
-| mono-certs     | Populate Mono certificates              | Uses `cert-sync`                              |
-| openssh        | Create OpenSSH host key                 |                                               |
-| udev-rules     | Reload and apply new udev rules         | Always last to facilitate userspace responses |
-
-### Special note
-
-The two cert handlers will eventually merge to use a full system trust store that serves normal applications and Mono.
+`usysconf` is a stateless binary to provide a centralised configuration system to replace "package hooks" and post-installation triggers.  It involves using TOML based config files for running other binaries, that allow for the capacity to skip running based on either existing or missing paths.
 
 
-## Authors
+The binary runs all config files in the directories, or only some of them using the --names name1,name2 flag.
 
-Copyright © 2017-2019 Solus Project
+This replaces the previous version written in C that hardcoded the handlers, to a version written in Go with TOML based config files.
 
-`usysconf` is available under the terms of the `GPL-2.0` license.
+## Building
+
+Install the dependencies:
+
+- go (>=1.13)
+
+Then compile usysconf:
+
+    $ make
+
+usysconf allows the ability to set the configuration and logging directories at compile time:
+
+    $ PREFIX=/usr USRDIR=/usr/dir SYSDIR=/etc/dir LOGDIR=/var/log/dir make
+
+## Installation
+
+    # PREFIX=/usr make install
+    $ usysconf run
+
+## License
+
+Copyright 2019-2020 Solus Project <copyright@getsol.us>
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+<http://www.apache.org/licenses/LICENSE-2.0>
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.

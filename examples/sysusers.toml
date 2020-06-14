@@ -1,0 +1,14 @@
+description = "Update systemd sysusers"
+
+[[bins]]
+task = "Updating system users"
+bin = "/usr/bin/systemd-sysusers"
+args = [
+    "--root=/"
+]
+
+[check]
+paths = [
+    "/etc/systemd/system",
+    "/usr/lib/systemd/system"
+]

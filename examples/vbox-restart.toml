@@ -1,0 +1,18 @@
+description = "Restart VirtualBox services"
+
+[[bins]]
+task = "Restarting VirtualBox services"
+bin = "/usr/bin/systemctl"
+args = [
+    "restart",
+    "vboxdrv.service"
+]
+
+[check]
+paths = [
+    "/usr/lib/systemd/system/vboxdrv.service"
+]
+
+[skip]
+chroot = true
+live = true
