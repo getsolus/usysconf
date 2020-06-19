@@ -61,8 +61,8 @@ func (c *Config) Validate() error {
 		return fmt.Errorf("triggers must contain at least one [[bin]]")
 	}
 
-	// Verify that the text to be outputed to the user does not exceed 42
-	// characters to make the outputed lines uniform in length
+	// Verify that the text to be outputted to the user does not exceed 42
+	// characters to make the outputted lines uniform in length
 	for _, bin := range c.Bins {
 		if len(bin.Task) > 42 {
 			return fmt.Errorf("the task: `%s` text cannot exceed the length of 42", bin.Task)
