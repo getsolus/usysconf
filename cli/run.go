@@ -51,17 +51,17 @@ func RunRun(r *cmd.RootCMD, c *cmd.CMD) {
 	args := c.Args.(*RunArgs)
 	flags := c.Flags.(*RunFlags)
 
+	// Enable Debug Output
+	if gFlags.Debug {
+		wlog.SetLevel(level.Debug)
+	}
+
 	wlog.Debugln("Started usysconf")
 	defer wlog.Debugln("Exiting usysconf")
 
 	// Root user check
 	if !flags.DryRun && os.Geteuid() != 0 {
 		wlog.Fatalln("You must have root privileges to run triggers")
-	}
-
-	// Enable Debug Output
-	if gFlags.Debug {
-		wlog.SetLevel(level.Debug)
 	}
 
 	if !flags.DryRun {
