@@ -51,6 +51,9 @@ func RunRun(r *cmd.RootCMD, c *cmd.CMD) {
 	args := c.Args.(*RunArgs)
 	flags := c.Flags.(*RunFlags)
 
+	wlog.Debugln("Started usysconf")
+	defer wlog.Debugln("Exiting usysconf")
+
 	// Root user check
 	if !flags.DryRun && os.Geteuid() != 0 {
 		wlog.Fatalln("You must have root privileges to run triggers")
@@ -63,6 +66,7 @@ func RunRun(r *cmd.RootCMD, c *cmd.CMD) {
 
 	if !flags.DryRun {
 		// Load the system log file
+		wlog.Debugln("Loading log file")
 		path := filepath.Clean(filepath.Join(config.LogDir, "usysconf.log"))
 		f, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 00600)
 		if err != nil {
@@ -70,9 +74,6 @@ func RunRun(r *cmd.RootCMD, c *cmd.CMD) {
 		}
 		wlog.SetOutput(f)
 	}
-
-	wlog.Debugln("Started usysconf")
-	defer wlog.Debugln("Exiting usysconf")
 
 	// Load Triggers
 	tm, err := config.LoadAll()
