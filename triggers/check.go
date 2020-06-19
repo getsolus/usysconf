@@ -31,11 +31,11 @@ func (c *Check) ResolvePaths() error {
 	for _, path := range c.Paths {
 		p, err := filepath.Glob(path)
 		if err != nil {
-			return fmt.Errorf("unable to glob path")
+			return fmt.Errorf("unable to glob path: %s", path)
 		}
 
 		if len(p) == 0 {
-			return fmt.Errorf("paths are empty")
+			return fmt.Errorf("path not found: %s", path)
 		}
 
 		for _, pa := range p {
