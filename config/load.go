@@ -83,6 +83,18 @@ func LoadAll() (tm triggers.Map, err error) {
 	if err != nil {
 		return
 	}
+
+	// replace the root home directory with the user executing usysconf
+	if os.Getuid() == 0 {
+		user := os.Getenv("SUDO_USER")
+		if user == "" {
+			err = fmt.Errorf("could not find the $SUDO_USER")
+			return
+		}
+
+		home = strings.Replace(home, "root", os.Getenv("SUDO_USER"), -1)
+	}
+
 	tm2, err = Load(filepath.Join(home, ".config", "usysconf.d"))
 	if err != nil {
 		return
