@@ -92,7 +92,9 @@ func LoadAll() (tm triggers.Map, err error) {
 			return
 		}
 
-		home = strings.Replace(home, "root", os.Getenv("SUDO_USER"), -1)
+		user = filepath.Join("home", user)
+
+		home = strings.Replace(home, "root", user, -1)
 	}
 
 	tm2, err = Load(filepath.Join(home, ".config", "usysconf.d"))
