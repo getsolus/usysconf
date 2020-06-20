@@ -20,6 +20,7 @@ import (
 	"github.com/getsolus/usysconf/triggers"
 	"io/ioutil"
 	"os"
+	"os/user"
 	"path/filepath"
 	"strings"
 )
@@ -86,17 +87,22 @@ func LoadAll() (tm triggers.Map, err error) {
 
 	// replace the root directory with the user home directory executing usysconf
 	if os.Getuid() == 0 {
-		user := os.Getenv("SUDO_USER")
-		if user == "" || user == "root" {
+		username := os.Getenv("SUDO_USER")
+		if username == "" || username == "root" {
 			// if user is not found or it is actually being run by root without sudo return
 			wlog.Warnln("home Triggers not loaded")
 			return
+		}
+		// Lookup sudo user's home directory
+		u, err := user.Lookup(username)
+		if err != nil {
+			wlog.Warnf("failed to lookup user '%s', reason: %s\n", username, err)
 		} else {
-			user = filepath.Join("home", user)
-			home = strings.Replace(home, "root", user, -1)
+			home = u.HomeDir
 		}
 	}
 
+	// Load configs from the user's Home directory
 	tm2, err = Load(filepath.Join(home, ".config", "usysconf.d"))
 	if err != nil {
 		return
