@@ -83,10 +83,25 @@ func LoadAll() (tm triggers.Map, err error) {
 	if err != nil {
 		return
 	}
+
+	// replace the root directory with the user home directory executing usysconf
+	if os.Getuid() == 0 {
+		user := os.Getenv("SUDO_USER")
+		if user == "" || user == "root" {
+			// if user is not found or it is actually being run by root without sudo return
+			wlog.Warnln("home Triggers not loaded")
+			return
+		} else {
+			user = filepath.Join("home", user)
+			home = strings.Replace(home, "root", user, -1)
+		}
+	}
+
 	tm2, err = Load(filepath.Join(home, ".config", "usysconf.d"))
 	if err != nil {
 		return
 	}
 	triggers.Merge(tm, tm2)
+
 	return
 }
