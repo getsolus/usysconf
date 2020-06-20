@@ -15,10 +15,7 @@
 package triggers
 
 import (
-	// "fmt"
-	wlog "github.com/DataDrake/waterlog"
-	// "os"
-	//"time"
+	log "github.com/DataDrake/waterlog"
 )
 
 // Trigger contains all the information for a configuration to be executed and
@@ -38,13 +35,6 @@ func (c *Trigger) Run(s Scope) {
 
 // Finish is the last function to be executed by any trigger to output details to the user.
 func (c *Trigger) Finish(s Scope) {
-	//ansiYellow := "\033[30;48;5;220m"
-	//ansiGreen := "\033[30;48;5;040m"
-	//ansiRed := "\033[30;48;5;208m"
-	//ansiInverse := "\033[7m"
-	//ansiInverseReset := "\033[27m"
-	//ansiReset := "\033[0m"
-
 	// Check for the worst status
 	status := Skipped
 	for _, out := range c.Output {
@@ -55,30 +45,30 @@ func (c *Trigger) Finish(s Scope) {
 	// Indicate the worst status for the whole group
 	switch status {
 	case Skipped:
-		wlog.Debugln(c.Name)
+		log.Debugln(c.Name)
 	case Failure:
-		wlog.Errorln(c.Name)
+		log.Errorln(c.Name)
 	case Success:
-		wlog.Goodln(c.Name)
+		log.Goodln(c.Name)
 	}
 	// Indicate status for sub-tasks
 	for _, out := range c.Output {
 		switch out.Status {
 		case Skipped:
 			if len(out.SubTask) > 0 {
-				wlog.Debugf("    Skipped for %s due to %s\n", out.SubTask, out.Message)
+				log.Debugf("    Skipped for %s due to %s\n", out.SubTask, out.Message)
 			} else if len(out.Message) > 0 {
-				wlog.Debugf("    Skipped due to %s\n", out.Message)
+				log.Debugf("    Skipped due to %s\n", out.Message)
 			}
 		case Failure:
 			if len(out.SubTask) > 0 {
-				wlog.Errorf("    Failure for %s due to %s\n", out.SubTask, out.Message)
+				log.Errorf("    Failure for %s due to %s\n", out.SubTask, out.Message)
 			} else if len(out.Message) > 0 {
-				wlog.Errorf("    Failure due to %s\n", out.Message)
+				log.Errorf("    Failure due to %s\n", out.Message)
 			}
 		case Success:
 			if s.DryRun && len(out.SubTask) > 0 {
-				wlog.Infof("    %s\n", out.SubTask)
+				log.Infof("    %s\n", out.SubTask)
 			}
 		}
 	}

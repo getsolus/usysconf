@@ -16,7 +16,7 @@ package triggers
 
 import (
 	"fmt"
-	wlog "github.com/DataDrake/waterlog"
+	log "github.com/DataDrake/waterlog"
 	"github.com/getsolus/usysconf/util"
 	"os/exec"
 )
@@ -77,7 +77,7 @@ func (b Bin) FanOut() (nbins []Bin, outputs []Output) {
 		return
 	}
 
-	wlog.Debugf("    Replace string exists at arg: %d\n", phIndex)
+	log.Debugf("    Replace string exists at arg: %d\n", phIndex)
 
 	paths := util.FilterPaths(r.Paths, r.Exclude)
 	for _, p := range paths {

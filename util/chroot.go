@@ -15,8 +15,8 @@
 package util
 
 import (
-	"io/ioutil"
 	log "github.com/DataDrake/waterlog"
+	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -42,12 +42,12 @@ func IsChroot() bool {
 		log.Warnf("Failed to access '/proc/mounts', reason: %s\n", err)
 		goto FALLBACK
 	}
-	defer mounts.Close()
 	raw, err = ioutil.ReadAll(mounts)
 	if err != nil {
 		log.Warnf("Failed to read '/proc/mounts', reason: %s\n", err)
 		goto FALLBACK
 	}
+	_ = mounts.Close()
 	if strings.Contains(string(raw), "overlay / overlay") {
 		log.Debugln("Overlayfs for '/' found, assuming chroot.\n")
 		return true
@@ -59,7 +59,7 @@ FALLBACK:
 		log.Fatalf("Failed to access '/', reason: %s\n", err)
 	}
 	pid = os.Getpid()
-	chrootDir, err = os.Stat(filepath.Join("/","proc",strconv.Itoa(pid), "root"))
+	chrootDir, err = os.Stat(filepath.Join("/", "proc", strconv.Itoa(pid), "root"))
 	if err != nil {
 		log.Fatalf("Failed to access '/', reason: %s\n", err)
 	}

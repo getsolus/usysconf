@@ -16,7 +16,7 @@ package cli
 
 import (
 	"github.com/DataDrake/cli-ng/cmd"
-	wlog "github.com/DataDrake/waterlog"
+	log "github.com/DataDrake/waterlog"
 	"github.com/DataDrake/waterlog/level"
 	"github.com/getsolus/usysconf/config"
 	"github.com/getsolus/usysconf/triggers"
@@ -53,15 +53,15 @@ func RunRun(r *cmd.RootCMD, c *cmd.CMD) {
 
 	// Enable Debug Output
 	if gFlags.Debug {
-		wlog.SetLevel(level.Debug)
+		log.SetLevel(level.Debug)
 	}
 
-	wlog.Debugln("Started usysconf")
-	defer wlog.Debugln("Exiting usysconf")
+	log.Debugln("Started usysconf")
+	defer log.Debugln("Exiting usysconf")
 
 	// Root user check
 	if !flags.DryRun && os.Geteuid() != 0 {
-		wlog.Fatalln("You must have root privileges to run triggers")
+		log.Fatalln("You must have root privileges to run triggers")
 	}
 
 	// Set Chroot as needed
@@ -77,7 +77,7 @@ func RunRun(r *cmd.RootCMD, c *cmd.CMD) {
 	// Load Triggers
 	tm, err := config.LoadAll()
 	if err != nil {
-		wlog.Fatalf("Failed to load triggers, reason: %s\n", err)
+		log.Fatalf("Failed to load triggers, reason: %s\n", err)
 	}
 
 	// If the names flag is not present, retrieve the names of the

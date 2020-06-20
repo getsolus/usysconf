@@ -15,7 +15,7 @@
 package triggers
 
 import (
-	wlog "github.com/DataDrake/waterlog"
+	log "github.com/DataDrake/waterlog"
 	"github.com/getsolus/usysconf/util"
 	"os"
 )
@@ -29,11 +29,11 @@ type Remove struct {
 // Execute will glob the paths and if it exists it will remove it from the system
 func (r *Remove) Execute(s Scope) error {
 	if s.DryRun {
-		wlog.Debugln("   No Paths will be removed during a dry-run\n")
+		log.Debugln("   No Paths will be removed during a dry-run\n")
 	}
 	paths := util.FilterPaths(r.Paths, r.Exclude)
 	for _, p := range paths {
-		wlog.Debugf("    Removing path '%s'\n", p)
+		log.Debugf("    Removing path '%s'\n", p)
 		if s.DryRun {
 			continue
 		}

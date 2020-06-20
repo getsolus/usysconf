@@ -15,8 +15,8 @@
 package util
 
 import (
-	"os"
 	log "github.com/DataDrake/waterlog"
+	"os"
 )
 
 // IsLive checks is this process is running in a Live install

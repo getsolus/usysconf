@@ -16,7 +16,7 @@ package cli
 
 import (
 	"github.com/DataDrake/cli-ng/cmd"
-	wlog "github.com/DataDrake/waterlog"
+	log "github.com/DataDrake/waterlog"
 )
 
 // VersionNumber is the version of the compiled usysconf binary (Makefile)
@@ -38,5 +38,5 @@ type VersionArgs struct{}
 func VersionRun(r *cmd.RootCMD, c *cmd.CMD) {
 	// gFlags := r.Flags.(*GlobalFlags)
 	// args := c.Args.(*VersionArgs)
-	wlog.Infof("usysconf %s\n", VersionNumber)
+	log.Infof("usysconf %s\n", VersionNumber)
 }

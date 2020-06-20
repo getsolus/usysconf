@@ -16,7 +16,7 @@ package triggers
 
 import (
 	"fmt"
-	wlog "github.com/DataDrake/waterlog"
+	log "github.com/DataDrake/waterlog"
 	"sort"
 )
 
@@ -46,9 +46,9 @@ func Print(tm Map) {
 	f := fmt.Sprintf("%%%ds - %%s\n", max)
 	for _, key := range keys {
 		t = tm[key]
-		wlog.Printf(f, t.Name, t.Config.Description)
+		log.Printf(f, t.Name, t.Config.Description)
 	}
-	wlog.Println()
+	log.Println()
 }
 
 // Run executes a list of triggers, where available
@@ -58,7 +58,7 @@ func Run(tm Map, s Scope, names []string) {
 		// Get Trigger if available
 		t, ok := tm[name]
 		if !ok {
-			wlog.Warnf("Could not find trigger %s\n", name)
+			log.Warnf("Could not find trigger %s\n", name)
 			continue
 		}
 		// Run Trigger

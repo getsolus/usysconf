@@ -16,10 +16,10 @@ package cli
 
 import (
 	"github.com/DataDrake/cli-ng/cmd"
-	wlog "github.com/DataDrake/waterlog"
+	log "github.com/DataDrake/waterlog"
 	"github.com/DataDrake/waterlog/format"
 	"github.com/DataDrake/waterlog/level"
-	"log"
+	log2 "log"
 )
 
 // GlobalFlags contains the flags for all commands
@@ -46,7 +46,7 @@ func init() {
 	Root.RegisterCMD(&Version)
 
 	//Set up logging
-	wlog.SetLevel(level.Info)
-	wlog.SetFormat(format.Min)
-	wlog.SetFlags(log.Ltime | log.Ldate | log.LUTC)
+	log.SetLevel(level.Info)
+	log.SetFormat(format.Min)
+	log.SetFlags(log2.Ltime | log2.Ldate | log2.LUTC)
 }

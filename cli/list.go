@@ -16,7 +16,7 @@ package cli
 
 import (
 	"github.com/DataDrake/cli-ng/cmd"
-	wlog "github.com/DataDrake/waterlog"
+	log "github.com/DataDrake/waterlog"
 	"github.com/DataDrake/waterlog/level"
 	"github.com/getsolus/usysconf/config"
 	"github.com/getsolus/usysconf/triggers"
@@ -41,14 +41,14 @@ func ListRun(r *cmd.RootCMD, c *cmd.CMD) {
 
 	// Enable Debug Output
 	if gFlags.Debug {
-		wlog.SetLevel(level.Debug)
+		log.SetLevel(level.Debug)
 	}
 	// Load Triggers
 	tm, err := config.LoadAll()
 	if err != nil {
-		wlog.Fatalf("Failed to load triggers, reason: %s\n", err.Error())
+		log.Fatalf("Failed to load triggers, reason: %s\n", err)
 	}
 	// Print triggers
-	wlog.Info("Available triggers:\n\n")
+	log.Info("Available triggers:\n\n")
 	triggers.Print(tm)
 }

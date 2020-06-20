@@ -17,7 +17,7 @@ package triggers
 import (
 	"fmt"
 	"github.com/BurntSushi/toml"
-	wlog "github.com/DataDrake/waterlog"
+	log "github.com/DataDrake/waterlog"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -136,7 +136,7 @@ func (c *Config) SkipProcessing(s Scope) (out Output) {
 			out.Message = fmt.Sprintf("path '%s' found", filepath.Clean(p))
 			return
 		}
-		wlog.Debugf("Path '%s', does not exist, skipping.\n", filepath.Clean(p))
+		log.Debugf("Path '%s', does not exist, skipping.\n", filepath.Clean(p))
 	}
 	return
 }

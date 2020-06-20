@@ -6,7 +6,7 @@
     - [x] Check for overlayfs
     - [x] Compare "/" with "/proc/PID/root" (device and inode #)
 - [x] Fix live device checking "/run/initramfs/livedev"
-- [ ] Rename wlog import to just log, use log2 for log
+- [x] Rename wlog import to just log, use log2 for log
 - [ ] Fix state tracking
     - [ ] Run for files with a newer mtime
         - [ ] Log mtime for examined files
