@@ -12,7 +12,7 @@
         - [ ] Log mtime for examined files
     - [ ] Run for triggers with a newer mtime
         - [ ] Log mtime for triggers (re-run if the trigger modified)
-- [ ] Add binary output on failure
+- [x] Add binary output on failure
 - [ ] Make sure that triggers without a replaces don't execute multiple times
 - [ ] Add Dependency System
     - [ ] Modify the TOML format

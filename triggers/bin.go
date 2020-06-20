@@ -15,6 +15,7 @@
 package triggers
 
 import (
+	"bytes"
 	"fmt"
 	log "github.com/DataDrake/waterlog"
 	"github.com/getsolus/usysconf/util"
@@ -43,10 +44,14 @@ func (b *Bin) Execute(s Scope, env map[string]string) Output {
 	for k, v := range env {
 		cmd.Env = append(cmd.Env, fmt.Sprintf("%s=%s", k, v))
 	}
+	// Add buffer for output
+	var buff bytes.Buffer
+	cmd.Stdout = &buff
+	cmd.Stderr = &buff
 	// Run the command
 	if err := cmd.Run(); err != nil {
 		out.Status = Failure
-		out.Message = fmt.Sprintf("error executing '%s %v': %s", b.Bin, b.Args, err.Error())
+		out.Message = fmt.Sprintf("error executing '%s %v': %s\n%s", b.Bin, b.Args, err.Error(), buff.String())
 	}
 	return out
 }
