@@ -22,7 +22,7 @@ usysconf: $(GOSRC)
 		-ldflags " \
 		-X $(MODULE)/cli.VersionNumber=$(VERSION) \
 		-X $(MODULE)/config.SysDir=$(SYSDIR) \
-		-X $(MODULE)/config.UsrDir=$(USRDIR)" \
+		-X $(MODULE)/config.UsrDir=$(USRDIR) \
 		-X $(MODULE)/state.Path=$(STATEPATH)" \
 		-o $@
 
