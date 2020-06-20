@@ -8,12 +8,13 @@
 - [x] Fix live device checking "/run/initramfs/livedev"
 - [x] Rename wlog import to just log, use log2 for log
 - [ ] Fix state tracking
+    - [x] Implement data structure for storing State
     - [ ] Run for files with a newer mtime
         - [ ] Log mtime for examined files
     - [ ] Run for triggers with a newer mtime
         - [ ] Log mtime for triggers (re-run if the trigger modified)
 - [x] Add binary output on failure
-- [ ] Make sure that triggers without a replaces don't execute multiple times
+- [x] Make sure that triggers without a replaces don't execute multiple times
 - [ ] Add Dependency System
     - [ ] Modify the TOML format
     - [ ] Build a dependency graph

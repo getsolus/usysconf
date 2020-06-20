@@ -10,6 +10,7 @@ PREFIX?=/usr/local
 BINDIR?=$(DESTDIR)$(PREFIX)/bin
 SYSDIR?=$(DESTDIR)/etc/$(PKGNAME).d
 USRDIR?=$(DESTDIR)$(PREFIX)/share/default/$(PKGNAME).d
+STATEPATH?=$(DESTDIR)/var/cache/$(PKGNAME)/state
 GO?=go
 GOFLAGS?=
 
@@ -22,9 +23,10 @@ usysconf: $(GOSRC)
 		-X $(MODULE)/cli.VersionNumber=$(VERSION) \
 		-X $(MODULE)/config.SysDir=$(SYSDIR) \
 		-X $(MODULE)/config.UsrDir=$(USRDIR)" \
+		-X $(MODULE)/state.Path=$(STATEPATH)" \
 		-o $@
 
-all: usysconf 
+all: usysconf
 
 # Exists in GNUMake but not in NetBSD make and others.
 RM?=rm -f
