@@ -27,7 +27,7 @@ import (
 var Run = cmd.CMD{
 	Name:  "run",
 	Alias: "r",
-	Short: "Run specified configuration file(s) to update the system configuration. It prints the status of each execution: SUCCESS(🗸)/FAILURE(✗)/SKIPPED(⁓)",
+	Short: "Run specified trigger(s) to update the system configuration.",
 	Flags: &RunFlags{},
 	Args:  &RunArgs{},
 	Run:   RunRun,
