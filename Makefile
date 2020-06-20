@@ -2,6 +2,7 @@
 .SUFFIXES:
 
 PKGNAME=usysconf
+MODULE=github.com/getsolus/usysconf
 
 VERSION="1.0.0"
 
@@ -18,11 +19,11 @@ GOSRC+=go.mod go.sum
 
 usysconf: $(GOSRC)
 	$(GO) build $(GOFLAGS) \
-		-ldflags "-X main.Prefix=$(PREFIX) \
-		-X cli.VersionNumber=$(VERSION) \
-		-X config.LogDir=$(LOGDIR) \
-		-X config.SysDir=$(SYSDIR) \
-		-X config.UsrDir=$(USRDIR)" \
+		-ldflags " \
+		-X $(MODULE)/cli.VersionNumber=$(VERSION) \
+		-X $(MODULE)/config.LogDir=$(LOGDIR) \
+		-X $(MODULE)/config.SysDir=$(SYSDIR) \
+		-X $(MODULE)/config.UsrDir=$(USRDIR)" \
 		-o $@
 
 all: usysconf 

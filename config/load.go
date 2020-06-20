@@ -71,7 +71,6 @@ func LoadAll() (tm triggers.Map, err error) {
 	if err != nil {
 		return
 	}
-
 	// Read from User Directory
 	tm2, err := Load(UsrDir)
 	if err != nil {
@@ -103,11 +102,11 @@ func LoadAll() (tm triggers.Map, err error) {
 	}
 
 	// Load configs from the user's Home directory
-	tm2, err = Load(filepath.Join(home, ".config", "usysconf.d"))
+	tm3, err := Load(filepath.Join(home, ".config", "usysconf.d"))
 	if err != nil {
 		return
 	}
-	triggers.Merge(tm, tm2)
+	triggers.Merge(tm, tm3)
 
 	return
 }
