@@ -34,7 +34,7 @@ func (b *Bin) Execute(s Scope, env map[string]string) Output {
 	out := Output{Status: Success}
 	// if the norun flag is present do not execute the configuration
 	if s.DryRun {
-		out.Status = Skipped
+		out.Status = Success
 		return out
 	}
 	// Create command
@@ -77,7 +77,7 @@ func (b Bin) FanOut() (nbins []Bin, outputs []Output) {
 		return
 	}
 
-	wlog.Debugf("replace string exists at arg: %d\n", phIndex)
+	wlog.Debugf("    Replace string exists at arg: %d\n", phIndex)
 
 	paths := util.FilterPaths(r.Paths, r.Exclude)
 	for _, p := range paths {

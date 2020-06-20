@@ -30,10 +30,20 @@ func Load(path string) (tm triggers.Map, err error) {
 	tm = make(triggers.Map)
 	entries, err := ioutil.ReadDir(path)
 	if err != nil {
-		wlog.Debugf("Failed to read triggers in %s, reason: %s\n", path, err.Error())
+		wlog.Debugf("Skipped directory '%s':\n", path)
+	}
+	if os.IsNotExist(err) {
+		wlog.Debugf("    Not found.\n")
 		err = nil
 		return
 	}
+	if err != nil {
+		wlog.Debugf("    Failed to read triggers, reason: %s\n", err)
+		err = nil
+		return
+	}
+	wlog.Debugf("Scanning directory '%s':\n", path)
+	found := false
 	for _, entry := range entries {
 		if entry.IsDir() {
 			continue
@@ -47,7 +57,8 @@ func Load(path string) (tm triggers.Map, err error) {
 			Path: filepath.Clean(filepath.Join(path, name)),
 		}
 		// found trigger
-		wlog.Debugf("Found trigger '%s' in directory '%s'\n", name, path)
+		wlog.Debugf("    Found '%s'\n", t.Name)
+		found = true
 		if err = t.Config.Load(t.Path); err == nil {
 			// Check the config for problems
 			err = t.Config.Validate()
@@ -58,6 +69,9 @@ func Load(path string) (tm triggers.Map, err error) {
 		}
 		// save trigger
 		tm[t.Name] = t
+	}
+	if !found {
+		wlog.Debugln("    No triggers found.")
 	}
 	return
 }
@@ -89,24 +103,30 @@ func LoadAll() (tm triggers.Map, err error) {
 		username := os.Getenv("SUDO_USER")
 		if username == "" || username == "root" {
 			// if user is not found or it is actually being run by root without sudo return
-			wlog.Warnln("home Triggers not loaded")
-			return
+			wlog.Warnln("Home Triggers not loaded")
+			goto CHECK
 		}
 		// Lookup sudo user's home directory
 		u, err := user.Lookup(username)
 		if err != nil {
-			wlog.Warnf("failed to lookup user '%s', reason: %s\n", username, err)
+			wlog.Warnf("Failed to lookup user '%s', reason: %s\n", username, err)
 		} else {
 			home = u.HomeDir
 		}
 	}
 
 	// Load configs from the user's Home directory
-	tm3, err := Load(filepath.Join(home, ".config", "usysconf.d"))
+	tm2, err = Load(filepath.Join(home, ".config", "usysconf.d"))
 	if err != nil {
 		return
 	}
-	triggers.Merge(tm, tm3)
+	triggers.Merge(tm, tm2)
 
+CHECK:
+	// check for lack of triggers
+	if len(tm) == 0 {
+		wlog.Fatalln("No triggers available")
+	}
+	wlog.Goodf("Found '%d' triggers\n", len(tm))
 	return
 }

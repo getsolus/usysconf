@@ -17,6 +17,7 @@ package triggers
 // Scope sets limits of execution for a trigger
 type Scope struct {
 	Chroot bool
+	Debug  bool
 	DryRun bool
 	Forced bool
 	Live   bool

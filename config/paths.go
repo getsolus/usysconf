@@ -19,6 +19,4 @@ var (
 	UsrDir string
 	// SysDir is the path defined during build (Makefile) i.e. /etc/usysconf.d
 	SysDir string
-	// LogDir is the path defined during build (Makefile) i.e. /var/log/usysconf
-	LogDir string
 )

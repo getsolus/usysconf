@@ -47,6 +47,6 @@ func init() {
 
 	//Set up logging
 	wlog.SetLevel(level.Info)
-	wlog.SetFormat(format.Un)
+	wlog.SetFormat(format.Min)
 	wlog.SetFlags(log.Ltime | log.Ldate | log.LUTC)
 }

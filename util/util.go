@@ -18,8 +18,7 @@ import (
 	"path/filepath"
 )
 
-// FilterPaths will process through globbed paths and remove any paths from the
-// resulting slice if they are present in the exclude slice.
+// FilterPaths will process through globbed paths and remove any paths from the resulting slice if they are present in the exclude slice.
 func FilterPaths(include []string, exclude []string) []string {
 	paths := make([]string, 0)
 

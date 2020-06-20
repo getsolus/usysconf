@@ -10,7 +10,6 @@ PREFIX?=/usr/local
 BINDIR?=$(DESTDIR)$(PREFIX)/bin
 SYSDIR?=$(DESTDIR)/etc/$(PKGNAME).d
 USRDIR?=$(DESTDIR)$(PREFIX)/share/default/$(PKGNAME).d
-LOGDIR?=$(DESTDIR)/var/log/$(PKGNAME)
 GO?=go
 GOFLAGS?=
 
@@ -21,7 +20,6 @@ usysconf: $(GOSRC)
 	$(GO) build $(GOFLAGS) \
 		-ldflags " \
 		-X $(MODULE)/cli.VersionNumber=$(VERSION) \
-		-X $(MODULE)/config.LogDir=$(LOGDIR) \
 		-X $(MODULE)/config.SysDir=$(SYSDIR) \
 		-X $(MODULE)/config.UsrDir=$(USRDIR)" \
 		-o $@

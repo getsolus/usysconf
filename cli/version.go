@@ -36,7 +36,7 @@ type VersionArgs struct{}
 
 // VersionRun prints the version of Usysconf and exits
 func VersionRun(r *cmd.RootCMD, c *cmd.CMD) {
-	//gFlags := r.Flags.(*GlobalFlags)
+	// gFlags := r.Flags.(*GlobalFlags)
 	// args := c.Args.(*VersionArgs)
-	wlog.Printf("usysconf %s\n", VersionNumber)
+	wlog.Infof("usysconf %s\n", VersionNumber)
 }

@@ -21,7 +21,6 @@ import (
 	"github.com/getsolus/usysconf/config"
 	"github.com/getsolus/usysconf/triggers"
 	"os"
-	"path/filepath"
 )
 
 // Run fulfills the "run" subcommand
@@ -64,21 +63,10 @@ func RunRun(r *cmd.RootCMD, c *cmd.CMD) {
 		wlog.Fatalln("You must have root privileges to run triggers")
 	}
 
-	if !flags.DryRun {
-		// Load the system log file
-		wlog.Debugln("Loading log file")
-		path := filepath.Clean(filepath.Join(config.LogDir, "usysconf.log"))
-		f, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 00600)
-		if err != nil {
-			wlog.Fatal(err.Error())
-		}
-		wlog.SetOutput(f)
-	}
-
 	// Load Triggers
 	tm, err := config.LoadAll()
 	if err != nil {
-		wlog.Fatalf("Failed to load triggers, reason: %s\n", err.Error())
+		wlog.Fatalf("Failed to load triggers, reason: %s\n", err)
 	}
 
 	// If the names flag is not present, retrieve the names of the
@@ -92,6 +80,7 @@ func RunRun(r *cmd.RootCMD, c *cmd.CMD) {
 	// Establish scope of operations
 	s := triggers.Scope{
 		Chroot: gFlags.Chroot,
+		Debug:  gFlags.Debug,
 		DryRun: flags.DryRun,
 		Forced: flags.Force,
 		Live:   gFlags.Live,

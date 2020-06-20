@@ -22,6 +22,6 @@ const (
 	Skipped Status = iota
 	// Success - The configuration has been executed, without error.
 	Success
-	// Failure - The configuration will not be executed, due to error.
+	// Failure - The configuration was not be executed, due to error.
 	Failure
 )

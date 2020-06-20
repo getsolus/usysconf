@@ -40,14 +40,15 @@ func Print(tm Map) {
 			max = len(k)
 		}
 	}
+	max += 4
 	sort.Strings(keys)
 	var t Trigger
-	f := fmt.Sprintf("\t%%%ds - %%s\n", max)
+	f := fmt.Sprintf("%%%ds - %%s\n", max)
 	for _, key := range keys {
 		t = tm[key]
-		fmt.Printf(f, t.Name, t.Config.Description)
+		wlog.Printf(f, t.Name, t.Config.Description)
 	}
-	fmt.Println()
+	wlog.Println()
 }
 
 // Run executes a list of triggers, where available

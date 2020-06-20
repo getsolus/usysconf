@@ -60,29 +60,21 @@ func (c *Config) Validate() error {
 	if len(c.Bins) == 0 {
 		return fmt.Errorf("triggers must contain at least one [[bin]]")
 	}
-
-	// Verify that the text to be outputted to the user does not exceed 42
-	// characters to make the outputted lines uniform in length
-	for _, bin := range c.Bins {
-		if len(bin.Task) > 42 {
-			return fmt.Errorf("the task: `%s` text cannot exceed the length of 42", bin.Task)
-		}
-	}
 	return nil
 }
 
 // Execute runs a trigger based on its configuration and the applicable scope
 func (c *Config) Execute(s Scope) []Output {
 	outs := make([]Output, 0)
-	if c.SkipProcessing(s) {
-		outs = append(outs, Output{Status: Skipped})
+	if out := c.SkipProcessing(s); out.Status != Success {
+		outs = append(outs, out)
 		return outs
 	}
 	rm := c.RemoveDirs
 	if rm != nil {
 		if err := rm.Execute(s); err != nil {
 			o := Output{
-				Message: fmt.Sprintf("error removing path: %s\n", err.Error()),
+				Message: fmt.Sprintf("error removing path: %s\n", err),
 				Status:  Failure,
 			}
 			outs = append(outs, o)
@@ -103,45 +95,50 @@ func (c *Config) Execute(s Scope) []Output {
 
 // SkipProcessing will process the skip and check elements of the configuration
 // and see if it should not be executed.
-func (c *Config) SkipProcessing(s Scope) bool {
-
+func (c *Config) SkipProcessing(s Scope) (out Output) {
+	out = Output{Status: Success}
 	// Check if the paths exist, if not skip
 	if c.Check != nil {
 		if err := c.Check.ResolvePaths(); err != nil {
-			wlog.Errorln(err.Error())
-			return true
+			out.Status = Skipped
+			out.Message = err.Error()
+			return
 		}
 	}
 
 	// Even if the skip element exists, if the force flag is present,
 	// continue processing
 	if s.Forced {
-		return false
+		return
 	}
 
 	if c.Skip == nil {
-		return false
+		return
 	}
 
 	// If the skip element exists and the chroot flag is present, skip
 	if c.Skip.Chroot && s.Chroot {
-		return true
+		out.Status = Skipped
+		return
 	}
 
 	// If the skip element exists and the live flag is present, skip
 	if c.Skip.Live && s.Live {
-		return true
+		out.Status = Skipped
+		return
 	}
 
 	// Process through the skip paths, and if one is present within the
 	// system, skip
 	for _, p := range c.Skip.Paths {
 		if _, err := os.Stat(filepath.Clean(p)); !os.IsNotExist(err) {
-			return true
+			out.Status = Skipped
+			out.Message = fmt.Sprintf("path '%s' found", filepath.Clean(p))
+			return
 		}
+		wlog.Debugf("Path '%s', does not exist, skipping.\n", filepath.Clean(p))
 	}
-
-	return false
+	return
 }
 
 // GetAllBins Process through the binaries of the configuration and check if
