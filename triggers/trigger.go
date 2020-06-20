@@ -33,11 +33,11 @@ type Trigger struct {
 // Run will process a single configuration and scope.
 func (c *Trigger) Run(s Scope) {
 	c.Output = c.Config.Execute(s)
-	c.Finish()
+	c.Finish(s)
 }
 
 // Finish is the last function to be executed by any trigger to output details to the user.
-func (c *Trigger) Finish() {
+func (c *Trigger) Finish(s Scope) {
 	ansiYellow := "\033[30;48;5;220m"
 	ansiGreen := "\033[30;48;5;040m"
 	ansiRed := "\033[30;48;5;208m"
@@ -53,13 +53,19 @@ func (c *Trigger) Finish() {
 		switch out.Status {
 		case Skipped:
 			wlog.Warnf("Skipped %s:%s\n", name, out.SubTask)
-			fmt.Fprintln(os.Stdout, ansiYellow+" 🗲 "+ansiInverse+" "+now+" "+ansiInverseReset+name+" "+ansiInverse+" "+out.SubTask+ansiReset)
+			if s.DryRun {
+				fmt.Fprintln(os.Stdout, ansiYellow+" 🗲 "+ansiInverse+" "+now+" "+ansiInverseReset+name+" "+ansiInverse+" "+out.SubTask+ansiReset)
+			}
 		case Failure:
 			wlog.Errorf("Failure for %s:%s due to %s\n", name, out.SubTask, out.Message)
-			fmt.Fprintln(os.Stdout, ansiRed+" ✗ "+ansiInverse+" "+now+" "+ansiInverseReset+name+" "+ansiInverse+" "+out.SubTask+ansiReset)
+			if s.DryRun {
+				fmt.Fprintln(os.Stdout, ansiRed+" ✗ "+ansiInverse+" "+now+" "+ansiInverseReset+name+" "+ansiInverse+" "+out.SubTask+ansiReset)
+			}
 		case Success:
 			wlog.Goodf("Succeeded to run %s:%s\n", name, out.SubTask)
-			fmt.Fprintln(os.Stdout, ansiGreen+" 🗸 "+ansiInverse+" "+now+" "+ansiInverseReset+name+" "+ansiInverse+" "+out.SubTask+ansiReset)
+			if s.DryRun {
+				fmt.Fprintln(os.Stdout, ansiGreen+" 🗸 "+ansiInverse+" "+now+" "+ansiInverseReset+name+" "+ansiInverse+" "+out.SubTask+ansiReset)
+			}
 		}
 	}
 }
