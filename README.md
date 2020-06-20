@@ -4,10 +4,13 @@
 
 [![Go Report Card](https://goreportcard.com/badge/github.com/getsolus/usysconf)](https://goreportcard.com/report/github.com/getsolus/usysconf) [![license](https://img.shields.io/github/license/getsolus/usysconf.svg)](https://raw.githubusercontent.com/getsolus/usysconf/master/LICENSE)
 
+usysconf is a [Solus project](https://getsol.us/).
+
+![logo](https://build.getsol.us/logo.png)
+
 `usysconf` is a stateless binary to provide a centralised configuration system to replace "package hooks" and post-installation triggers.  It involves using TOML based config files for running other binaries, that allow for the capacity to skip running based on either existing or missing paths.
 
-
-The binary runs all config files in the directories, or only some of them using the --names name1,name2 flag.
+The binary runs all config files in the directories, or only some of them by passing them as arguments.
 
 This replaces the previous version written in C that hardcoded the handlers, to a version written in Go with TOML based config files.
 
@@ -23,12 +26,17 @@ Then compile usysconf:
 
 usysconf allows the ability to set the configuration and logging directories at compile time:
 
-    $ PREFIX=/usr USRDIR=/usr/dir SYSDIR=/etc/dir LOGDIR=/var/log/dir make
+    $ make PREFIX=/usr USRDIR=/usr/dir SYSDIR=/etc/dir LOGDIR=/var/log/dir
 
 ## Installation
 
-    # PREFIX=/usr make install
-    $ usysconf run
+    # make install PREFIX=/usr
+
+## Running
+
+    $ usysconf list
+    # usysconf run
+    # usysconf run apparmor dconf
 
 ## License
 
