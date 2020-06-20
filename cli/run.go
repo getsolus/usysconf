@@ -20,6 +20,7 @@ import (
 	"github.com/DataDrake/waterlog/level"
 	"github.com/getsolus/usysconf/config"
 	"github.com/getsolus/usysconf/triggers"
+	"github.com/getsolus/usysconf/util"
 	"os"
 )
 
@@ -61,6 +62,16 @@ func RunRun(r *cmd.RootCMD, c *cmd.CMD) {
 	// Root user check
 	if !flags.DryRun && os.Geteuid() != 0 {
 		wlog.Fatalln("You must have root privileges to run triggers")
+	}
+
+	// Set Chroot as needed
+	if flags.DryRun && util.IsChroot() {
+		gFlags.Chroot = true
+	}
+
+	// Set Live as needed
+	if util.IsLive() {
+		gFlags.Live = true
 	}
 
 	// Load Triggers

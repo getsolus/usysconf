@@ -1,0 +1,21 @@
+# TODO
+
+- [x] Fix chroot detection
+    - [x] Check for "/" permission
+    - [x] Check for "/proc/1/root/" permission
+    - [x] Check for overlayfs
+    - [x] Compare "/" with "/proc/PID/root" (device and inode #)
+- [x] Fix live device checking "/run/initramfs/livedev"
+- [ ] Rename wlog import to just log, use log2 for log
+- [ ] Fix state tracking
+    - [ ] Run for files with a newer mtime
+        - [ ] Log mtime for examined files
+    - [ ] Run for triggers with a newer mtime
+        - [ ] Log mtime for triggers (re-run if the trigger modified)
+- [ ] Add binary output on failure
+- [ ] Make sure that triggers without a replaces don't execute multiple times
+- [ ] Add Dependency System
+    - [ ] Modify the TOML format
+    - [ ] Build a dependency graph
+    - [ ] Depth-first traversal of the dependency graph
+    - [ ] Missing dependencies should warn, but not fail
