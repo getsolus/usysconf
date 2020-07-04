@@ -30,6 +30,25 @@ type Bin struct {
 	Replace *Replace `toml:"replace"`
 }
 
+// ExecuteBins generates and runs all of the necesarry Bin commands
+func (t *Trigger) ExecuteBins(s Scope) {
+	var bins []Bin
+	var outputs []Output
+	// Generate
+	for _, b := range t.Bins {
+		bs, outs := b.FanOut()
+		bins = append(bins, bs...)
+		outputs = append(outputs, outs...)
+	}
+	// Execute
+	for i, b := range bins {
+		out := b.Execute(s, t.Env)
+		outputs[i].Status = out.Status
+		outputs[i].Message = out.Message
+	}
+	t.Output = append(t.Output, outputs...)
+}
+
 // Execute the binary from the confuration
 func (b *Bin) Execute(s Scope, env map[string]string) Output {
 	out := Output{Status: Success}
@@ -56,7 +75,8 @@ func (b *Bin) Execute(s Scope, env map[string]string) Output {
 	return out
 }
 
-// FanOut generates one or more bin tasks from a given, as needed
+// FanOut generates one or more bin tasks from a given, as needed by replacing the "***" sequence
+// in the arguments and creating separate binaries to be executed.
 func (b Bin) FanOut() (nbins []Bin, outputs []Output) {
 
 	r := b.Replace

@@ -16,6 +16,7 @@ package triggers
 
 import (
 	log "github.com/DataDrake/waterlog"
+	"github.com/getsolus/usysconf/state"
 )
 
 // Trigger contains all the information for a configuration to be executed and
@@ -24,20 +25,47 @@ type Trigger struct {
 	Name   string
 	Path   string
 	Output []Output
-	Config Config
+
+	Description string            `toml:"description"`
+	Bins        []Bin             `toml:"bins"`
+	Skip        *Skip             `toml:"skip,omitempty"`
+	Check       *Check            `toml:"check,omitempty"`
+	Env         map[string]string `toml:"env"`
+	RemoveDirs  *Remove           `toml:"remove,omitempty"`
 }
 
 // Run will process a single configuration and scope.
-func (c *Trigger) Run(s Scope) {
-	c.Output = c.Config.Execute(s)
-	c.Finish(s)
+func (t *Trigger) Run(s Scope, prev, next state.Map) (ok bool) {
+	var check, diff state.Map
+	// Get the new check result
+	check, ok = t.CheckMatch()
+	if !ok {
+		goto FINISH
+	}
+	// Calculate Diff
+	diff = state.Diff(prev, check)
+	// Merge it into the new State
+	next.Merge(diff)
+	// Check for Skip
+	if t.ShouldSkip(s, check, diff) {
+		goto FINISH
+	}
+	// Do the removals
+	if ok = t.Remove(s); !ok {
+		goto FINISH
+	}
+	// Run the bins
+	t.ExecuteBins(s)
+FINISH:
+	t.Finish(s)
+	return
 }
 
 // Finish is the last function to be executed by any trigger to output details to the user.
-func (c *Trigger) Finish(s Scope) {
+func (t *Trigger) Finish(s Scope) {
 	// Check for the worst status
 	status := Skipped
-	for _, out := range c.Output {
+	for _, out := range t.Output {
 		if out.Status > status {
 			status = out.Status
 		}
@@ -45,14 +73,14 @@ func (c *Trigger) Finish(s Scope) {
 	// Indicate the worst status for the whole group
 	switch status {
 	case Skipped:
-		log.Debugln(c.Name)
+		log.Debugln(t.Name)
 	case Failure:
-		log.Errorln(c.Name)
+		log.Errorln(t.Name)
 	case Success:
-		log.Goodln(c.Name)
+		log.Goodln(t.Name)
 	}
 	// Indicate status for sub-tasks
-	for _, out := range c.Output {
+	for _, out := range t.Output {
 		switch out.Status {
 		case Skipped:
 			if len(out.SubTask) > 0 {

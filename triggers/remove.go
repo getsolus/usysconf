@@ -15,8 +15,9 @@
 package triggers
 
 import (
+	"fmt"
 	log "github.com/DataDrake/waterlog"
-	"github.com/getsolus/usysconf/util"
+	"github.com/getsolus/usysconf/state"
 	"os"
 )
 
@@ -26,21 +27,38 @@ type Remove struct {
 	Exclude []string `toml:"exclude"`
 }
 
-// Execute will glob the paths and if it exists it will remove it from the system
-func (r *Remove) Execute(s Scope) error {
+// Remove glob the paths and if it exists it will remove it from the system
+func (t *Trigger) Remove(s Scope) bool {
 	if s.DryRun {
 		log.Debugln("   No Paths will be removed during a dry-run\n")
 	}
-	paths := util.FilterPaths(r.Paths, r.Exclude)
-	for _, p := range paths {
-		log.Debugf("    Removing path '%s'\n", p)
+	if t.RemoveDirs == nil {
+		log.Debugln("   No Paths to remove\n")
+		return true
+	}
+	m, err := state.Scan(t.RemoveDirs.Paths)
+	if err != nil {
+		out := Output{
+			Status:  Failure,
+			Message: fmt.Sprintf("Failed to remove paths for '%s', reason: %s\n", t.Name, err),
+		}
+		t.Output = append(t.Output, out)
+		return false
+	}
+	m = m.Exclude(t.RemoveDirs.Exclude)
+	for k := range m {
+		log.Debugf("    Removing path '%s'\n", k)
 		if s.DryRun {
 			continue
 		}
-		if err := os.Remove(p); err != nil {
-			return err
+		if err := os.Remove(k); err != nil {
+			out := Output{
+				Status:  Failure,
+				Message: fmt.Sprintf("Failed to remove paths '%s', reason: %s\n", k, err),
+			}
+			t.Output = append(t.Output, out)
+			return false
 		}
 	}
-
-	return nil
+	return true
 }

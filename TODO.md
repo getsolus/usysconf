@@ -15,10 +15,10 @@
         - [x] Search for files by prefix
         - [x] Filter files within the structure
         - [x] Convert map to a list of strings
-    - [ ] Run for files with a newer mtime
-        - [ ] Log mtime for examined files
-    - [ ] Run for triggers with a newer mtime
-        - [ ] Log mtime for triggers (re-run if the trigger modified)
+    - [x] Run for files with a newer mtime
+        - [x] Log mtime for examined files
+    - [x] Run for triggers with a newer mtime
+        - [x] Log mtime for triggers (re-run if the trigger modified)
 - [x] Add binary output on failure
 - [x] Make sure that triggers without a replaces don't execute multiple times
 - [ ] Add Dependency System

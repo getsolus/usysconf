@@ -17,6 +17,7 @@ package triggers
 import (
 	"fmt"
 	log "github.com/DataDrake/waterlog"
+	"github.com/getsolus/usysconf/state"
 	"sort"
 )
 
@@ -46,13 +47,15 @@ func Print(tm Map) {
 	f := fmt.Sprintf("%%%ds - %%s\n", max)
 	for _, key := range keys {
 		t = tm[key]
-		log.Printf(f, t.Name, t.Config.Description)
+		log.Printf(f, t.Name, t.Description)
 	}
 	log.Println()
 }
 
 // Run executes a list of triggers, where available
 func Run(tm Map, s Scope, names []string) {
+	prev := state.Load()
+	next := make(state.Map)
 	// Iterate over triggers
 	for _, name := range names {
 		// Get Trigger if available
@@ -62,6 +65,12 @@ func Run(tm Map, s Scope, names []string) {
 			continue
 		}
 		// Run Trigger
-		t.Run(s)
+		t.Run(s, prev, next)
+	}
+	if !s.DryRun {
+		// Save new State for next run
+		if err := next.Save(); err != nil {
+			log.Errorf("Failed to save next state file, reason: %s\n", err)
+		}
 	}
 }

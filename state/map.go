@@ -15,6 +15,7 @@
 package state
 
 import (
+	"fmt"
 	log "github.com/DataDrake/waterlog"
 	cbor "github.com/fxamacker/cbor/v2"
 	"os"
@@ -24,19 +25,16 @@ import (
 	"time"
 )
 
-// SystemStatePath is the location of the serialized system state directory
-var SystemStatePath string
-
-// UserStatePath is the location of the serialized user state directory
-var UserStatePath string
+// Path is the location of the serialized system state directory
+var Path string
 
 // Map contains a list files and their modification times
 type Map map[string]time.Time
 
 // Load reads in the state if it exists and deserializes it
-func Load(path string) Map {
+func Load() Map {
 	m := make(Map)
-	sFile, err := os.Open(filepath.Clean(path))
+	sFile, err := os.Open(filepath.Clean(Path))
 	if err != nil {
 		return m
 	}
@@ -46,24 +44,12 @@ func Load(path string) Map {
 	return m
 }
 
-// LoadAll loads in both the user and system
-func LoadAll() Map {
-	system := Load(SystemStatePath)
-	home, err := os.UserHomeDir()
-	if err != nil {
-		return system
-	}
-	user := Load(filepath.Join(home, UserStatePath))
-	system.Merge(user)
-	return system
-}
-
 // Save writes out the current state for future runs
-func (m Map) Save(path string) error {
-	if err := os.MkdirAll(filepath.Dir(filepath.Clean(path)), 0750); err != nil {
+func (m Map) Save() error {
+	if err := os.MkdirAll(filepath.Dir(Path), 0750); err != nil {
 		return err
 	}
-	sFile, err := os.Create(filepath.Clean(path))
+	sFile, err := os.Create(filepath.Clean(Path))
 	if err != nil {
 		return err
 	}
@@ -166,4 +152,31 @@ func (m Map) Strings() []string {
 		strs = append(strs, k)
 	}
 	return strs
+}
+
+// Scan goes over a set of paths and imports them and their contents to the map
+func Scan(paths []string) (m Map, err error) {
+	m = make(Map)
+	var p []string
+	for _, path := range paths {
+		p, err = filepath.Glob(path)
+		if err != nil {
+			err = fmt.Errorf("unable to glob path: %s", path)
+			return
+		}
+
+		if len(p) == 0 {
+			continue
+		}
+		var info os.FileInfo
+		for _, pa := range p {
+			info, err = os.Stat(filepath.Clean(pa))
+			if err != nil && !os.IsNotExist(err) {
+				err = fmt.Errorf("failed to check path: %s", pa)
+				return
+			}
+			m[pa] = info.ModTime()
+		}
+	}
+	return
 }

@@ -59,9 +59,9 @@ func Load(path string) (tm triggers.Map, err error) {
 		// found trigger
 		wlog.Debugf("    Found '%s'\n", t.Name)
 		found = true
-		if err = t.Config.Load(t.Path); err == nil {
+		if err = t.Load(t.Path); err == nil {
 			// Check the config for problems
-			err = t.Config.Validate()
+			err = t.Validate()
 		}
 		if err != nil {
 			err = fmt.Errorf("failed to read '%s' from '%s' reason: %s", name, path, err.Error())

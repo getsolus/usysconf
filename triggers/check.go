@@ -16,8 +16,8 @@ package triggers
 
 import (
 	"fmt"
-	"os"
-	"path/filepath"
+	"github.com/getsolus/usysconf/state"
+	log "github.com/DataDrake/waterlog"
 )
 
 // Check contains paths that must exixt to execute the configuration.  This
@@ -26,24 +26,22 @@ type Check struct {
 	Paths []string `toml:"paths"`
 }
 
-// ResolvePaths will glob the paths and if the path does not exist in the system, an error is returned
-func (c *Check) ResolvePaths() error {
-	for _, path := range c.Paths {
-		p, err := filepath.Glob(path)
-		if err != nil {
-			return fmt.Errorf("unable to glob path: %s", path)
-		}
-
-		if len(p) == 0 {
-			return fmt.Errorf("path not found: %s", path)
-		}
-
-		for _, pa := range p {
-			if _, err := os.Stat(filepath.Clean(pa)); os.IsNotExist(err) {
-				return fmt.Errorf("path was not found: %s", pa)
-			}
-		}
+// CheckMatch will glob the paths and if the path does not exist in the system, an error is returned
+func (t *Trigger) CheckMatch() (m state.Map, ok bool) {
+	if t.Check == nil {
+		log.Debugf("No check paths for trigger '%s'\n", t.Name)
+		ok = true
+		return
 	}
-
-	return nil
+	m, err := state.Scan(t.Check.Paths)
+	if err != nil {
+		out := Output{
+			Status:  Failure,
+			Message: fmt.Sprintf("Failed to scan paths for '%s', reason: %s\n", t.Name, err),
+		}
+		t.Output = append(t.Output, out)
+		return
+	}
+	ok = true
+	return
 }
