@@ -9,6 +9,12 @@
 - [x] Rename wlog import to just log, use log2 for log
 - [ ] Fix state tracking
     - [x] Implement data structure for storing State
+        - [x] Place scanned files into data structure
+        - [x] Merge multiple structures
+        - [x] Diff structures
+        - [x] Search for files by prefix
+        - [x] Filter files within the structure
+        - [x] Convert map to a list of strings
     - [ ] Run for files with a newer mtime
         - [ ] Log mtime for examined files
     - [ ] Run for triggers with a newer mtime
