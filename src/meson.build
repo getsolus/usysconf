@@ -48,6 +48,7 @@ if with_systemd == true
     handlers += [
         'systemd/tmpfiles',
         'systemd/sysusers',
+        'systemd/sockets',
         'systemd/reload',
     ]
     if with_systemd_reexec == true
