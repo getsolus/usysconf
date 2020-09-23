@@ -1,9 +1,9 @@
 project(
     'usysconf',
     ['c'],
-    version: '0.5.3',
+    version: '0.5.4',
     license: [
-        'GPL-2.0',
+        'GPL-2.0-only',
     ],
     default_options: [
         'c_std=c11',
@@ -49,7 +49,7 @@ cdata = configuration_data()
 # General options..
 cdata.set_quoted('PACKAGE_NAME', meson.project_name())
 cdata.set_quoted('PACKAGE_VERSION', meson.project_version())
-cdata.set_quoted('PACKAGE_URL', 'https://solus-project.com')
+cdata.set_quoted('PACKAGE_URL', 'https://getsol.us')
 
 # Allow building a static binary. For now let's default to dynamic so we can
 # actually valgrind the thing.
