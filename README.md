@@ -32,6 +32,7 @@ $ sudo usysconf run -f
 | tmpfiles       | Update systemd tmpfiles                 |                                               |
 | systemd-reload | Reload systemd configuration            |                                               |
 | systemd-reexec | Re-execute systemd                      |                                               |
+| systemd-sockets| Re-start vendor-enabled .socket units   |                                               |
 | vbox-restart   | Restart VirtualBox services             | Will be replaced with generic service handler |
 | apparmor       | Compile AppArmor profiles               | Uses `aa-lsm-hook`                            |
 | glib2          | Compile glib-schemas                    |                                               |
