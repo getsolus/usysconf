@@ -67,12 +67,12 @@ func (m Map) Merge(other Map) {
 }
 
 // Diff finds all of the Files which were modified or deleted between states
-func Diff(old, curr Map) Map {
+func (m Map) Diff(m2 Map) Map {
 	diff := make(Map)
 	// Check for new or newer
-	for cKey, cVal := range curr {
+	for cKey, cVal := range m2 {
 		found := false
-		for oKey, oVal := range old {
+		for oKey, oVal := range m {
 			if cKey == oKey {
 				found = true
 				if cVal.After(oVal) {
@@ -112,6 +112,9 @@ func (m Map) Search(paths []string) Map {
 // Exclude removes keys from the Map if they match certain patterns
 func (m Map) Exclude(patterns []string) Map {
 	match := make(Map)
+	for k, v := range m {
+		match[k] = v
+	}
 	var regexes []*regexp.Regexp
 	for _, pattern := range patterns {
 		exclude := pattern
@@ -126,7 +129,7 @@ func (m Map) Exclude(patterns []string) Map {
 	for k := range m {
 		for _, regex := range regexes {
 			if regex.MatchString(k) {
-				delete(m, k)
+				delete(match, k)
 				break
 			}
 		}
@@ -157,25 +160,29 @@ func (m Map) Strings() []string {
 // Scan goes over a set of paths and imports them and their contents to the map
 func Scan(paths []string) (m Map, err error) {
 	m = make(Map)
-	var p []string
+	var ps []string
 	for _, path := range paths {
-		p, err = filepath.Glob(path)
+		ps, err = filepath.Glob(path)
 		if err != nil {
 			err = fmt.Errorf("unable to glob path: %s", path)
 			return
 		}
 
-		if len(p) == 0 {
+		if len(ps) == 0 {
 			continue
 		}
-		var info os.FileInfo
-		for _, pa := range p {
-			info, err = os.Stat(filepath.Clean(pa))
+		for _, p := range ps {
+			err = filepath.Walk(filepath.Clean(p), func(path string, info os.FileInfo, err error) error {
+				if err != nil {
+					err = fmt.Errorf("failed to check path: %s", path)
+					return err
+				}
+				m[filepath.Join(path, info.Name())] = info.ModTime()
+				return nil
+			})
 			if err != nil && !os.IsNotExist(err) {
-				err = fmt.Errorf("failed to check path: %s", pa)
 				return
 			}
-			m[pa] = info.ModTime()
 		}
 	}
 	return

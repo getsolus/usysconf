@@ -19,7 +19,6 @@ import (
 	log "github.com/DataDrake/waterlog"
 	"github.com/DataDrake/waterlog/level"
 	"github.com/getsolus/usysconf/config"
-	"github.com/getsolus/usysconf/triggers"
 )
 
 // List fulfills the "list" subcommand
@@ -50,5 +49,5 @@ func ListRun(r *cmd.RootCMD, c *cmd.CMD) {
 	}
 	// Print triggers
 	log.Info("Available triggers:\n\n")
-	triggers.Print(tm)
+	tm.Print()
 }

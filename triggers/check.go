@@ -16,8 +16,8 @@ package triggers
 
 import (
 	"fmt"
-	"github.com/getsolus/usysconf/state"
 	log "github.com/DataDrake/waterlog"
+	"github.com/getsolus/usysconf/state"
 )
 
 // Check contains paths that must exixt to execute the configuration.  This

@@ -97,5 +97,5 @@ func RunRun(r *cmd.RootCMD, c *cmd.CMD) {
 		Live:   gFlags.Live,
 	}
 	// Run triggers
-	triggers.Run(tm, s, n)
+	tm.Run(s, n)
 }

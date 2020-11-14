@@ -90,7 +90,7 @@ func LoadAll() (tm triggers.Map, err error) {
 	if err != nil {
 		return
 	}
-	triggers.Merge(tm, tm2)
+	tm.Merge(tm2)
 
 	// Read from Home directory
 	home, err := os.UserHomeDir()
@@ -120,7 +120,7 @@ func LoadAll() (tm triggers.Map, err error) {
 	if err != nil {
 		return
 	}
-	triggers.Merge(tm, tm2)
+	tm.Merge(tm2)
 
 CHECK:
 	// check for lack of triggers

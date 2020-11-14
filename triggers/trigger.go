@@ -43,7 +43,7 @@ func (t *Trigger) Run(s Scope, prev, next state.Map) (ok bool) {
 		goto FINISH
 	}
 	// Calculate Diff
-	diff = state.Diff(prev, check)
+	diff = prev.Diff(check)
 	// Merge it into the new State
 	next.Merge(diff)
 	// Check for Skip

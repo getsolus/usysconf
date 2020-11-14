@@ -25,14 +25,14 @@ import (
 type Map map[string]Trigger
 
 // Merge combines two Maps by copying from right to left
-func Merge(left, right Map) {
-	for k, v := range right {
-		left[k] = v
+func (tm Map) Merge(tm2 Map) {
+	for k, v := range tm2 {
+		tm[k] = v
 	}
 }
 
 // Print renders a Map in a human-readable format
-func Print(tm Map) {
+func (tm Map) Print() {
 	var keys []string
 	max := 0
 	for k := range tm {
@@ -53,7 +53,7 @@ func Print(tm Map) {
 }
 
 // Run executes a list of triggers, where available
-func Run(tm Map, s Scope, names []string) {
+func (tm Map) Run(s Scope, names []string) {
 	prev := state.Load()
 	next := make(state.Map)
 	// Iterate over triggers
