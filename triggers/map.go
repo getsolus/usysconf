@@ -17,6 +17,7 @@ package triggers
 import (
 	"fmt"
 	log "github.com/DataDrake/waterlog"
+	"github.com/getsolus/usysconf/deps"
 	"github.com/getsolus/usysconf/state"
 	"sort"
 )
@@ -56,24 +57,20 @@ func (tm Map) Print(chroot, live bool) {
 	log.Println()
 }
 
-// Graph renders a dependency graph in "dot" format
-func (tm Map) Graph(chroot, live bool) {
-	var keys []string
-	for k := range tm {
-		keys = append(keys, k)
-	}
-	sort.Strings(keys)
-	log.Println("digraph {")
-	for _, key := range keys {
-		t := tm[key]
+// Graph generates a dependency graph
+func (tm Map) Graph(chroot, live bool) (g deps.Graph) {
+	g = make(deps.Graph)
+	for _, t := range tm {
 		if t.Skip != nil {
 			if (t.Skip.Chroot && chroot) || (t.Skip.Live && live) {
 				continue
 			}
 		}
-        t.Graph()
+		if t.Deps != nil {
+			g.Insert(t.Name, t.Deps.After)
+		}
 	}
-	log.Println("}")
+	return
 }
 
 // Run executes a list of triggers, where available

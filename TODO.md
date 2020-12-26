@@ -23,7 +23,7 @@
 - [x] Make sure that triggers without a replaces don't execute multiple times
 - [ ] Add Dependency System
     - [x] Modify the TOML format
-    - [ ] Build a dependency graph
+    - [x] Build a dependency graph
     - [ ] Depth-first traversal of the dependency graph
     - [ ] Missing dependencies should warn, but not fail
 - [ ] Multiple Removals

@@ -15,8 +15,8 @@
 package triggers
 
 import (
-	"github.com/getsolus/usysconf/state"
 	log "github.com/DataDrake/waterlog"
+	"github.com/getsolus/usysconf/state"
 )
 
 // Trigger contains all the information for a configuration to be executed and output to the user.
@@ -28,19 +28,10 @@ type Trigger struct {
 	Description string            `toml:"description"`
 	Check       *Check            `toml:"check,omitempty"`
 	Skip        *Skip             `toml:"skip,omitempty"`
-    Deps        *Deps             `toml:"deps,omitempty"`
+	Deps        *Deps             `toml:"deps,omitempty"`
 	Env         map[string]string `toml:"env,omitempty"`
 	Bins        []Bin             `toml:"bins,omitempty"`
 	RemoveDirs  *Remove           `toml:"remove,omitempty"`
-}
-
-func (t *Trigger) Graph() {
-    if t.Deps == nil {
-        return
-    }
-    for _, dep := range t.Deps.After {
-        log.Printf("\t\"%s\" -> \"%s\";\n", t.Name, dep)
-    }
 }
 
 // Run will process a single configuration and scope.

@@ -48,5 +48,6 @@ func GraphDepsRun(r *cmd.RootCMD, c *cmd.CMD) {
 		log.Fatalf("Failed to load triggers, reason: %s\n", err)
 	}
 	// Print triggers
-	tm.Graph(gFlags.Chroot, gFlags.Live)
+	g := tm.Graph(gFlags.Chroot, gFlags.Live)
+	g.Print()
 }
