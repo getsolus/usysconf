@@ -31,8 +31,7 @@ func IsChroot() bool {
 	var rootDir, chrootDir os.FileInfo
 	var pid int
 	// Try to check for access to the root partition of PID1 (shell?)
-	_, err := os.Stat("/proc/1/root")
-	if err != nil {
+	if _, err := os.Stat("/proc/1/root"); err != nil {
 		log.Warnln("Failed to access '/proc/1/root', assuming chroot and continuing.")
 		return true
 	}

@@ -16,7 +16,7 @@ package config
 
 import (
 	"fmt"
-	wlog "github.com/DataDrake/waterlog"
+	log "github.com/DataDrake/waterlog"
 	"github.com/getsolus/usysconf/triggers"
 	"io/ioutil"
 	"os"
@@ -30,19 +30,17 @@ func Load(path string) (tm triggers.Map, err error) {
 	tm = make(triggers.Map)
 	entries, err := ioutil.ReadDir(path)
 	if err != nil {
-		wlog.Debugf("Skipped directory '%s':\n", path)
-	}
-	if os.IsNotExist(err) {
-		wlog.Debugf("    Not found.\n")
+		log.Debugf("Skipped directory '%s':\n", path)
+		if os.IsNotExist(err) {
+			log.Debugf("    Not found.\n")
+			err = nil
+			return
+		}
+		log.Debugf("    Failed to read triggers, reason: %s\n", err)
 		err = nil
 		return
 	}
-	if err != nil {
-		wlog.Debugf("    Failed to read triggers, reason: %s\n", err)
-		err = nil
-		return
-	}
-	wlog.Debugf("Scanning directory '%s':\n", path)
+	log.Debugf("Scanning directory '%s':\n", path)
 	found := false
 	for _, entry := range entries {
 		if entry.IsDir() {
@@ -57,7 +55,7 @@ func Load(path string) (tm triggers.Map, err error) {
 			Path: filepath.Clean(filepath.Join(path, name)),
 		}
 		// found trigger
-		wlog.Debugf("    Found '%s'\n", t.Name)
+		log.Debugf("    Found '%s'\n", t.Name)
 		found = true
 		if err = t.Load(t.Path); err == nil {
 			// Check the config for problems
@@ -71,7 +69,7 @@ func Load(path string) (tm triggers.Map, err error) {
 		tm[t.Name] = t
 	}
 	if !found {
-		wlog.Debugln("    No triggers found.")
+		log.Debugln("    No triggers found.")
 	}
 	return
 }
@@ -91,42 +89,38 @@ func LoadAll() (tm triggers.Map, err error) {
 		return
 	}
 	tm.Merge(tm2)
-
 	// Read from Home directory
 	home, err := os.UserHomeDir()
 	if err != nil {
 		return
 	}
-
 	// replace the root directory with the user home directory executing usysconf
 	if os.Getuid() == 0 {
 		username := os.Getenv("SUDO_USER")
 		if username == "" || username == "root" {
 			// if user is not found or it is actually being run by root without sudo return
-			wlog.Warnln("Home Triggers not loaded")
+			log.Warnln("Home Triggers not loaded")
 			goto CHECK
 		}
 		// Lookup sudo user's home directory
 		u, err := user.Lookup(username)
 		if err != nil {
-			wlog.Warnf("Failed to lookup user '%s', reason: %s\n", username, err)
+			log.Warnf("Failed to lookup user '%s', reason: %s\n", username, err)
 		} else {
 			home = u.HomeDir
 		}
 	}
-
 	// Load configs from the user's Home directory
 	tm2, err = Load(filepath.Join(home, ".config", "usysconf.d"))
 	if err != nil {
 		return
 	}
 	tm.Merge(tm2)
-
 CHECK:
 	// check for lack of triggers
 	if len(tm) == 0 {
-		wlog.Fatalln("No triggers available")
+		log.Fatalln("No triggers available")
 	}
-	wlog.Goodf("Found '%d' triggers\n", len(tm))
+	log.Goodf("Found '%d' triggers\n", len(tm))
 	return
 }

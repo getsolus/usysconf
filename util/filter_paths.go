@@ -18,40 +18,28 @@ import (
 	"path/filepath"
 )
 
-// FilterPaths will process through globbed paths and remove any paths from the resulting slice if they are present in the exclude slice.
-func FilterPaths(include []string, exclude []string) []string {
-	paths := make([]string, 0)
-
-	ipaths := make([]string, 0)
-	for _, p := range include {
-		ps, err := filepath.Glob(p)
+// get a list of files that match the provided filters
+func match(filters []string) (matches []string) {
+	for _, filter := range filters {
+		partial, err := filepath.Glob(filter)
 		if err != nil {
 			continue
 		}
-
-		ipaths = append(paths, ps...)
+		matches = append(matches, partial...)
 	}
+	return
+}
 
-	epaths := make([]string, 0)
-	for _, p := range exclude {
-		ps, err := filepath.Glob(p)
-		if err != nil {
-			continue
-		}
-
-		epaths = append(epaths, ps...)
-	}
-
-it:
-	for _, ip := range ipaths {
-		for _, ep := range epaths {
-			if ip == ep {
-				continue it
+// FilterPaths will process through globbed paths and remove any paths from the resulting slice if they are present in the excludes slice.
+func FilterPaths(includes []string, excludes []string) (paths []string) {
+	excludePaths := match(excludes)
+	for _, includePath := range match(includes) {
+		for _, excludePath := range excludePaths {
+			if includePath == excludePath {
+				break
 			}
 		}
-
-		paths = append(paths, ip)
+		paths = append(paths, includePath)
 	}
-
-	return paths
+	return
 }
