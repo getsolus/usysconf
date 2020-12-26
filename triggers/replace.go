@@ -14,8 +14,8 @@
 
 package triggers
 
-// Replace contains details to replace a single argument with a path in the
-// executed binary.  This supports globbing.
+// Replace contains details to replace a single argument with a path in the executed binary.
+// This supports globbing.
 type Replace struct {
 	Paths   []string `toml:"paths"`
 	Exclude []string `toml:"exclude"`

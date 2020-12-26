@@ -19,8 +19,8 @@ import (
 	"github.com/getsolus/usysconf/state"
 )
 
-// Skip contains details for when the configuration will not be executed, due
-// to existing paths, or possible flags passed.  This supports globbing.
+// Skip contains details for when the configuration will not be executed, due to existing paths, or possible flags passed.
+// This supports globbing.
 type Skip struct {
 	Chroot bool     `toml:"chroot,omitempty"`
 	Live   bool     `toml:"live,omitempty"`
@@ -37,31 +37,24 @@ func (t *Trigger) ShouldSkip(s Scope, check, diff state.Map) bool {
 		t.Output = append(t.Output, out)
 		return true
 	}
-
-	// Even if the skip element exists, if the force flag is present,
-	// continue processing
+	// Even if the skip element exists, if the force flag is present, continue processing
 	if s.Forced {
 		return false
 	}
-
 	if t.Skip == nil {
 		return false
 	}
-
 	// If the skip element exists and the chroot flag is present, skip
 	if t.Skip.Chroot && s.Chroot {
 		t.Output = append(t.Output, out)
 		return true
 	}
-
 	// If the skip element exists and the live flag is present, skip
 	if t.Skip.Live && s.Live {
 		t.Output = append(t.Output, out)
 		return true
 	}
-
-	// Process through the skip paths, and if one is present within the
-	// system, skip
+	// Process through the skip paths, and if one is present within the system, skip
 	matches := check.Search(t.Skip.Paths)
 	for k := range matches {
 		out.Message = fmt.Sprintf("path '%s' found", k)

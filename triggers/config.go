@@ -28,13 +28,11 @@ func (t *Trigger) Load(path string) error {
 	if _, err := os.Stat(path); os.IsNotExist(err) {
 		return err
 	}
-
 	// Read the configuration into the program
 	cfg, err := ioutil.ReadFile(filepath.Clean(path))
 	if err != nil {
 		return fmt.Errorf("unable to read config file located at %s", path)
 	}
-
 	// Save the configuration into the content structure
 	if err := toml.Unmarshal(cfg, t); err != nil {
 		return fmt.Errorf("unable to read config file located at %s due to %s", path, err.Error())

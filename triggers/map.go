@@ -43,10 +43,9 @@ func (tm Map) Print() {
 	}
 	max += 4
 	sort.Strings(keys)
-	var t Trigger
 	f := fmt.Sprintf("%%%ds - %%s\n", max)
 	for _, key := range keys {
-		t = tm[key]
+		t := tm[key]
 		log.Printf(f, t.Name, t.Description)
 	}
 	log.Println()

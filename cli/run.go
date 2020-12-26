@@ -50,36 +50,29 @@ func RunRun(r *cmd.RootCMD, c *cmd.CMD) {
 	gFlags := r.Flags.(*GlobalFlags)
 	args := c.Args.(*RunArgs)
 	flags := c.Flags.(*RunFlags)
-
 	// Enable Debug Output
 	if gFlags.Debug {
 		log.SetLevel(level.Debug)
 	}
-
 	log.Debugln("Started usysconf")
 	defer log.Debugln("Exiting usysconf")
-
 	// Root user check
 	if !flags.DryRun && os.Geteuid() != 0 {
 		log.Fatalln("You must have root privileges to run triggers")
 	}
-
 	// Set Chroot as needed
 	if flags.DryRun && util.IsChroot() {
 		gFlags.Chroot = true
 	}
-
 	// Set Live as needed
 	if util.IsLive() {
 		gFlags.Live = true
 	}
-
 	// Load Triggers
 	tm, err := config.LoadAll()
 	if err != nil {
 		log.Fatalf("Failed to load triggers, reason: %s\n", err)
 	}
-
 	// If the names flag is not present, retrieve the names of the
 	// configurations in the system and usr directories.
 	n := args.Triggers

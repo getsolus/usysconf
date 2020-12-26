@@ -21,7 +21,7 @@ import (
 	"os"
 )
 
-// Remove contains paths to be removed from the system.  Tis supports globbing.
+// Remove contains paths to be removed from the system. This supports globbing.
 type Remove struct {
 	Paths   []string `toml:"paths"`
 	Exclude []string `toml:"exclude"`
@@ -36,7 +36,7 @@ func (t *Trigger) Remove(s Scope) bool {
 		log.Debugln("   No Paths to remove\n")
 		return true
 	}
-	m, err := state.Scan(t.RemoveDirs.Paths)
+	matches, err := state.Scan(t.RemoveDirs.Paths)
 	if err != nil {
 		out := Output{
 			Status:  Failure,
@@ -45,16 +45,16 @@ func (t *Trigger) Remove(s Scope) bool {
 		t.Output = append(t.Output, out)
 		return false
 	}
-	m = m.Exclude(t.RemoveDirs.Exclude)
-	for k := range m {
-		log.Debugf("    Removing path '%s'\n", k)
+	matches = matches.Exclude(t.RemoveDirs.Exclude)
+	for path := range matches {
+		log.Debugf("    Removing path '%s'\n", path)
 		if s.DryRun {
 			continue
 		}
-		if err := os.Remove(k); err != nil {
+		if err := os.Remove(path); err != nil {
 			out := Output{
 				Status:  Failure,
-				Message: fmt.Sprintf("Failed to remove paths '%s', reason: %s\n", k, err),
+				Message: fmt.Sprintf("Failed to remove path '%s', reason: %s\n", path, err),
 			}
 			t.Output = append(t.Output, out)
 			return false

@@ -20,17 +20,17 @@ import (
 	"github.com/getsolus/usysconf/state"
 )
 
-// Check contains paths that must exixt to execute the configuration.  This
-// supports globbing.
+// Check contains paths that must exixt to execute the configuration.
+// This supports globbing.
 type Check struct {
 	Paths []string `toml:"paths"`
 }
 
 // CheckMatch will glob the paths and if the path does not exist in the system, an error is returned
 func (t *Trigger) CheckMatch() (m state.Map, ok bool) {
+	ok = true
 	if t.Check == nil {
 		log.Debugf("No check paths for trigger '%s'\n", t.Name)
-		ok = true
 		return
 	}
 	m, err := state.Scan(t.Check.Paths)
@@ -40,8 +40,8 @@ func (t *Trigger) CheckMatch() (m state.Map, ok bool) {
 			Message: fmt.Sprintf("Failed to scan paths for '%s', reason: %s\n", t.Name, err),
 		}
 		t.Output = append(t.Output, out)
+		ok = false
 		return
 	}
-	ok = true
 	return
 }

@@ -14,8 +14,7 @@
 
 package triggers
 
-// Output contains the details necessary to output the configuration details
-// to the user.
+// Output contains the details necessary to output the configuration details to the user.
 type Output struct {
 	Name    string
 	SubTask string

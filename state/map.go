@@ -35,11 +35,16 @@ type Map map[string]time.Time
 func Load() Map {
 	m := make(Map)
 	sFile, err := os.Open(filepath.Clean(Path))
-	if err != nil {
+	if os.IsNotExist(err) {
 		return m
 	}
+	if err != nil {
+		log.Fatalf("Failed to open state file, reason: '%s'\n", err)
+	}
 	dec := cbor.NewDecoder(sFile)
-	_ = dec.Decode(m)
+	if err := dec.Decode(m); err != nil {
+		log.Warnf("Failed to load existing state file, reason '%s'\n", err)
+	}
 	_ = sFile.Close()
 	return m
 }
@@ -67,22 +72,22 @@ func (m Map) Merge(other Map) {
 }
 
 // Diff finds all of the Files which were modified or deleted between states
-func (m Map) Diff(m2 Map) Map {
+func (m Map) Diff(curr Map) Map {
 	diff := make(Map)
 	// Check for new or newer
-	for cKey, cVal := range m2 {
+	for currKey, currVal := range curr {
 		found := false
-		for oKey, oVal := range m {
-			if cKey == oKey {
+		for prevKey, prevVal := range m {
+			if currKey == prevKey {
 				found = true
-				if cVal.After(oVal) {
-					diff[cKey] = cVal
+				if currVal.After(prevVal) {
+					diff[currKey] = currVal
 				}
 				break
 			}
 		}
 		if !found {
-			diff[cKey] = cVal
+			diff[currKey] = currVal
 		}
 	}
 	return diff
@@ -92,8 +97,7 @@ func (m Map) Diff(m2 Map) Map {
 func (m Map) Search(paths []string) Map {
 	match := make(Map)
 	for _, path := range paths {
-		search := path
-		search = strings.ReplaceAll(search, "*", ".*")
+		search := strings.ReplaceAll(path, "*", ".*")
 		search = "^" + strings.ReplaceAll(search, string(filepath.Separator), "\\"+string(filepath.Separator))
 		regex, err := regexp.Compile(search)
 		if err != nil {
@@ -117,8 +121,7 @@ func (m Map) Exclude(patterns []string) Map {
 	}
 	var regexes []*regexp.Regexp
 	for _, pattern := range patterns {
-		exclude := pattern
-		exclude = strings.ReplaceAll(exclude, "*", ".*")
+		exclude := strings.ReplaceAll(pattern, "*", ".*")
 		regex, err := regexp.Compile(exclude)
 		if err != nil {
 			log.Warnf("Could not convert pattern to regex: %s\n", pattern)
@@ -139,40 +142,31 @@ func (m Map) Exclude(patterns []string) Map {
 
 // IsEmpty checkes if the Map has nothing in it
 func (m Map) IsEmpty() bool {
-	for k := range m {
-		if len(k) > 0 {
-			return false
-		}
-		return false
-	}
-	return true
+	return len(m) == 0
 }
 
 // Strings gets a list of files from the keys
-func (m Map) Strings() []string {
-	var strs []string
+func (m Map) Strings() (strs []string) {
 	for k := range m {
 		strs = append(strs, k)
 	}
-	return strs
+	return
 }
 
 // Scan goes over a set of paths and imports them and their contents to the map
-func Scan(paths []string) (m Map, err error) {
+func Scan(filters []string) (m Map, err error) {
 	m = make(Map)
-	var ps []string
-	for _, path := range paths {
-		ps, err = filepath.Glob(path)
-		if err != nil {
-			err = fmt.Errorf("unable to glob path: %s", path)
+	var matches []string
+	for _, filter := range filters {
+		if matches, err = filepath.Glob(filter); err != nil {
+			err = fmt.Errorf("unable to glob path: %s", filter)
 			return
 		}
-
-		if len(ps) == 0 {
+		if len(matches) == 0 {
 			continue
 		}
-		for _, p := range ps {
-			err = filepath.Walk(filepath.Clean(p), func(path string, info os.FileInfo, err error) error {
+		for _, match := range matches {
+			err = filepath.Walk(filepath.Clean(match), func(path string, info os.FileInfo, err error) error {
 				if err != nil {
 					err = fmt.Errorf("failed to check path: %s", path)
 					return err
@@ -180,7 +174,11 @@ func Scan(paths []string) (m Map, err error) {
 				m[filepath.Join(path, info.Name())] = info.ModTime()
 				return nil
 			})
-			if err != nil && !os.IsNotExist(err) {
+			if err != nil {
+				if os.IsNotExist(err) {
+					err = nil
+					continue
+				}
 				return
 			}
 		}

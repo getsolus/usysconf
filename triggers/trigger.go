@@ -19,8 +19,7 @@ import (
 	"github.com/getsolus/usysconf/state"
 )
 
-// Trigger contains all the information for a configuration to be executed and
-// output to the user.
+// Trigger contains all the information for a configuration to be executed and output to the user.
 type Trigger struct {
 	Name   string
 	Path   string
@@ -38,8 +37,7 @@ type Trigger struct {
 func (t *Trigger) Run(s Scope, prev, next state.Map) (ok bool) {
 	var check, diff state.Map
 	// Get the new check result
-	check, ok = t.CheckMatch()
-	if !ok {
+	if check, ok = t.CheckMatch(); !ok {
 		goto FINISH
 	}
 	// Calculate Diff

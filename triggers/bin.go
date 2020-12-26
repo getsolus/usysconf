@@ -78,39 +78,31 @@ func (b *Bin) Execute(s Scope, env map[string]string) Output {
 // FanOut generates one or more bin tasks from a given, as needed by replacing the "***" sequence
 // in the arguments and creating separate binaries to be executed.
 func (b Bin) FanOut() (nbins []Bin, outputs []Output) {
-
-	r := b.Replace
-
-	phExists := false
-	phIndex := 0
+	phIndex := -1
 	for i, arg := range b.Args {
-		if r == nil {
-			break
-		}
-
 		if arg == "***" {
-			phExists = true
 			phIndex = i
 			break
 		}
 	}
-
-	if !phExists {
+	if phIndex == -1 {
 		nbins = append(nbins, b)
 		out := Output{Name: b.Task}
 		outputs = append(outputs, out)
 		return
 	}
-
+	if b.Replace == nil {
+		log.Errorln("    Placeholder found, but [bins.replaces] is missing.")
+		return
+	}
 	log.Debugf("    Replace string exists at arg: %d\n", phIndex)
-
-	paths := util.FilterPaths(r.Paths, r.Exclude)
-	for _, p := range paths {
+	paths := util.FilterPaths(b.Replace.Paths, b.Replace.Exclude)
+	for _, path := range paths {
 		out := Output{
 			Name:    b.Task,
-			SubTask: p,
+			SubTask: path,
 		}
-		b.Args[phIndex] = p
+		b.Args[phIndex] = path
 		nbins = append(nbins, b)
 		outputs = append(outputs, out)
 	}
