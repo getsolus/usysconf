@@ -57,11 +57,11 @@ func RunRun(r *cmd.RootCMD, c *cmd.CMD) {
 	log.Debugln("Started usysconf")
 	defer log.Debugln("Exiting usysconf")
 	// Root user check
-	if !flags.DryRun && os.Geteuid() != 0 {
+	if os.Geteuid() != 0 {
 		log.Fatalln("You must have root privileges to run triggers")
 	}
 	// Set Chroot as needed
-	if flags.DryRun && util.IsChroot() {
+	if util.IsChroot() {
 		gFlags.Chroot = true
 	}
 	// Set Live as needed

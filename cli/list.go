@@ -49,5 +49,5 @@ func ListRun(r *cmd.RootCMD, c *cmd.CMD) {
 	}
 	// Print triggers
 	log.Info("Available triggers:\n\n")
-	tm.Print()
+	tm.Print(gFlags.Chroot, gFlags.Live)
 }

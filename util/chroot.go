@@ -64,5 +64,5 @@ FALLBACK:
 	}
 	root = rootDir.Sys().(*syscall.Stat_t)
 	chroot = chrootDir.Sys().(*syscall.Stat_t)
-	return root.Dev == chroot.Dev && root.Ino == chroot.Ino
+	return root.Dev != chroot.Dev || root.Ino != chroot.Ino
 }

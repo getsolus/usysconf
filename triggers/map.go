@@ -32,7 +32,7 @@ func (tm Map) Merge(tm2 Map) {
 }
 
 // Print renders a Map in a human-readable format
-func (tm Map) Print() {
+func (tm Map) Print(chroot, live bool) {
 	var keys []string
 	max := 0
 	for k := range tm {
@@ -46,6 +46,11 @@ func (tm Map) Print() {
 	f := fmt.Sprintf("%%%ds - %%s\n", max)
 	for _, key := range keys {
 		t := tm[key]
+		if t.Skip != nil {
+			if (t.Skip.Chroot && chroot) || (t.Skip.Live && live) {
+				continue
+			}
+		}
 		log.Printf(f, t.Name, t.Description)
 	}
 	log.Println()
@@ -56,6 +61,7 @@ func (tm Map) Run(s Scope, names []string) {
 	prev := state.Load()
 	next := make(state.Map)
 	// Iterate over triggers
+	sort.Strings(names)
 	for _, name := range names {
 		// Get Trigger if available
 		t, ok := tm[name]
