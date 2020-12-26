@@ -56,6 +56,26 @@ func (tm Map) Print(chroot, live bool) {
 	log.Println()
 }
 
+// Graph renders a dependency graph in "dot" format
+func (tm Map) Graph(chroot, live bool) {
+	var keys []string
+	for k := range tm {
+		keys = append(keys, k)
+	}
+	sort.Strings(keys)
+	log.Println("digraph {")
+	for _, key := range keys {
+		t := tm[key]
+		if t.Skip != nil {
+			if (t.Skip.Chroot && chroot) || (t.Skip.Live && live) {
+				continue
+			}
+		}
+        t.Graph()
+	}
+	log.Println("}")
+}
+
 // Run executes a list of triggers, where available
 func (tm Map) Run(s Scope, names []string) {
 	prev := state.Load()

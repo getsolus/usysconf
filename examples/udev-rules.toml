@@ -1,5 +1,20 @@
 description = "Reload udev rules"
 
+[check]
+paths = [
+    "/usr/lib/udev/rules.d",
+    "/etc/udev/rules.d"
+]
+
+[skip]
+chroot = true
+
+[deps]
+after = [
+    "hwdb",
+    "systemd-reexec"
+]
+
 [[bins]]
 task = "Reloading udev rules"
 bin = "/usr/bin/udevadm"
@@ -14,12 +29,3 @@ bin = "/usr/bin/udevadm"
 args = [
     "trigger"
 ]
-
-[check]
-paths = [
-    "/usr/lib/udev/rules.d",
-    "/etc/udev/rules.d"
-]
-
-[skip]
-chroot = true

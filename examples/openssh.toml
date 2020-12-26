@@ -1,5 +1,16 @@
 description = "Create OpenSSH host key"
 
+[check]
+paths = [
+    "/etc/ssh"
+]
+
+[skip]
+paths = [
+    "/etc/ssh/ssh_host_rsa_key",
+    "/etc/ssh/ssh_host_dsa_key"
+]
+
 [[bins]]
 task = "Creating OpenSSH host key"
 bin = "/usr/bin/ssh-keygen"
@@ -9,15 +20,4 @@ args = [
     "-f", "/etc/ssh/ssh_host_rsa_key", 
     "-C", 
     "-N"
-]
-
-[skip]
-paths = [
-    "/etc/ssh/ssh_host_rsa_key",
-    "/etc/ssh/ssh_host_dsa_key"
-]
-
-[check]
-paths = [
-    "/etc/ssh"
 ]

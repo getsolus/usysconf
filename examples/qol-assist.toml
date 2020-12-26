@@ -1,12 +1,5 @@
 description = "Register QoL migration"
 
-[[bins]]
-task = "Registering QoL migration on next boot"
-bin = "/usr/sbin/qol-assist"
-args = [
-    "trigger"
-]
-
 [check]
 paths = [
     "/usr/sbin/qol-assist",
@@ -17,3 +10,14 @@ paths = [
 chroot = true
 live = true
 
+[deps]
+after = [
+    "systemd-reload"
+]
+
+[[bins]]
+task = "Registering QoL migration on next boot"
+bin = "/usr/sbin/qol-assist"
+args = [
+    "trigger"
+]

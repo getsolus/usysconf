@@ -1,5 +1,18 @@
 description = "Populate Mono certificates"
 
+[check]
+paths = [
+    "/etc/ssl/certs"
+]
+
+[skip]
+chroot = true
+
+[deps]
+after = [
+    "ssl"
+]
+
 [[bins]]
 task = "Populating Mono certificates"
 bin = "/usr/bin/cert-sync"
@@ -12,11 +25,3 @@ args = [
     paths = [
         "/etc/ssl/certs/ca-certificates.crt"
     ]
-
-[check]
-paths = [
-    "/etc/ssl/certs"
-]
-
-[skip]
-chroot = true

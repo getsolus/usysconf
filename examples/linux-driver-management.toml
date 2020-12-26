@@ -1,5 +1,10 @@
 description = "Update graphical driver configuration"
 
+[deps]
+after = [
+    "depmod"
+]
+
 [[bins]]
 task = "Updating graphical driver configuration"
 bin = "/usr/bin/linux-driver-management"

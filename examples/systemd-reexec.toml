@@ -1,12 +1,5 @@
 description = "Re-execute systemd"
 
-[[bins]]
-task = "Re-executing systemd"
-bin = "/usr/bin/systemctl"
-args = [
-    "daemon-reexec"
-]
-
 [check]
 paths = [
     "/etc/systemd/system",
@@ -16,3 +9,10 @@ paths = [
 [skip]
 chroot = true
 live = true
+
+[[bins]]
+task = "Re-executing systemd"
+bin = "/usr/bin/systemctl"
+args = [
+    "daemon-reexec"
+]

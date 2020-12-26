@@ -1,15 +1,19 @@
 description = "Update gconf database"
 
+[check]
+paths = [
+    "/etc/gconf/schemas",
+    "/etc/gconf/gconf.xml.defaults",
+    "/usr/share/gconf/schemas"
+]
+
+[deps]
+after = [
+    "glib2"
+]
+
 [env]
 GCONF_CONFIG_SOURCE = "xml:merged:/etc/gconf/gconf.xml.defaults"
-
-[remove]
-paths = [
-    "/etc/gconf/gconf.xml.defaults/*"
-]
-exclude = [
-    "*.xml"
-]
 
 [[bins]]
 task = "Preparing gconf tree"
@@ -26,9 +30,11 @@ args = [
     "--makefile-install-rule"
 ]
 
-[check]
+[remove]
 paths = [
-    "/etc/gconf/schemas",
-    "/etc/gconf/gconf.xml.defaults",
-    "/usr/share/gconf/schemas"
+    "/etc/gconf/gconf.xml.defaults/*"
 ]
+exclude = [
+    "*.xml"
+]
+

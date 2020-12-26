@@ -1,5 +1,10 @@
 description = "Compile glib-schemas"
 
+[check]
+paths = [
+    "/usr/share/glib-2.0/schemas"
+]
+
 [[bins]]
 task = "Compiling glib-schemas"
 bin = "/usr/bin/glib-compile-schemas"
@@ -11,8 +16,3 @@ args = [
     paths = [
         "/usr/share/glib-2.0/schemas"
     ]
-
-[check]
-paths = [
-    "/usr/share/glib-2.0/schemas"
-]

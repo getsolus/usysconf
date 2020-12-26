@@ -7,7 +7,7 @@
     - [x] Compare "/" with "/proc/PID/root" (device and inode #)
 - [x] Fix live device checking "/run/initramfs/livedev"
 - [x] Rename wlog import to just log, use log2 for log
-- [ ] Fix state tracking
+- [x] Fix state tracking
     - [x] Implement data structure for storing State
         - [x] Place scanned files into data structure
         - [x] Merge multiple structures
@@ -22,7 +22,8 @@
 - [x] Add binary output on failure
 - [x] Make sure that triggers without a replaces don't execute multiple times
 - [ ] Add Dependency System
-    - [ ] Modify the TOML format
+    - [x] Modify the TOML format
     - [ ] Build a dependency graph
     - [ ] Depth-first traversal of the dependency graph
     - [ ] Missing dependencies should warn, but not fail
+- [ ] Multiple Removals

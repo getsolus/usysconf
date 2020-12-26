@@ -1,5 +1,10 @@
 description = "Update icon theme caches"
 
+[check]
+paths = [
+    "/usr/share/icons"
+]
+
 [[bins]]
 task = "Updating icon theme cache"
 bin = "/usr/bin/gtk-update-icon-cache"
@@ -15,8 +20,3 @@ args = [
     exclude = [
         "*.png"
     ]
-
-[check]
-paths = [
-    "/usr/share/icons"
-]

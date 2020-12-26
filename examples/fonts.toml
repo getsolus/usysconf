@@ -1,5 +1,10 @@
 description = "Rebuild font cache"
 
+[check]
+paths = [
+    "/usr/share/fonts"
+]
+
 [[bins]]
 task = "Rebuilding font cache"
 bin = "/usr/bin/fc-cache"
@@ -8,7 +13,3 @@ args = [
     "-s"
 ]
 
-[check]
-paths = [
-    "/usr/share/fonts"
-]

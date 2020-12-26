@@ -1,14 +1,19 @@
 description = "Update dconf database"
 
+[check]
+paths = [
+    "/etc/dconf/db",
+    "/etc/dconf/profile"
+]
+
+[deps]
+after = [
+    "gconf"
+]
+
 [[bins]]
 task = "Rebuilding dconf database"
 bin = "/usr/bin/dconf"
 args = [
     "update"
-]
-
-[check]
-paths = [
-    "/etc/dconf/db",
-    "/etc/dconf/profile"
 ]

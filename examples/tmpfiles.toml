@@ -1,15 +1,20 @@
 description = "Update systemd tmpfiles"
 
+[check]
+paths = [
+    "/etc/systemd/system",
+    "/usr/lib/systemd/system"
+]
+
+[deps]
+after = [
+    "systemd-reexec"
+]
+
 [[bins]]
 task = "Updating systemd tmpfiles"
 bin = "/usr/bin/systemd-tmpfiles"
 args = [
     "--root=/",
     "--create"
-]
-
-[check]
-paths = [
-    "/etc/systemd/system",
-    "/usr/lib/systemd/system"
 ]

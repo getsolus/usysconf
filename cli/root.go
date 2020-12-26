@@ -42,6 +42,7 @@ func init() {
 	// Setup the Sub-Commands
 	Root.RegisterCMD(&cmd.Help)
 	Root.RegisterCMD(&Run)
+	Root.RegisterCMD(&GraphDeps)
 	Root.RegisterCMD(&List)
 	Root.RegisterCMD(&Version)
 

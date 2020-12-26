@@ -1,13 +1,5 @@
 description = "Restart vendor-enabled systemd socket units"
 
-[[bins]]
-task = "Restarting socket units"
-bin = "/usr/bin/systemctl"
-args = [
-    "restart",
-    "sockets.target"
-]
-
 [check]
 paths = [
     "/usr/lib/systemd/system/sockets.target.wants"
@@ -16,3 +8,16 @@ paths = [
 [skip]
 chroot = true
 live = true
+
+[deps]
+after = [
+    "systemd-reexec"
+]
+
+[[bins]]
+task = "Restarting socket units"
+bin = "/usr/bin/systemctl"
+args = [
+    "restart",
+    "sockets.target"
+]

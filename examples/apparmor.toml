@@ -1,9 +1,5 @@
 description = "Compile AppArmor profiles"
 
-[[bins]]
-task = "Compiling and Reloading AppArmor profiles"
-bin = "/usr/sbin/aa-lsm-hook"
-
 [check]
 paths = [
     "/etc/apparmor.d"
@@ -11,3 +7,12 @@ paths = [
 
 [skip]
 chroot = true
+
+[deps]
+after = [
+    "systemd-reexec"
+]
+
+[[bins]]
+task = "Compiling and Reloading AppArmor profiles"
+bin = "/usr/sbin/aa-lsm-hook"

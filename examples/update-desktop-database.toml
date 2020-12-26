@@ -1,5 +1,10 @@
 description = "Update desktop database"
 
+[check]
+paths = [
+    "/usr/share/applications"
+]
+
 [[bins]]
 task = "Updating desktop database"
 bin = "/usr/bin/update-desktop-database"
@@ -12,8 +17,3 @@ args = [
     paths = [
         "/usr/share/applications"
     ]
-
-[check]
-paths = [
-    "/usr/share/applications"
-]

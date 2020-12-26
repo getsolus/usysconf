@@ -1,13 +1,5 @@
 description = "Restart VirtualBox services"
 
-[[bins]]
-task = "Restarting VirtualBox services"
-bin = "/usr/bin/systemctl"
-args = [
-    "restart",
-    "vboxdrv.service"
-]
-
 [check]
 paths = [
     "/usr/lib/systemd/system/vboxdrv.service"
@@ -16,3 +8,16 @@ paths = [
 [skip]
 chroot = true
 live = true
+
+[deps]
+after = [
+    "clr-boot-manager"
+]
+
+[[bins]]
+task = "Restarting VirtualBox services"
+bin = "/usr/bin/systemctl"
+args = [
+    "restart",
+    "vboxdrv.service"
+]

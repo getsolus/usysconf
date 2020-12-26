@@ -1,10 +1,10 @@
 description = "Update SSL certificate configuration"
 
-[[bins]]
-task = "Updating SSL certificates"
-bin = "/usr/bin/c_rehash"
-
 [check]
 paths = [
     "/etc/ssl/certs"
 ]
+
+[[bins]]
+task = "Updating SSL certificates"
+bin = "/usr/bin/c_rehash"

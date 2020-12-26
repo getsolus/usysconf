@@ -1,5 +1,10 @@
 description = "Update mimetype database"
 
+[check]
+paths = [
+    "/usr/share/mime"
+]
+
 [[bins]]
 task = "Updating mimetype database"
 bin = "/usr/bin/update-mime-database"
@@ -12,9 +17,3 @@ args = [
     paths = [
         "/usr/share/mime"
     ]
-
-
-[check]
-paths = [
-    "/usr/share/mime"
-]

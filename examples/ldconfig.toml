@@ -1,12 +1,5 @@
 description = "Update dynamic library cache"
 
-[[bins]]
-task = "Updating dynamic library cache"
-bin = "/sbin/ldconfig"
-args = [
-    "-X"
-]
-
 [check]
 paths = [
     "/usr/lib64",
@@ -14,4 +7,11 @@ paths = [
     "/lib64",
     "/lib",
     "/usr/share/ld.so.conf.d"
+]
+
+[[bins]]
+task = "Updating dynamic library cache"
+bin = "/sbin/ldconfig"
+args = [
+    "-X"
 ]

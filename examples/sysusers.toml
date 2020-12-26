@@ -1,14 +1,19 @@
 description = "Update systemd sysusers"
 
+[check]
+paths = [
+    "/etc/systemd/system",
+    "/usr/lib/systemd/system"
+]
+
+[deps]
+after = [
+    "systemd-reexec"
+]
+
 [[bins]]
 task = "Updating system users"
 bin = "/usr/bin/systemd-sysusers"
 args = [
     "--root=/"
-]
-
-[check]
-paths = [
-    "/etc/systemd/system",
-    "/usr/lib/systemd/system"
 ]

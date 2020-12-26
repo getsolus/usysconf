@@ -1,12 +1,5 @@
 description = "Reload systemd configuration"
 
-[[bins]]
-task = "Reloading systemd configuration"
-bin = "/usr/bin/systemctl"
-args = [
-    "daemon-reload"
-]
-
 [check]
 paths = [
     "/etc/systemd/system",
@@ -15,3 +8,17 @@ paths = [
 
 [skip]
 chroot = true
+
+[deps]
+after = [
+    "systemd-reexec",
+    "systemd-reload",
+    "sysusers"
+]
+
+[[bins]]
+task = "Reloading systemd configuration"
+bin = "/usr/bin/systemctl"
+args = [
+    "daemon-reload"
+]
