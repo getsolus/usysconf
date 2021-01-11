@@ -77,9 +77,11 @@ func (tm Map) Graph(chroot, live bool) (g deps.Graph) {
 func (tm Map) Run(s Scope, names []string) {
 	prev := state.Load()
 	next := make(state.Map)
+	// Resolve deps
+	g := tm.Graph(s.Chroot, s.Live)
+	order := g.Resolve(names)
 	// Iterate over triggers
-	sort.Strings(names)
-	for _, name := range names {
+	for _, name := range order {
 		// Get Trigger if available
 		t, ok := tm[name]
 		if !ok {

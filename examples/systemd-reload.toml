@@ -12,8 +12,8 @@ chroot = true
 [deps]
 after = [
     "systemd-reexec",
-    "systemd-reload",
-    "sysusers"
+    "sysusers",
+    "tmpfiles"
 ]
 
 [[bins]]

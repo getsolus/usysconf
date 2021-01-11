@@ -24,6 +24,7 @@
 - [ ] Add Dependency System
     - [x] Modify the TOML format
     - [x] Build a dependency graph
-    - [ ] Depth-first traversal of the dependency graph
+    - [x] Breadth-first traversal of the dependency graph
+    - [ ] Check for circular deps
     - [ ] Missing dependencies should warn, but not fail
 - [ ] Multiple Removals

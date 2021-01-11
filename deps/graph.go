@@ -27,6 +27,38 @@ func (g Graph) Insert(name string, deps []string) {
 	g[name] = append(g[name], deps...)
 }
 
+// prune all references to things not in the list
+func (g Graph) prune(names []string) {
+	for k := range g {
+		found := false
+		for _, name := range names {
+			if k == name {
+				found = true
+				break
+			}
+		}
+		if !found {
+			delete(g, k)
+		}
+	}
+	for k, deps := range g {
+		var next []string
+		for _, dep := range deps {
+			found := false
+			for _, name := range names {
+				if dep == name {
+					found = true
+					break
+				}
+			}
+			if found {
+				next = append(next, dep)
+			}
+		}
+		g[k] = next
+	}
+}
+
 // traverse performs a breadth-first traversal of a graph
 func (g Graph) traverse(todo []string) (order, remaining []string) {
 	for _, name := range todo {
@@ -59,6 +91,7 @@ func (g Graph) traverse(todo []string) (order, remaining []string) {
 
 // Resolve finds the ideal ordering for a list of triggers
 func (g Graph) Resolve(todo []string) (order []string) {
+	g.prune(todo)
 	var partial []string
 	for len(todo) > 0 {
 		partial, todo = g.traverse(todo)
