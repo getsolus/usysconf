@@ -11,8 +11,8 @@ require (
 	github.com/securego/gosec v0.0.0-20200401082031-e946c8c39989 // indirect
 	gitlab.com/opennota/check v0.0.0-20181224073239-ccaba434e62a // indirect
 	golang.org/x/lint v0.0.0-20201208152925-83fdc39ff7b5 // indirect
-	golang.org/x/mod v0.4.0 // indirect
-	golang.org/x/tools v0.0.0-20210108195828-e2f9c7f1fc8e // indirect
+	golang.org/x/mod v0.4.1 // indirect
+	golang.org/x/tools v0.0.0-20210115202250-e0d201561e39 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	honnef.co/go/tools v0.1.0 // indirect
 )

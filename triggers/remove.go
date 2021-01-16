@@ -32,11 +32,21 @@ func (t *Trigger) Remove(s Scope) bool {
 	if s.DryRun {
 		log.Debugln("   No Paths will be removed during a dry-run\n")
 	}
-	if t.RemoveDirs == nil {
+	if len(t.Removals) == 0 {
 		log.Debugln("   No Paths to remove\n")
 		return true
 	}
-	matches, err := state.Scan(t.RemoveDirs.Paths)
+	for _, remove := range t.Removals {
+		if !t.removeOne(s, remove) {
+			return false
+		}
+	}
+	return true
+}
+
+// removeOne carries out removals for a single Remove entry
+func (t *Trigger) removeOne(s Scope, remove Remove) bool {
+	matches, err := state.Scan(remove.Paths)
 	if err != nil {
 		out := Output{
 			Status:  Failure,
@@ -45,7 +55,7 @@ func (t *Trigger) Remove(s Scope) bool {
 		t.Output = append(t.Output, out)
 		return false
 	}
-	matches = matches.Exclude(t.RemoveDirs.Exclude)
+	matches = matches.Exclude(remove.Exclude)
 	for path := range matches {
 		log.Debugf("    Removing path '%s'\n", path)
 		if s.DryRun {

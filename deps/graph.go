@@ -17,6 +17,7 @@ package deps
 import (
 	log "github.com/DataDrake/waterlog"
 	"sort"
+	"strings"
 )
 
 // Graph represents the dependencies shared between triggers
@@ -25,6 +26,66 @@ type Graph map[string][]string
 // Insert sets the dependencies for a given trigger
 func (g Graph) Insert(name string, deps []string) {
 	g[name] = append(g[name], deps...)
+}
+
+// Validate checks the graph for any potential issues
+func (g Graph) Validate(triggers []string) {
+	g.CheckCircular()
+	g.CheckMissing(triggers)
+}
+
+// CheckMissing checks for any missign triggers and prints warnings
+func (g Graph) CheckMissing(triggers []string) {
+	for name, deps := range g {
+		for _, dep := range deps {
+			found := false
+			for _, trigger := range triggers {
+				if dep == trigger {
+					found = true
+					break
+				}
+			}
+			if !found {
+				log.Warnf("Dependency '%s' of trigger '%s' does not exist\n", dep, name)
+			}
+		}
+	}
+}
+
+// CheckCircular checks for circular dependencies
+func (g Graph) CheckCircular() {
+	var visited []string
+	for name := range g {
+		if found := g.circular(name, visited); len(found) != 0 {
+			last := found[len(found)-1]
+			for _, next := range found {
+				if next == last {
+					break
+				}
+				found = found[1:]
+			}
+			log.Fatalf("Circular dependency: %s\n", strings.Join(found, " -> "))
+		}
+	}
+}
+
+func (g Graph) circular(name string, visited []string) (found []string) {
+	visited = append(visited, name)
+	for _, dep := range g[name] {
+		for _, v := range visited {
+			if dep == v {
+				found = append(found, name, dep)
+				return
+			}
+		}
+		if len(found) == 0 {
+			found = g.circular(dep, visited)
+			if len(found) != 0 {
+				return append([]string{name}, found...)
+			}
+		}
+	}
+	return
 }
 
 // prune all references to things not in the list

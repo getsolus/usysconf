@@ -21,10 +21,10 @@
         - [x] Log mtime for triggers (re-run if the trigger modified)
 - [x] Add binary output on failure
 - [x] Make sure that triggers without a replaces don't execute multiple times
-- [ ] Add Dependency System
+- [x] Add Dependency System
     - [x] Modify the TOML format
     - [x] Build a dependency graph
     - [x] Breadth-first traversal of the dependency graph
-    - [ ] Check for circular deps
-    - [ ] Missing dependencies should warn, but not fail
-- [ ] Multiple Removals
+    - [x] Check for circular deps
+    - [x] Missing dependencies should warn, but not fail
+- [x] Multiple Removals

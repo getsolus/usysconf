@@ -60,6 +60,7 @@ func (tm Map) Print(chroot, live bool) {
 // Graph generates a dependency graph
 func (tm Map) Graph(chroot, live bool) (g deps.Graph) {
 	g = make(deps.Graph)
+	var names []string
 	for _, t := range tm {
 		if t.Skip != nil {
 			if (t.Skip.Chroot && chroot) || (t.Skip.Live && live) {
@@ -69,7 +70,9 @@ func (tm Map) Graph(chroot, live bool) (g deps.Graph) {
 		if t.Deps != nil {
 			g.Insert(t.Name, t.Deps.After)
 		}
+		names = append(names, t.Name)
 	}
+	g.Validate(names)
 	return
 }
 

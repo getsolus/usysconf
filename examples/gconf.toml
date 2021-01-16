@@ -30,7 +30,7 @@ args = [
     "--makefile-install-rule"
 ]
 
-[remove]
+[[remove]]
 paths = [
     "/etc/gconf/gconf.xml.defaults/*"
 ]

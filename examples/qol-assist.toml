@@ -12,6 +12,7 @@ live = true
 
 [deps]
 after = [
+    "systemd-reexec",
     "systemd-reload"
 ]
 

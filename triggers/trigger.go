@@ -31,7 +31,7 @@ type Trigger struct {
 	Deps        *Deps             `toml:"deps,omitempty"`
 	Env         map[string]string `toml:"env,omitempty"`
 	Bins        []Bin             `toml:"bins,omitempty"`
-	RemoveDirs  *Remove           `toml:"remove,omitempty"`
+	Removals    []Remove          `toml:"remove,omitempty"`
 }
 
 // Run will process a single configuration and scope.
