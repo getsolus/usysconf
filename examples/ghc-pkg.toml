@@ -1,0 +1,13 @@
+description = "Update the ghc-pkg cache"
+
+[check]
+paths = [
+    "/usr/lib64/ghc-*/package.conf.d/*"
+]
+
+[[bins]]
+task = "Updating the ghc-pkg cache"
+bin = "/usr/bin/ghc-pkg"
+args = [
+    "recache"
+]
