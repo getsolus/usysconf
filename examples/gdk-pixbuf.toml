@@ -1,0 +1,13 @@
+description = "Update gdk-pixbuf cache"
+
+[check]
+paths = [
+    "/usr/lib/gdk-pixbuf-2.0/2.10.0/loaders"
+]
+
+[[bins]]
+task = "Updating gdk-pixbuf cache"
+bin = "/usr/bin/gdk-pixbuf-query-loaders"
+args = [
+    "--update-cache"
+]
