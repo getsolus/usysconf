@@ -16,7 +16,7 @@
 #include "util.h"
 
 static const char *gdk_pixbuf_loaders[] = {
-        "/usr/lib/gdk-pixbuf-2.0/2.10.0/loaders",
+        "/usr/lib/gdk-pixbuf-2.0/2.10.0/loaders/*",
 };
 
 /**
@@ -28,11 +28,8 @@ static UscHandlerStatus usc_handler_gdk_pixbuf_exec(__usc_unused__ UscContext *c
         char *command[] = {
                 "/usr/bin/gdk-pixbuf-query-loaders",
                 "--update-cache",
-                NULL, /* /usr/lib/gdk-pixbuf-2.0/2.10.0/loaders */
                 NULL, /* Terminator */
         };
-
-        command[1] = (char *)path,
 
         usc_context_emit_task_start(ctx, "Compiling gdk-pixbuf cache");
         int ret = usc_exec_command(command);
