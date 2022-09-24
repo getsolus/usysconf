@@ -76,6 +76,7 @@ static const UscHandler *usc_handlers[] = {
 
         /** Enter userspace. */
         &usc_handler_glib2,
+        &usc_handler_gdk_pixbuf,
         &usc_handler_fonts,
         &usc_handler_mime,
         &usc_handler_icon_cache,

@@ -1,6 +1,7 @@
 xdg_handlers = [
     'dconf',
     'gconf',
+    'gdk-pixbuf',
     'glib2',
     'mime',
     'icon-cache',

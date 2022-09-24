@@ -28,13 +28,9 @@ static UscHandlerStatus usc_handler_gdk_pixbuf_exec(__usc_unused__ UscContext *c
         char *command[] = {
                 "/usr/bin/gdk-pixbuf-query-loaders",
                 "--update-cache",
-                "/usr/lib/gdk-pixbuf-2.0/2.10.0/loaders", /* /usr/lib/gdk-pixbuf-2.0/2.10.0/loaders */
+                NULL, /* /usr/lib/gdk-pixbuf-2.0/2.10.0/loaders */
                 NULL, /* Terminator */
         };
-
-        //if (!usc_file_is_dir(path)) {
-        //        return USC_HANDLER_SKIP;
-        //}
 
         command[1] = (char *)path,
 
