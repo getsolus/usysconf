@@ -96,8 +96,6 @@ static const UscHandler *usc_handlers[] = {
         &usc_handler_mono_certs,
 #endif
 
-        &usc_handler_sshd,
-
         &usc_handler_udev_rules,
 };
 
