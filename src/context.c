@@ -99,6 +99,8 @@ static const UscHandler *usc_handlers[] = {
         &usc_handler_sshd,
 
         &usc_handler_udev_rules,
+
+        &usc_handler_ghc_pkg,
 };
 
 /**
