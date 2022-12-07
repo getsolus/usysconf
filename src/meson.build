@@ -12,6 +12,7 @@ xdg_handlers = [
 ]
 
 handlers = [
+    'ghc-pkg',
     'ldconfig',
     'hwdb',
     'mandb',

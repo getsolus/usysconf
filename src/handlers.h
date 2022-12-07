@@ -73,6 +73,8 @@ extern UscHandler usc_handler_sshd;
 
 extern UscHandler usc_handler_udev_rules;
 
+extern UscHandler usc_handler_ghc_pkg;
+
 /*
  * Editor modelines  -  https://www.wireshark.org/tools/modelines.html
  *
