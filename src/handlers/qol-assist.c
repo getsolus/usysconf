@@ -21,6 +21,7 @@
 static const char *qol_paths[] = {
         "/usr/sbin/qol-assist",
         "/usr/lib/systemd/system/qol-assist-migration.service",
+        "/usr/share/defaults/qol-assist.d/*",
 };
 
 /**
