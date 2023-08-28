@@ -47,7 +47,6 @@ $ sudo usysconf run -f
 | mandb          | Updating manpages database              |                                               |
 | ssl-certs      | Update SSL certificate configuration    | Only uses `c_rehash` right now                |
 | mono-certs     | Populate Mono certificates              | Uses `cert-sync`                              |
-| openssh        | Create OpenSSH host key                 |                                               |
 | udev-rules     | Reload and apply new udev rules         | Always last to facilitate userspace responses |
 
 ### Special note

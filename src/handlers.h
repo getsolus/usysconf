@@ -69,8 +69,6 @@ extern UscHandler usc_handler_ssl_certs;
 extern UscHandler usc_handler_mono_certs;
 #endif
 
-extern UscHandler usc_handler_sshd;
-
 extern UscHandler usc_handler_udev_rules;
 
 extern UscHandler usc_handler_ghc_pkg;

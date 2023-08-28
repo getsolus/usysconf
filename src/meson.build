@@ -17,7 +17,6 @@ handlers = [
     'hwdb',
     'mandb',
     'ssl',
-    'openssh',
     'udev-rules',
 ]
 
