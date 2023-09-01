@@ -24,7 +24,7 @@ var Version string = "unknown"
 // GlobalFlags contains the flags for all commands.
 type GlobalFlags struct {
 	Debug   bool             `short:"d" long:"debug"  help:"Run in debug mode."`
-	Chroot  bool             `short:"c" long:"chroot" help:"Specify that command is being run from a chrooted environment."`
+	Chroot  bool             `short:"c" long:"chroot" help:"Specify that command is being run from a chrooted environment."` //nolint:lll
 	Live    bool             `short:"l" long:"live"   help:"Specify that command is being run from a live medium."`
 	Version kong.VersionFlag `short:"v" long:"version"   help:"Print version and exit."`
 }

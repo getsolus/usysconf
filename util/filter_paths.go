@@ -32,7 +32,8 @@ func match(filters []string) (matches []string) {
 	return
 }
 
-// FilterPaths will process through globbed paths and remove any paths from the resulting slice if they are present in the excludes slice.
+// FilterPaths will process through globbed paths and remove any paths from the resulting slice
+// if they are present in the excludes slice.
 func FilterPaths(includes []string, excludes []string) (paths []string) {
 	excludePaths := match(excludes)
 	for _, includePath := range match(includes) {

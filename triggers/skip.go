@@ -20,15 +20,16 @@ import (
 	"github.com/getsolus/usysconf/state"
 )
 
-// Skip contains details for when the configuration will not be executed, due to existing paths, or possible flags passed.
-// This supports globbing.
+// Skip contains details for when the configuration will not be executed due to existing paths,
+// or possible flags passed. This supports globbing.
 type Skip struct {
 	Chroot bool     `toml:"chroot,omitempty"`
 	Live   bool     `toml:"live,omitempty"`
 	Paths  []string `toml:"paths"`
 }
 
-// ShouldSkip will process the skip and check elements of the configuration and see if it should not be executed.
+// ShouldSkip will process the skip and check elements of the configuration and see if
+// it should not be executed.
 func (t *Trigger) ShouldSkip(s Scope, check, diff state.Map) bool {
 	out := Output{
 		Status: Skipped,
