@@ -17,7 +17,6 @@ package triggers
 import (
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 
@@ -31,7 +30,7 @@ func (t *Trigger) Load(path string) error {
 		return err
 	}
 	// Read the configuration into the program
-	cfg, err := ioutil.ReadFile(filepath.Clean(path))
+	cfg, err := os.ReadFile(filepath.Clean(path))
 	if err != nil {
 		return fmt.Errorf("unable to read config file located at %q: %w", path, err)
 	}
