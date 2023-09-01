@@ -26,7 +26,7 @@ type graph struct{}
 func (g graph) Run(flags GlobalFlags) error {
 	tm, err := config.LoadAll()
 	if err != nil {
-		return fmt.Errorf("Failed to load triggers, reason: %s\n", err)
+		return fmt.Errorf("failed to load triggers: %w", err)
 	}
 	tm.Graph(flags.Chroot, flags.Live).Print()
 	return nil

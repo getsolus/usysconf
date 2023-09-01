@@ -26,7 +26,7 @@ type list struct{}
 func (l list) Run(flags GlobalFlags) error {
 	tm, err := config.LoadAll()
 	if err != nil {
-		return fmt.Errorf("Failed to load triggers, reason: %s\n", err)
+		return fmt.Errorf("failed to load triggers: %w", err)
 	}
 	log.Info("Available triggers:\n\n")
 	tm.Print(flags.Chroot, flags.Live)
