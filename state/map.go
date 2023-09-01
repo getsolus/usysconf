@@ -16,13 +16,14 @@ package state
 
 import (
 	"fmt"
-	log "github.com/DataDrake/waterlog"
-	cbor "github.com/fxamacker/cbor/v2"
 	"os"
 	"path/filepath"
 	"regexp"
 	"strings"
 	"time"
+
+	log "github.com/DataDrake/waterlog"
+	cbor "github.com/fxamacker/cbor/v2"
 )
 
 // Path is the location of the serialized system state directory
@@ -32,21 +33,29 @@ var Path string
 type Map map[string]time.Time
 
 // Load reads in the state if it exists and deserializes it
-func Load() Map {
+func Load() (Map, error) {
 	m := make(Map)
 	sFile, err := os.Open(filepath.Clean(Path))
+
 	if os.IsNotExist(err) {
-		return m
+		// Don't return an error here because we need to run
+		// all of the triggers the first time to generate the file
+		return m, nil
 	}
+
 	if err != nil {
-		log.Fatalf("Failed to open state file, reason: '%s'\n", err)
+		return nil, err
 	}
+
+	defer sFile.Close()
+
 	dec := cbor.NewDecoder(sFile)
-	if err := dec.Decode(m); err != nil {
-		log.Warnf("Failed to load existing state file, reason '%s'\n", err)
+
+	if err := dec.Decode(&m); err != nil {
+		return nil, err
 	}
-	_ = sFile.Close()
-	return m
+
+	return m, nil
 }
 
 // Save writes out the current state for future runs

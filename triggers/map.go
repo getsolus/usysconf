@@ -16,10 +16,11 @@ package triggers
 
 import (
 	"fmt"
+	"sort"
+
 	log "github.com/DataDrake/waterlog"
 	"github.com/getsolus/usysconf/deps"
 	"github.com/getsolus/usysconf/state"
-	"sort"
 )
 
 // Map relates the name of trigger to its definition
@@ -78,7 +79,13 @@ func (tm Map) Graph(chroot, live bool) (g deps.Graph) {
 
 // Run executes a list of triggers, where available
 func (tm Map) Run(s Scope, names []string) {
-	prev := state.Load()
+	prev, err := state.Load()
+
+	if err != nil {
+		log.Errorf("Failed to read state file: %s\n", err)
+		return
+	}
+
 	next := make(state.Map)
 	// Resolve deps
 	g := tm.Graph(s.Chroot, s.Live)
