@@ -42,6 +42,7 @@ func (t *Trigger) ShouldSkip(s Scope, check, diff state.Map) bool {
 	if s.Forced {
 		return false
 	}
+
 	if t.Skip == nil {
 		return false
 	}
@@ -60,7 +61,9 @@ func (t *Trigger) ShouldSkip(s Scope, check, diff state.Map) bool {
 	for k := range matches {
 		out.Message = fmt.Sprintf("path '%s' found", k)
 		t.Output = append(t.Output, out)
+
 		return true
 	}
+
 	return false
 }

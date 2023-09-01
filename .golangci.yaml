@@ -27,7 +27,6 @@ linters:
     - stylecheck
     - tagalign
     - wrapcheck
-    - wsl
     # Disabled permanently
     - exhaustruct     # structs may be uninitialized
     - nlreturn        # covered by wsl cuddle rules

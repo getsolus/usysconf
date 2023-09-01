@@ -58,6 +58,7 @@ func (t *Trigger) Run(s Scope, prev, next state.Map) (ok bool) {
 	t.ExecuteBins(s)
 FINISH:
 	t.Finish(s)
+
 	return
 }
 

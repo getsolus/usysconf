@@ -38,6 +38,7 @@ func (t *Trigger) Load(path string) error {
 	if err := toml.Unmarshal(cfg, t); err != nil {
 		return fmt.Errorf("unable to read config file located at %s due to %s", path, err.Error())
 	}
+
 	return nil
 }
 
@@ -48,5 +49,6 @@ func (t *Trigger) Validate() error {
 	if len(t.Bins) == 0 {
 		return fmt.Errorf("triggers must contain at least one [[bin]]")
 	}
+
 	return nil
 }

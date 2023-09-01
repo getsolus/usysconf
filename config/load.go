@@ -35,36 +35,47 @@ func Load(path string) (triggers.Map, error) {
 			logger.Debug("Directory not found")
 			return nil, nil
 		}
+
 		return nil, fmt.Errorf("failed to read triggers: %w", err)
 	}
+
 	tm := make(triggers.Map, len(entries))
+
 	logger.Debug("Scanning directory")
+
 	for _, entry := range entries {
 		if entry.IsDir() {
 			continue
 		}
+
 		name := entry.Name()
 		if !strings.HasSuffix(name, ".toml") {
 			continue
 		}
+
 		t := triggers.Trigger{
 			Name: strings.TrimSuffix(name, ".toml"),
 			Path: filepath.Clean(filepath.Join(path, name)),
 		}
 		logger.Debug("Trigger found", "name", t.Name)
+
 		err = t.Load(t.Path)
 		if err != nil {
 			return nil, err
 		}
+
 		err = t.Validate()
 		if err != nil {
 			return nil, fmt.Errorf("failed to read %s from %s: %w", name, path, err)
 		}
+
 		tm[t.Name] = t
 	}
+
 	if len(tm) == 0 {
 		logger.Debug("No triggers found")
 	}
+
 	return tm, nil
 }
 
@@ -76,6 +87,7 @@ func LoadAll() (triggers.Map, error) {
 	if p, err := os.UserHomeDir(); err != nil {
 		paths = append(paths, p)
 	}
+
 	if os.Getuid() == 0 {
 		uname := os.Getenv("SUDO_USER")
 		if uname != "" && uname != "root" {
@@ -89,13 +101,17 @@ func LoadAll() (triggers.Map, error) {
 	}
 
 	tm := make(triggers.Map)
+
 	for _, path := range paths {
 		trig, err := Load(path)
 		if err != nil {
 			return nil, err
 		}
+
 		tm.Merge(trig)
 	}
+
 	slog.Info("Total triggers", "count", len(tm))
+
 	return tm, nil
 }

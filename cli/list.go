@@ -28,7 +28,9 @@ func (l list) Run(flags GlobalFlags) error {
 	if err != nil {
 		return fmt.Errorf("failed to load triggers: %w", err)
 	}
+
 	slog.Info("Available triggers:")
 	tm.Print(flags.Chroot, flags.Live)
+
 	return nil
 }

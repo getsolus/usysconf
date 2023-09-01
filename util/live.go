@@ -26,11 +26,12 @@ func IsLive() bool {
 		slog.Debug("Live session detected")
 		return true
 	}
+
 	if os.IsNotExist(err) {
 		return false
 	}
+
 	slog.Error("Could not check for live session", "reason", err)
 	// TODO: Return error instead of panicking.
 	panic("Could not check for live session")
-	// return false
 }

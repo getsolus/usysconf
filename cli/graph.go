@@ -28,6 +28,8 @@ func (g graph) Run(flags GlobalFlags) error {
 	if err != nil {
 		return fmt.Errorf("failed to load triggers: %w", err)
 	}
+
 	tm.Graph(flags.Chroot, flags.Live).Print()
+
 	return nil
 }

@@ -34,6 +34,7 @@ type Bin struct {
 // ExecuteBins generates and runs all of the necesarry Bin commands
 func (t *Trigger) ExecuteBins(s Scope) {
 	var bins []Bin
+
 	var outputs []Output
 	// Generate
 	for _, b := range t.Bins {
@@ -47,6 +48,7 @@ func (t *Trigger) ExecuteBins(s Scope) {
 		outputs[i].Status = out.Status
 		outputs[i].Message = out.Message
 	}
+
 	t.Output = append(t.Output, outputs...)
 }
 
@@ -73,6 +75,7 @@ func (b *Bin) Execute(s Scope, env map[string]string) Output {
 		out.Status = Failure
 		out.Message = fmt.Sprintf("error executing '%s %v': %s\n%s", b.Bin, b.Args, err.Error(), buff.String())
 	}
+
 	return out
 }
 
@@ -80,23 +83,29 @@ func (b *Bin) Execute(s Scope, env map[string]string) Output {
 // in the arguments and creating separate binaries to be executed.
 func (b Bin) FanOut() (nbins []Bin, outputs []Output) {
 	phIndex := -1
+
 	for i, arg := range b.Args {
 		if arg == "***" {
 			phIndex = i
 			break
 		}
 	}
+
 	if phIndex == -1 {
 		nbins = append(nbins, b)
 		out := Output{Name: b.Task}
 		outputs = append(outputs, out)
+
 		return
 	}
+
 	if b.Replace == nil {
 		slog.Error("Placeholder found, but [bins.replaces] is missing")
 		return
 	}
+
 	slog.Debug("Replace string exists", "argument", phIndex)
+
 	paths := util.FilterPaths(b.Replace.Paths, b.Replace.Exclude)
 	for _, path := range paths {
 		out := Output{
@@ -107,5 +116,6 @@ func (b Bin) FanOut() (nbins []Bin, outputs []Output) {
 		nbins = append(nbins, b)
 		outputs = append(outputs, out)
 	}
+
 	return
 }

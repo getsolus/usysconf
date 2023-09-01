@@ -36,16 +36,23 @@ func (tm Map) Merge(tm2 Map) {
 // Print renders a Map in a human-readable format
 func (tm Map) Print(chroot, live bool) {
 	var keys []string
+
 	max := 0
+
 	for k := range tm {
 		keys = append(keys, k)
+
 		if len(k) > max {
 			max = len(k)
 		}
 	}
+
 	max += 4
+
 	sort.Strings(keys)
+
 	f := fmt.Sprintf("%%%ds - %%s\n", max)
+
 	for _, key := range keys {
 		t := tm[key]
 		if t.Skip != nil {
@@ -53,27 +60,35 @@ func (tm Map) Print(chroot, live bool) {
 				continue
 			}
 		}
+
 		fmt.Printf(f, t.Name, t.Description)
 	}
+
 	fmt.Println()
 }
 
 // Graph generates a dependency graph
 func (tm Map) Graph(chroot, live bool) (g deps.Graph) {
 	g = make(deps.Graph)
+
 	var names []string
+
 	for _, t := range tm {
 		if t.Skip != nil {
 			if (t.Skip.Chroot && chroot) || (t.Skip.Live && live) {
 				continue
 			}
 		}
+
 		if t.Deps != nil {
 			g.Insert(t.Name, t.Deps.After)
 		}
+
 		names = append(names, t.Name)
 	}
+
 	g.Validate(names)
+
 	return
 }
 
@@ -100,6 +115,7 @@ func (tm Map) Run(s Scope, names []string) {
 		// Run Trigger
 		t.Run(s, prev, next)
 	}
+
 	if !s.DryRun {
 		// Save new State for next run
 		if err := next.Save(); err != nil {

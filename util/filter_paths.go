@@ -25,8 +25,10 @@ func match(filters []string) (matches []string) {
 		if err != nil {
 			continue
 		}
+
 		matches = append(matches, partial...)
 	}
+
 	return
 }
 
@@ -39,7 +41,9 @@ func FilterPaths(includes []string, excludes []string) (paths []string) {
 				break
 			}
 		}
+
 		paths = append(paths, includePath)
 	}
+
 	return
 }

@@ -27,8 +27,11 @@ import (
 // IsChroot detects if the current process is running in a chroot environment
 func IsChroot() bool {
 	var raw []byte
+
 	var root, chroot *syscall.Stat_t
+
 	var rootDir, chrootDir os.FileInfo
+
 	var pid int
 	// Try to check for access to the root partition of PID1 (shell?)
 	if _, err := os.Stat("/proc/1/root"); err != nil {
@@ -41,32 +44,40 @@ func IsChroot() bool {
 		slog.Warn("Failed to access", "path", "/proc/mounts", "reason", err)
 		goto FALLBACK
 	}
+
 	raw, err = io.ReadAll(mounts)
 	if err != nil {
 		slog.Warn("Failed to read", "path", "/proc/mounts", "reason", err)
 		goto FALLBACK
 	}
+
 	_ = mounts.Close()
+
 	if strings.Contains(string(raw), "overlay / overlay") {
 		slog.Debug("Overlayfs for '/' found, assuming chroot")
 		return true
 	}
 FALLBACK:
 	slog.Debug("Falling back to rigorous check for chroot")
+
 	rootDir, err = os.Stat("/")
 	if err != nil {
 		slog.Error("Failed to access", "path", "/", "reason", err)
 		// TODO: Return error instead of panicking.
 		panic("Failed to access")
 	}
+
 	pid = os.Getpid()
+
 	chrootDir, err = os.Stat(filepath.Join("/", "proc", strconv.Itoa(pid), "root"))
 	if err != nil {
 		slog.Error("Failed to access", "path", "/", "reason", err)
 		// TODO: Return error instead of panicking.
 		panic("Failed to access")
 	}
+
 	root = rootDir.Sys().(*syscall.Stat_t)
 	chroot = chrootDir.Sys().(*syscall.Stat_t)
+
 	return root.Dev != chroot.Dev || root.Ino != chroot.Ino
 }

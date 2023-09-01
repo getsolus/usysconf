@@ -40,12 +40,14 @@ func (g Graph) CheckMissing(triggers []string) {
 	for name, deps := range g {
 		for _, dep := range deps {
 			found := false
+
 			for _, trigger := range triggers {
 				if dep == trigger {
 					found = true
 					break
 				}
 			}
+
 			if !found {
 				slog.Warn("Dependency does not exist", "parent", name, "child", dep)
 			}
@@ -63,6 +65,7 @@ func (g Graph) CheckCircular() {
 				if next == last {
 					break
 				}
+
 				found = found[1:]
 			}
 			// TODO: Return an error instead of panicking.
@@ -81,6 +84,7 @@ func (g Graph) circular(name string, visited []string) (found []string) {
 				return
 			}
 		}
+
 		if len(found) == 0 {
 			found = g.circular(dep, visited)
 			if len(found) != 0 {
@@ -88,6 +92,7 @@ func (g Graph) circular(name string, visited []string) (found []string) {
 			}
 		}
 	}
+
 	return
 }
 
@@ -95,30 +100,37 @@ func (g Graph) circular(name string, visited []string) (found []string) {
 func (g Graph) prune(names []string) {
 	for k := range g {
 		found := false
+
 		for _, name := range names {
 			if k == name {
 				found = true
 				break
 			}
 		}
+
 		if !found {
 			delete(g, k)
 		}
 	}
+
 	for k, deps := range g {
 		var next []string
+
 		for _, dep := range deps {
 			found := false
+
 			for _, name := range names {
 				if dep == name {
 					found = true
 					break
 				}
 			}
+
 			if found {
 				next = append(next, dep)
 			}
 		}
+
 		g[k] = next
 	}
 }
@@ -133,34 +145,43 @@ func (g Graph) traverse(todo []string) (order, remaining []string) {
 			remaining = append(remaining, name)
 		}
 	}
+
 	for _, name := range remaining {
 		var next []string
+
 		for _, dep := range g[name] {
 			found := false
+
 			for _, prev := range order {
 				if dep == prev {
 					found = true
 					break
 				}
 			}
+
 			if !found {
 				next = append(next, dep)
 			}
 		}
+
 		g[name] = next
 	}
+
 	sort.Strings(order)
+
 	return
 }
 
 // Resolve finds the ideal ordering for a list of triggers
 func (g Graph) Resolve(todo []string) (order []string) {
 	g.prune(todo)
+
 	var partial []string
 	for len(todo) > 0 {
 		partial, todo = g.traverse(todo)
 		order = append(order, partial...)
 	}
+
 	return
 }
 
@@ -170,14 +191,18 @@ func (g Graph) Print() {
 	for name := range g {
 		names = append(names, name)
 	}
+
 	sort.Strings(names)
 	fmt.Println("digraph {")
+
 	for _, name := range names {
 		deps := g[name]
 		sort.Strings(deps)
+
 		for _, dep := range deps {
 			fmt.Printf("\t\"%s\" -> \"%s\";\n", name, dep)
 		}
 	}
+
 	fmt.Println("}")
 }

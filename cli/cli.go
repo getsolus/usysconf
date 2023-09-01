@@ -40,5 +40,6 @@ type arguments struct {
 func Parse() (*kong.Context, GlobalFlags) {
 	var args arguments
 	ctx := kong.Parse(&args, kong.Vars{"version": Version})
+
 	return ctx, args.GlobalFlags
 }

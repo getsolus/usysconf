@@ -35,9 +35,11 @@ func (r run) Run(flags GlobalFlags) error {
 	if os.Geteuid() != 0 {
 		return errors.New("you must have root privileges to run triggers")
 	}
+
 	if util.IsChroot() {
 		flags.Chroot = true
 	}
+
 	if util.IsLive() {
 		flags.Live = true
 	}
@@ -64,5 +66,6 @@ func (r run) Run(flags GlobalFlags) error {
 	}
 	// Run triggers.
 	tm.Run(s, n)
+
 	return nil
 }
