@@ -52,7 +52,7 @@ func (t *Trigger) ExecuteBins(s Scope) {
 	t.Output = append(t.Output, outputs...)
 }
 
-// Execute the binary from the confuration.
+// Execute the binary from the configuration.
 func (b *Bin) Execute(s Scope, env map[string]string) Output {
 	out := Output{Status: Success}
 	// if the norun flag is present do not execute the configuration
@@ -60,8 +60,10 @@ func (b *Bin) Execute(s Scope, env map[string]string) Output {
 		out.Status = Success
 		return out
 	}
+
 	// Create command
-	cmd := exec.Command(b.Bin, b.Args...)
+	cmd := exec.Command(b.Bin, b.Args...) //#nosec:G204 // the command from the config is tainted
+
 	// Setup environment
 	for k, v := range env {
 		cmd.Env = append(cmd.Env, fmt.Sprintf("%s=%s", k, v))
