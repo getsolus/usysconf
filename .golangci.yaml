@@ -9,7 +9,6 @@ linters:
     - forcetypeassert
     - funlen
     - forbidigo
-    - gci
     - gochecknoglobals
     - gochecknoinits
     - gocritic
