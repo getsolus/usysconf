@@ -35,8 +35,7 @@ func (tm Map) Merge(tm2 Map) {
 
 // Print renders a Map in a human-readable format.
 func (tm Map) Print(chroot, live bool) {
-	var keys []string
-
+	keys := make([]string, 0, len(tm))
 	max := 0
 
 	for k := range tm {
@@ -70,8 +69,7 @@ func (tm Map) Print(chroot, live bool) {
 // Graph generates a dependency graph.
 func (tm Map) Graph(chroot, live bool) (g deps.Graph) {
 	g = make(deps.Graph)
-
-	var names []string
+	names := make([]string, 0, len(tm))
 
 	for _, t := range tm {
 		if t.Skip != nil {

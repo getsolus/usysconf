@@ -187,7 +187,8 @@ func (g Graph) Resolve(todo []string) (order []string) {
 
 // Print renders this graph to a "dot" format.
 func (g Graph) Print() {
-	var names []string
+	names := make([]string, 0, len(g))
+
 	for name := range g {
 		names = append(names, name)
 	}

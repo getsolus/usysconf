@@ -143,7 +143,7 @@ func (m Map) Exclude(patterns []string) Map {
 		match[k] = v
 	}
 
-	var regexes []*regexp.Regexp
+	regexes := make([]*regexp.Regexp, 0, len(patterns))
 
 	for _, pattern := range patterns {
 		exclude := strings.ReplaceAll(pattern, "*", ".*")
