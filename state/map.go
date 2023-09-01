@@ -189,7 +189,7 @@ func Scan(filters []string) (m Map, err error) {
 
 	for _, filter := range filters {
 		if matches, err = filepath.Glob(filter); err != nil {
-			err = fmt.Errorf("unable to glob path: %s", filter)
+			err = fmt.Errorf("unable to glob path %q: %w", filter, err)
 			return
 		}
 
@@ -200,7 +200,7 @@ func Scan(filters []string) (m Map, err error) {
 		for _, match := range matches {
 			err = filepath.Walk(filepath.Clean(match), func(path string, info os.FileInfo, err error) error {
 				if err != nil {
-					err = fmt.Errorf("failed to check path: %s", path)
+					err = fmt.Errorf("failed to check path %q: %w", path, err)
 					return err
 				}
 

@@ -31,9 +31,11 @@ type run struct {
 	Triggers []string `arg:"" help:"Names of the triggers to run." optional:""`
 }
 
+var errNeedRoot = errors.New("you must have root privileges to run triggers")
+
 func (r run) Run(flags GlobalFlags) error {
 	if os.Geteuid() != 0 {
-		return errors.New("you must have root privileges to run triggers")
+		return errNeedRoot
 	}
 
 	if util.IsChroot() {
