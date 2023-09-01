@@ -29,7 +29,7 @@ type run struct {
 	Force  bool `short:"f" long:"force"   help:"Force run the configuration regardless if it should be skipped."`
 	DryRun bool `short:"n" long:"dry-run" help:"Test the configuration files without executing the specified binaries and arguments."`
 
-	Triggers []string `arg:"" help:"Names of the triggers to run."`
+	Triggers []string `arg:"" help:"Names of the triggers to run." optional:""`
 }
 
 func (r run) Run(flags GlobalFlags) error {
