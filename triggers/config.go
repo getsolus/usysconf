@@ -16,10 +16,11 @@ package triggers
 
 import (
 	"fmt"
-	"github.com/BurntSushi/toml"
 	"io/ioutil"
 	"os"
 	"path/filepath"
+
+	"github.com/BurntSushi/toml"
 )
 
 // Load reads a Trigger configuration from a file and parses it

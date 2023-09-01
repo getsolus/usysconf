@@ -80,7 +80,6 @@ func (tm Map) Graph(chroot, live bool) (g deps.Graph) {
 // Run executes a list of triggers, where available
 func (tm Map) Run(s Scope, names []string) {
 	prev, err := state.Load()
-
 	if err != nil {
 		slog.Error("Failed to read state file", "reason", err)
 		return

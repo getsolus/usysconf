@@ -60,7 +60,7 @@ func Load() (Map, error) {
 
 // Save writes out the current state for future runs
 func (m Map) Save() error {
-	if err := os.MkdirAll(filepath.Dir(Path), 0750); err != nil {
+	if err := os.MkdirAll(filepath.Dir(Path), 0o750); err != nil {
 		return err
 	}
 	sFile, err := os.Create(filepath.Clean(Path))

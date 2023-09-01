@@ -16,7 +16,6 @@ linters:
     - godot
     - godox
     - goerr113
-    - gofumpt
     - gomnd
     - gosec
     - govet

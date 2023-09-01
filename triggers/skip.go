@@ -16,6 +16,7 @@ package triggers
 
 import (
 	"fmt"
+
 	"github.com/getsolus/usysconf/state"
 )
 

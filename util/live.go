@@ -32,5 +32,5 @@ func IsLive() bool {
 	slog.Error("Could not check for live session", "reason", err)
 	// TODO: Return error instead of panicking.
 	panic("Could not check for live session")
-	//return false
+	// return false
 }
