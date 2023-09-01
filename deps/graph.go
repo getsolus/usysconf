@@ -21,21 +21,21 @@ import (
 	"strings"
 )
 
-// Graph represents the dependencies shared between triggers
+// Graph represents the dependencies shared between triggers.
 type Graph map[string][]string
 
-// Insert sets the dependencies for a given trigger
+// Insert sets the dependencies for a given trigger.
 func (g Graph) Insert(name string, deps []string) {
 	g[name] = append(g[name], deps...)
 }
 
-// Validate checks the graph for any potential issues
+// Validate checks the graph for any potential issues.
 func (g Graph) Validate(triggers []string) {
 	g.CheckCircular()
 	g.CheckMissing(triggers)
 }
 
-// CheckMissing checks for any missign triggers and prints warnings
+// CheckMissing checks for any missign triggers and prints warnings.
 func (g Graph) CheckMissing(triggers []string) {
 	for name, deps := range g {
 		for _, dep := range deps {
@@ -55,7 +55,7 @@ func (g Graph) CheckMissing(triggers []string) {
 	}
 }
 
-// CheckCircular checks for circular dependencies
+// CheckCircular checks for circular dependencies.
 func (g Graph) CheckCircular() {
 	var visited []string
 	for name := range g {
@@ -96,7 +96,7 @@ func (g Graph) circular(name string, visited []string) (found []string) {
 	return
 }
 
-// prune all references to things not in the list
+// prune all references to things not in the list.
 func (g Graph) prune(names []string) {
 	for k := range g {
 		found := false
@@ -135,7 +135,7 @@ func (g Graph) prune(names []string) {
 	}
 }
 
-// traverse performs a breadth-first traversal of a graph
+// traverse performs a breadth-first traversal of a graph.
 func (g Graph) traverse(todo []string) (order, remaining []string) {
 	for _, name := range todo {
 		deps := g[name]
@@ -172,7 +172,7 @@ func (g Graph) traverse(todo []string) (order, remaining []string) {
 	return
 }
 
-// Resolve finds the ideal ordering for a list of triggers
+// Resolve finds the ideal ordering for a list of triggers.
 func (g Graph) Resolve(todo []string) (order []string) {
 	g.prune(todo)
 
@@ -185,7 +185,7 @@ func (g Graph) Resolve(todo []string) (order []string) {
 	return
 }
 
-// Print renders this graph to a "dot" format
+// Print renders this graph to a "dot" format.
 func (g Graph) Print() {
 	var names []string
 	for name := range g {

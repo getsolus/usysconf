@@ -28,7 +28,7 @@ type Remove struct {
 	Exclude []string `toml:"exclude"`
 }
 
-// Remove glob the paths and if it exists it will remove it from the system
+// Remove glob the paths and if it exists it will remove it from the system.
 func (t *Trigger) Remove(s Scope) bool {
 	if s.DryRun {
 		slog.Debug("No Paths will be removed during a dry-run")
@@ -48,7 +48,7 @@ func (t *Trigger) Remove(s Scope) bool {
 	return true
 }
 
-// removeOne carries out removals for a single Remove entry
+// removeOne carries out removals for a single Remove entry.
 func (t *Trigger) removeOne(s Scope, remove Remove) bool {
 	matches, err := state.Scan(remove.Paths)
 	if err != nil {

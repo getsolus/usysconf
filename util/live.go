@@ -19,7 +19,7 @@ import (
 	"os"
 )
 
-// IsLive checks is this process is running in a Live install
+// IsLive checks is this process is running in a Live install.
 func IsLive() bool {
 	var err error
 	if _, err = os.Stat("/run/initramfs/livedev"); err == nil {

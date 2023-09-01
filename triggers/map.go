@@ -23,17 +23,17 @@ import (
 	"github.com/getsolus/usysconf/state"
 )
 
-// Map relates the name of trigger to its definition
+// Map relates the name of trigger to its definition.
 type Map map[string]Trigger
 
-// Merge combines two Maps by copying from right to left
+// Merge combines two Maps by copying from right to left.
 func (tm Map) Merge(tm2 Map) {
 	for k, v := range tm2 {
 		tm[k] = v
 	}
 }
 
-// Print renders a Map in a human-readable format
+// Print renders a Map in a human-readable format.
 func (tm Map) Print(chroot, live bool) {
 	var keys []string
 
@@ -67,7 +67,7 @@ func (tm Map) Print(chroot, live bool) {
 	fmt.Println()
 }
 
-// Graph generates a dependency graph
+// Graph generates a dependency graph.
 func (tm Map) Graph(chroot, live bool) (g deps.Graph) {
 	g = make(deps.Graph)
 
@@ -92,7 +92,7 @@ func (tm Map) Graph(chroot, live bool) (g deps.Graph) {
 	return
 }
 
-// Run executes a list of triggers, where available
+// Run executes a list of triggers, where available.
 func (tm Map) Run(s Scope, names []string) {
 	prev, err := state.Load()
 	if err != nil {

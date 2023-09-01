@@ -26,13 +26,13 @@ import (
 	"github.com/fxamacker/cbor/v2"
 )
 
-// Path is the location of the serialized system state directory
+// Path is the location of the serialized system state directory.
 var Path string
 
-// Map contains a list files and their modification times
+// Map contains a list files and their modification times.
 type Map map[string]time.Time
 
-// Load reads in the state if it exists and deserializes it
+// Load reads in the state if it exists and deserializes it.
 func Load() (Map, error) {
 	m := make(Map)
 	sFile, err := os.Open(filepath.Clean(Path))
@@ -58,7 +58,7 @@ func Load() (Map, error) {
 	return m, nil
 }
 
-// Save writes out the current state for future runs
+// Save writes out the current state for future runs.
 func (m Map) Save() error {
 	if err := os.MkdirAll(filepath.Dir(Path), 0o750); err != nil {
 		return err
@@ -76,14 +76,14 @@ func (m Map) Save() error {
 	return err
 }
 
-// Merge combines two Maps into one
+// Merge combines two Maps into one.
 func (m Map) Merge(other Map) {
 	for k, v := range other {
 		m[k] = v
 	}
 }
 
-// Diff finds all of the Files which were modified or deleted between states
+// Diff finds all of the Files which were modified or deleted between states.
 func (m Map) Diff(curr Map) Map {
 	diff := make(Map)
 	// Check for new or newer
@@ -110,7 +110,7 @@ func (m Map) Diff(curr Map) Map {
 	return diff
 }
 
-// Search finds all of the matching files in a Map
+// Search finds all of the matching files in a Map.
 func (m Map) Search(paths []string) Map {
 	match := make(Map)
 
@@ -134,7 +134,7 @@ func (m Map) Search(paths []string) Map {
 	return match
 }
 
-// Exclude removes keys from the Map if they match certain patterns
+// Exclude removes keys from the Map if they match certain patterns.
 func (m Map) Exclude(patterns []string) Map {
 	match := make(Map)
 	for k, v := range m {
@@ -167,12 +167,12 @@ func (m Map) Exclude(patterns []string) Map {
 	return match
 }
 
-// IsEmpty checkes if the Map has nothing in it
+// IsEmpty checkes if the Map has nothing in it.
 func (m Map) IsEmpty() bool {
 	return len(m) == 0
 }
 
-// Strings gets a list of files from the keys
+// Strings gets a list of files from the keys.
 func (m Map) Strings() (strs []string) {
 	for k := range m {
 		strs = append(strs, k)
@@ -181,7 +181,7 @@ func (m Map) Strings() (strs []string) {
 	return
 }
 
-// Scan goes over a set of paths and imports them and their contents to the map
+// Scan goes over a set of paths and imports them and their contents to the map.
 func Scan(filters []string) (m Map, err error) {
 	m = make(Map)
 

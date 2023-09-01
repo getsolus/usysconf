@@ -24,7 +24,7 @@ import (
 	"syscall"
 )
 
-// IsChroot detects if the current process is running in a chroot environment
+// IsChroot detects if the current process is running in a chroot environment.
 func IsChroot() bool {
 	var raw []byte
 

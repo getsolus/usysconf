@@ -27,7 +27,7 @@ type Check struct {
 	Paths []string `toml:"paths"`
 }
 
-// CheckMatch will glob the paths and if the path does not exist in the system, an error is returned
+// CheckMatch will glob the paths and if the path does not exist in the system, an error is returned.
 func (t *Trigger) CheckMatch() (m state.Map, ok bool) {
 	ok = true
 

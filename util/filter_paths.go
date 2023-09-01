@@ -18,7 +18,7 @@ import (
 	"path/filepath"
 )
 
-// get a list of files that match the provided filters
+// get a list of files that match the provided filters.
 func match(filters []string) (matches []string) {
 	for _, filter := range filters {
 		partial, err := filepath.Glob(filter)

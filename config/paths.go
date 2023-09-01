@@ -15,8 +15,8 @@
 package config
 
 var (
-	// UsrDir is the path defined during build (Makefile) i.e. /usr/share/defaults/usysconf.d
+	// UsrDir is the path defined during build (Makefile) i.e. `/usr/share/defaults/usysconf.d`.
 	UsrDir string
-	// SysDir is the path defined during build (Makefile) i.e. /etc/usysconf.d
+	// SysDir is the path defined during build (Makefile) i.e. `/etc/usysconf.d`.
 	SysDir string
 )

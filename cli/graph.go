@@ -22,7 +22,7 @@ import (
 
 type graph struct{}
 
-// GraphDepsRun prints the usage for the requested command
+// GraphDepsRun prints the usage for the requested command.
 func (g graph) Run(flags GlobalFlags) error {
 	tm, err := config.LoadAll()
 	if err != nil {

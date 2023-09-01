@@ -31,7 +31,7 @@ type Bin struct {
 	Replace *Replace `toml:"replace"`
 }
 
-// ExecuteBins generates and runs all of the necesarry Bin commands
+// ExecuteBins generates and runs all of the necesarry Bin commands.
 func (t *Trigger) ExecuteBins(s Scope) {
 	var bins []Bin
 
@@ -52,7 +52,7 @@ func (t *Trigger) ExecuteBins(s Scope) {
 	t.Output = append(t.Output, outputs...)
 }
 
-// Execute the binary from the confuration
+// Execute the binary from the confuration.
 func (b *Bin) Execute(s Scope, env map[string]string) Output {
 	out := Output{Status: Success}
 	// if the norun flag is present do not execute the configuration

@@ -23,7 +23,7 @@ import (
 	"github.com/BurntSushi/toml"
 )
 
-// Load reads a Trigger configuration from a file and parses it
+// Load reads a Trigger configuration from a file and parses it.
 func (t *Trigger) Load(path string) error {
 	// Check if this is a valid file path
 	if _, err := os.Stat(path); os.IsNotExist(err) {
@@ -42,7 +42,7 @@ func (t *Trigger) Load(path string) error {
 	return nil
 }
 
-// Validate checks for errors in a Trigger configuration
+// Validate checks for errors in a Trigger configuration.
 func (t *Trigger) Validate() error {
 	// Verify that there is at least one binary to execute, otherwise there
 	// is no need to continue
