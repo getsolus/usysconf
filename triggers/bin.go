@@ -94,16 +94,12 @@ func (b Bin) FanOut() (nbins []Bin, outputs []Output) {
 	}
 
 	if phIndex == -1 {
-		nbins = append(nbins, b)
-		out := Output{Name: b.Task}
-		outputs = append(outputs, out)
-
-		return
+		return append(nbins, b), append(outputs, Output{Name: b.Task})
 	}
 
 	if b.Replace == nil {
 		slog.Error("Placeholder found, but [bins.replaces] is missing")
-		return
+		return nil, nil
 	}
 
 	slog.Debug("Replace string exists", "argument", phIndex)
@@ -119,5 +115,5 @@ func (b Bin) FanOut() (nbins []Bin, outputs []Output) {
 		outputs = append(outputs, out)
 	}
 
-	return
+	return nbins, outputs
 }

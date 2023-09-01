@@ -169,7 +169,7 @@ func (g Graph) traverse(todo []string) (order, remaining []string) {
 
 	sort.Strings(order)
 
-	return
+	return order, remaining
 }
 
 // Resolve finds the ideal ordering for a list of triggers.
