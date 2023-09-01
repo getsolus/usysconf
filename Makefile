@@ -4,7 +4,8 @@
 PKGNAME=usysconf
 MODULE=github.com/getsolus/usysconf
 
-VERSION="1.0.0"
+TAG_COMMIT := $(shell git rev-list --abbrev-commit --tags --max-count=1)
+VERSION := $(shell git describe --abbrev=0 --tags ${TAG_COMMIT} 2>/dev/null || true)
 
 PREFIX?=/usr/local
 BINDIR?=$(DESTDIR)$(PREFIX)/bin
@@ -17,10 +18,11 @@ GOFLAGS?=
 GOSRC!=find . -name '*.go'
 GOSRC+=go.mod go.sum
 
+TAG := $(shell git describe --abbrev=0 --tags ${TAG_COMMIT} 2>/dev/null || true)
 usysconf: $(GOSRC)
 	$(GO) build $(GOFLAGS) \
 		-ldflags " \
-		-X $(MODULE)/cli.VersionNumber=$(VERSION) \
+		-X $(MODULE)/cli.Version=$(VERSION) \
 		-X $(MODULE)/config.SysDir=$(SYSDIR) \
 		-X $(MODULE)/config.UsrDir=$(USRDIR) \
 		-X $(MODULE)/state.Path=$(STATEPATH)" \

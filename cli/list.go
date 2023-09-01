@@ -1,4 +1,4 @@
-// Copyright © 2019-2020 Solus Project
+// Copyright © 2019-Present Solus Project
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,39 +15,20 @@
 package cli
 
 import (
-	"github.com/DataDrake/cli-ng/cmd"
+	"fmt"
+
 	log "github.com/DataDrake/waterlog"
-	"github.com/DataDrake/waterlog/level"
 	"github.com/getsolus/usysconf/config"
 )
 
-// List fulfills the "list" subcommand
-var List = cmd.CMD{
-	Name:  "list",
-	Alias: "ls",
-	Short: "List available triggers to run (user-specific)",
-	Args:  &ListArgs{},
-	Run:   ListRun,
-}
+type list struct{}
 
-// ListArgs contains the arguments for the "list" subcommand
-type ListArgs struct{}
-
-// ListRun prints the usage for the requested command
-func ListRun(r *cmd.RootCMD, c *cmd.CMD) {
-	gFlags := r.Flags.(*GlobalFlags)
-	// args := c.Args.(*ListArgs)
-
-	// Enable Debug Output
-	if gFlags.Debug {
-		log.SetLevel(level.Debug)
-	}
-	// Load Triggers
+func (l list) Run(flags GlobalFlags) error {
 	tm, err := config.LoadAll()
 	if err != nil {
-		log.Fatalf("Failed to load triggers, reason: %s\n", err)
+		return fmt.Errorf("Failed to load triggers, reason: %s\n", err)
 	}
-	// Print triggers
 	log.Info("Available triggers:\n\n")
-	tm.Print(gFlags.Chroot, gFlags.Live)
+	tm.Print(flags.Chroot, flags.Live)
+	return nil
 }

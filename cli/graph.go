@@ -1,4 +1,4 @@
-// Copyright © 2019-2020 Solus Project
+// Copyright © 2019-Present Solus Project
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,28 +12,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package main
+package cli
 
 import (
-	log2 "log"
+	"fmt"
 
-	log "github.com/DataDrake/waterlog"
-	"github.com/DataDrake/waterlog/format"
-	"github.com/DataDrake/waterlog/level"
-	"github.com/getsolus/usysconf/cli"
+	"github.com/getsolus/usysconf/config"
 )
 
-func main() {
-	ctx, flags := cli.Parse()
+type graph struct{}
 
-	if flags.Debug {
-		log.SetLevel(level.Debug)
-	}
-	log.SetFormat(format.Min)
-	log.SetFlags(log2.Ltime | log2.Ldate | log2.LUTC)
-
-	err := ctx.Run(flags)
+// GraphDepsRun prints the usage for the requested command
+func (g graph) Run(flags GlobalFlags) error {
+	tm, err := config.LoadAll()
 	if err != nil {
-		log.Fatal(err)
+		return fmt.Errorf("Failed to load triggers, reason: %s\n", err)
 	}
+	tm.Graph(flags.Chroot, flags.Live).Print()
+	return nil
 }

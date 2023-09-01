@@ -1,4 +1,4 @@
-// Copyright © 2019-2020 Solus Project
+// Copyright © 2019-Present Solus Project
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,80 +15,58 @@
 package cli
 
 import (
-	"github.com/DataDrake/cli-ng/cmd"
+	"errors"
+	"fmt"
+	"os"
+
 	log "github.com/DataDrake/waterlog"
-	"github.com/DataDrake/waterlog/level"
 	"github.com/getsolus/usysconf/config"
 	"github.com/getsolus/usysconf/triggers"
 	"github.com/getsolus/usysconf/util"
-	"os"
 )
 
-// Run fulfills the "run" subcommand
-var Run = cmd.CMD{
-	Name:  "run",
-	Alias: "r",
-	Short: "Run specified trigger(s) to update the system configuration.",
-	Flags: &RunFlags{},
-	Args:  &RunArgs{},
-	Run:   RunRun,
+type run struct {
+	Force  bool `short:"f" long:"force"   help:"Force run the configuration regardless if it should be skipped."`
+	DryRun bool `short:"n" long:"dry-run" help:"Test the configuration files without executing the specified binaries and arguments."`
+
+	Triggers []string `arg:"" help:"Names of the triggers to run."`
 }
 
-// RunFlags contains the additional flags for the "run" subcommand
-type RunFlags struct {
-	Force  bool `short:"f" long:"force"   desc:"Force run the configuration regardless if it should be skipped."`
-	DryRun bool `short:"n" long:"dry-run" desc:"Test the configuration files without executing the specified binaries and arguments"`
-}
-
-// RunArgs contains the arguments for the "run" subcommand
-type RunArgs struct {
-	Triggers []string `desc:"Names of the triggers to run"`
-}
-
-// RunRun prints the usage for the requested command
-func RunRun(r *cmd.RootCMD, c *cmd.CMD) {
-	gFlags := r.Flags.(*GlobalFlags)
-	args := c.Args.(*RunArgs)
-	flags := c.Flags.(*RunFlags)
-	// Enable Debug Output
-	if gFlags.Debug {
-		log.SetLevel(level.Debug)
-	}
+func (r run) Run(flags GlobalFlags) error {
 	log.Debugln("Started usysconf")
 	defer log.Debugln("Exiting usysconf")
-	// Root user check
+
 	if os.Geteuid() != 0 {
-		log.Fatalln("You must have root privileges to run triggers")
+		return errors.New("you must have root privileges to run triggers")
 	}
-	// Set Chroot as needed
 	if util.IsChroot() {
-		gFlags.Chroot = true
+		flags.Chroot = true
 	}
-	// Set Live as needed
 	if util.IsLive() {
-		gFlags.Live = true
+		flags.Live = true
 	}
-	// Load Triggers
+	// Load Triggers.
 	tm, err := config.LoadAll()
 	if err != nil {
-		log.Fatalf("Failed to load triggers, reason: %s\n", err)
+		return fmt.Errorf("failed to load triggers: %w", err)
 	}
 	// If the names flag is not present, retrieve the names of the
 	// configurations in the system and usr directories.
-	n := args.Triggers
+	n := r.Triggers
 	if len(n) == 0 {
 		for k := range tm {
 			n = append(n, k)
 		}
 	}
-	// Establish scope of operations
+	// Establish scope of operations.
 	s := triggers.Scope{
-		Chroot: gFlags.Chroot,
-		Debug:  gFlags.Debug,
-		DryRun: flags.DryRun,
-		Forced: flags.Force,
-		Live:   gFlags.Live,
+		Chroot: flags.Chroot,
+		Debug:  flags.Debug,
+		DryRun: r.DryRun,
+		Forced: r.Force,
+		Live:   flags.Live,
 	}
-	// Run triggers
+	// Run triggers.
 	tm.Run(s, n)
+	return nil
 }
