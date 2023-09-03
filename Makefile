@@ -18,7 +18,6 @@ GOFLAGS?=
 GOSRC!=find . -name '*.go'
 GOSRC+=go.mod go.sum
 
-TAG := $(shell git describe --abbrev=0 --tags ${TAG_COMMIT} 2>/dev/null || true)
 usysconf: $(GOSRC)
 	$(GO) build $(GOFLAGS) \
 		-ldflags " \

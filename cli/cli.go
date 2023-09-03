@@ -19,7 +19,7 @@ import (
 )
 
 // Version will be injected by ld flags.
-var Version string = "dd"
+var Version string = "unknown"
 
 // GlobalFlags contains the flags for all commands.
 type GlobalFlags struct {
