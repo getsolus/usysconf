@@ -1,4 +1,4 @@
-// Copyright © 2019-2020 Solus Project
+// Copyright © 2019-Present Solus Project
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,8 +16,9 @@ package triggers
 
 import (
 	"fmt"
-	log "github.com/DataDrake/waterlog"
+
 	"github.com/getsolus/usysconf/state"
+	"golang.org/x/exp/slog"
 )
 
 // Check contains paths that must exixt to execute the configuration.
@@ -30,7 +31,7 @@ type Check struct {
 func (t *Trigger) CheckMatch() (m state.Map, ok bool) {
 	ok = true
 	if t.Check == nil {
-		log.Debugf("No check paths for trigger '%s'\n", t.Name)
+		slog.Debug("No check paths for trigger", "name", t.Name)
 		return
 	}
 	m, err := state.Scan(t.Check.Paths)
