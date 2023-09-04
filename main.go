@@ -15,20 +15,20 @@
 package main
 
 import (
+	"log/slog"
 	"os"
 
 	"github.com/getsolus/usysconf/cli"
-	"golang.org/x/exp/slog"
 )
 
 func main() {
+	cli.ConfigureLogger()
+
 	ctx, flags := cli.Parse()
 
-	logOpt := &slog.HandlerOptions{}
 	if flags.Debug {
-		logOpt.Level = slog.LevelDebug
+		cli.Level.Set(slog.LevelDebug)
 	}
-	slog.SetDefault(slog.New(slog.NewTextHandler(os.Stderr, logOpt)))
 
 	err := ctx.Run(flags)
 	if err != nil {
