@@ -1,4 +1,4 @@
-// Copyright © 2019-2020 Solus Project
+// Copyright © 2019-Present Solus Project
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,25 +15,24 @@
 package main
 
 import (
-	log2 "log"
+	"os"
 
-	log "github.com/DataDrake/waterlog"
-	"github.com/DataDrake/waterlog/format"
-	"github.com/DataDrake/waterlog/level"
 	"github.com/getsolus/usysconf/cli"
+	"golang.org/x/exp/slog"
 )
 
 func main() {
 	ctx, flags := cli.Parse()
 
+	logOpt := &slog.HandlerOptions{}
 	if flags.Debug {
-		log.SetLevel(level.Debug)
+		logOpt.Level = slog.LevelDebug
 	}
-	log.SetFormat(format.Min)
-	log.SetFlags(log2.Ltime | log2.Ldate | log2.LUTC)
+	slog.SetDefault(slog.New(slog.NewTextHandler(os.Stderr, logOpt)))
 
 	err := ctx.Run(flags)
 	if err != nil {
-		log.Fatal(err)
+		slog.Error(err.Error())
+		os.Exit(1)
 	}
 }
