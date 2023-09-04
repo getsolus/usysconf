@@ -1,4 +1,4 @@
-// Copyright © 2019-2020 Solus Project
+// Copyright © 2019-Present Solus Project
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -22,8 +22,8 @@ import (
 	"strings"
 	"time"
 
-	log "github.com/DataDrake/waterlog"
-	cbor "github.com/fxamacker/cbor/v2"
+	"github.com/fxamacker/cbor/v2"
+	"golang.org/x/exp/slog"
 )
 
 // Path is the location of the serialized system state directory
@@ -110,7 +110,7 @@ func (m Map) Search(paths []string) Map {
 		search = "^" + strings.ReplaceAll(search, string(filepath.Separator), "\\"+string(filepath.Separator))
 		regex, err := regexp.Compile(search)
 		if err != nil {
-			log.Warnf("Could not convert path to regex: %s\n", path)
+			slog.Error("Could not convert to regex", "path", path)
 			continue
 		}
 		for k, v := range m {
@@ -133,7 +133,7 @@ func (m Map) Exclude(patterns []string) Map {
 		exclude := strings.ReplaceAll(pattern, "*", ".*")
 		regex, err := regexp.Compile(exclude)
 		if err != nil {
-			log.Warnf("Could not convert pattern to regex: %s\n", pattern)
+			slog.Error("Could not convert to regex", "pattern", pattern)
 			continue
 		}
 		regexes = append(regexes, regex)
