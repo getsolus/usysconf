@@ -1,4 +1,4 @@
-// Copyright © 2019-2020 Solus Project
+// Copyright © 2019-Present Solus Project
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,9 +15,11 @@
 package deps
 
 import (
-	log "github.com/DataDrake/waterlog"
+	"fmt"
 	"sort"
 	"strings"
+
+	"golang.org/x/exp/slog"
 )
 
 // Graph represents the dependencies shared between triggers
@@ -46,7 +48,7 @@ func (g Graph) CheckMissing(triggers []string) {
 				}
 			}
 			if !found {
-				log.Warnf("Dependency '%s' of trigger '%s' does not exist\n", dep, name)
+				slog.Warn("Dependency does not exist", "parent", name, "child", dep)
 			}
 		}
 	}
@@ -64,7 +66,9 @@ func (g Graph) CheckCircular() {
 				}
 				found = found[1:]
 			}
-			log.Fatalf("Circular dependency: %s\n", strings.Join(found, " -> "))
+			// TODO: Return an error instead of panicking.
+			slog.Error("Circular dependency", "chain", strings.Join(found, " -> "))
+			panic("Circular dependency")
 		}
 	}
 }
@@ -168,13 +172,13 @@ func (g Graph) Print() {
 		names = append(names, name)
 	}
 	sort.Strings(names)
-	log.Println("digraph {")
+	fmt.Println("digraph {")
 	for _, name := range names {
 		deps := g[name]
 		sort.Strings(deps)
 		for _, dep := range deps {
-			log.Printf("\t\"%s\" -> \"%s\";\n", name, dep)
+			fmt.Printf("\t\"%s\" -> \"%s\";\n", name, dep)
 		}
 	}
-	log.Println("}")
+	fmt.Println("}")
 }
