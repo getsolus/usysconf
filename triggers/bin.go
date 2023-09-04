@@ -1,4 +1,4 @@
-// Copyright © 2019-2020 Solus Project
+// Copyright © 2019-Present Solus Project
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,9 +17,10 @@ package triggers
 import (
 	"bytes"
 	"fmt"
-	log "github.com/DataDrake/waterlog"
-	"github.com/getsolus/usysconf/util"
 	"os/exec"
+
+	"github.com/getsolus/usysconf/util"
+	"golang.org/x/exp/slog"
 )
 
 // Bin contains the details of the binary to be executed.
@@ -92,10 +93,10 @@ func (b Bin) FanOut() (nbins []Bin, outputs []Output) {
 		return
 	}
 	if b.Replace == nil {
-		log.Errorln("    Placeholder found, but [bins.replaces] is missing.")
+		slog.Error("Placeholder found, but [bins.replaces] is missing")
 		return
 	}
-	log.Debugf("    Replace string exists at arg: %d\n", phIndex)
+	slog.Debug("Replace string exists", "argument", phIndex)
 	paths := util.FilterPaths(b.Replace.Paths, b.Replace.Exclude)
 	for _, path := range paths {
 		out := Output{
