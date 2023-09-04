@@ -17,8 +17,8 @@ package cli
 import (
 	"fmt"
 
-	log "github.com/DataDrake/waterlog"
 	"github.com/getsolus/usysconf/config"
+	"golang.org/x/exp/slog"
 )
 
 type list struct{}
@@ -28,7 +28,7 @@ func (l list) Run(flags GlobalFlags) error {
 	if err != nil {
 		return fmt.Errorf("failed to load triggers: %w", err)
 	}
-	log.Info("Available triggers:\n\n")
+	slog.Info("Available triggers:\n\n")
 	tm.Print(flags.Chroot, flags.Live)
 	return nil
 }
