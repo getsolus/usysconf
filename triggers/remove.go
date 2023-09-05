@@ -1,4 +1,4 @@
-// Copyright © 2019-2020 Solus Project
+// Copyright © Solus Project
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,9 +16,10 @@ package triggers
 
 import (
 	"fmt"
-	log "github.com/DataDrake/waterlog"
-	"github.com/getsolus/usysconf/state"
+	"log/slog"
 	"os"
+
+	"github.com/getsolus/usysconf/state"
 )
 
 // Remove contains paths to be removed from the system. This supports globbing.
@@ -30,10 +31,10 @@ type Remove struct {
 // Remove glob the paths and if it exists it will remove it from the system
 func (t *Trigger) Remove(s Scope) bool {
 	if s.DryRun {
-		log.Debugln("   No Paths will be removed during a dry-run\n")
+		slog.Debug("No Paths will be removed during a dry-run")
 	}
 	if len(t.Removals) == 0 {
-		log.Debugln("   No Paths to remove\n")
+		slog.Debug("No Paths to remove")
 		return true
 	}
 	for _, remove := range t.Removals {
@@ -57,7 +58,7 @@ func (t *Trigger) removeOne(s Scope, remove Remove) bool {
 	}
 	matches = matches.Exclude(remove.Exclude)
 	for path := range matches {
-		log.Debugf("    Removing path '%s'\n", path)
+		slog.Debug("Removing", "path", path)
 		if s.DryRun {
 			continue
 		}

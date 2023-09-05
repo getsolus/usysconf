@@ -1,4 +1,4 @@
-// Copyright © 2019-Present Solus Project
+// Copyright © Solus Project
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,8 +16,8 @@ package cli
 
 import (
 	"fmt"
+	"log/slog"
 
-	log "github.com/DataDrake/waterlog"
 	"github.com/getsolus/usysconf/config"
 )
 
@@ -28,7 +28,7 @@ func (l list) Run(flags GlobalFlags) error {
 	if err != nil {
 		return fmt.Errorf("failed to load triggers: %w", err)
 	}
-	log.Info("Available triggers:\n\n")
+	slog.Info("Available triggers:")
 	tm.Print(flags.Chroot, flags.Live)
 	return nil
 }

@@ -1,4 +1,4 @@
-// Copyright © 2019-2020 Solus Project
+// Copyright © Solus Project
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,32 +16,29 @@ package config
 
 import (
 	"fmt"
-	log "github.com/DataDrake/waterlog"
-	"github.com/getsolus/usysconf/triggers"
-	"io/ioutil"
+	"log/slog"
 	"os"
 	"os/user"
 	"path/filepath"
 	"strings"
+
+	"github.com/getsolus/usysconf/triggers"
 )
 
-// Load reads in all of the trigger files in a directory
-func Load(path string) (tm triggers.Map, err error) {
-	tm = make(triggers.Map)
-	entries, err := ioutil.ReadDir(path)
+// Load reads in all of the trigger files in a directory.
+func Load(path string) (triggers.Map, error) {
+	logger := slog.With("path", path)
+
+	entries, err := os.ReadDir(path)
 	if err != nil {
-		log.Debugf("Skipped directory '%s':\n", path)
 		if os.IsNotExist(err) {
-			log.Debugf("    Not found.\n")
-			err = nil
-			return
+			logger.Debug("Directory not found")
+			return nil, nil
 		}
-		log.Debugf("    Failed to read triggers, reason: %s\n", err)
-		err = nil
-		return
+		return nil, fmt.Errorf("failed to read triggers: %w", err)
 	}
-	log.Debugf("Scanning directory '%s':\n", path)
-	found := false
+	tm := make(triggers.Map, len(entries))
+	logger.Debug("Scanning directory")
 	for _, entry := range entries {
 		if entry.IsDir() {
 			continue
@@ -54,73 +51,51 @@ func Load(path string) (tm triggers.Map, err error) {
 			Name: strings.TrimSuffix(name, ".toml"),
 			Path: filepath.Clean(filepath.Join(path, name)),
 		}
-		// found trigger
-		log.Debugf("    Found '%s'\n", t.Name)
-		found = true
-		if err = t.Load(t.Path); err == nil {
-			// Check the config for problems
-			err = t.Validate()
-		}
+		logger.Debug("Trigger found", "name", t.Name)
+		err = t.Load(t.Path)
 		if err != nil {
-			err = fmt.Errorf("failed to read '%s' from '%s' reason: %s", name, path, err.Error())
-			return
+			return nil, err
 		}
-		// save trigger
+		err = t.Validate()
+		if err != nil {
+			return nil, fmt.Errorf("failed to read %s from %s: %w", name, path, err)
+		}
 		tm[t.Name] = t
 	}
-	if !found {
-		log.Debugln("    No triggers found.")
+	if len(tm) == 0 {
+		logger.Debug("No triggers found")
 	}
-	return
+	return tm, nil
 }
 
 // LoadAll will check the system, user, and home directories, in that order, for a
 // configuration file that has the passed name parameter, without the extension
 // and will create a config with the specified valus.
-func LoadAll() (tm triggers.Map, err error) {
-	// Read from System directory
-	tm, err = Load(SysDir)
-	if err != nil {
-		return
+func LoadAll() (triggers.Map, error) {
+	paths := []string{SysDir, UsrDir}
+	if p, err := os.UserHomeDir(); err != nil {
+		paths = append(paths, p)
 	}
-	// Read from User Directory
-	tm2, err := Load(UsrDir)
-	if err != nil {
-		return
-	}
-	tm.Merge(tm2)
-	// Read from Home directory
-	home, err := os.UserHomeDir()
-	if err != nil {
-		return
-	}
-	// replace the root directory with the user home directory executing usysconf
 	if os.Getuid() == 0 {
-		username := os.Getenv("SUDO_USER")
-		if username == "" || username == "root" {
-			// if user is not found or it is actually being run by root without sudo return
-			log.Warnln("Home Triggers not loaded")
-			goto CHECK
+		uname := os.Getenv("SUDO_USER")
+		if uname != "" && uname != "root" {
+			u, err := user.Lookup(uname)
+			if err != nil {
+				slog.Warn("Failed to lookup underlying user", "name", uname, "reason", err)
+			} else {
+				paths = append(paths, filepath.Join(u.HomeDir, ".config", "usysconf.d"))
+			}
 		}
-		// Lookup sudo user's home directory
-		u, err := user.Lookup(username)
+	}
+
+	tm := make(triggers.Map)
+	for _, path := range paths {
+		trig, err := Load(path)
 		if err != nil {
-			log.Warnf("Failed to lookup user '%s', reason: %s\n", username, err)
-		} else {
-			home = u.HomeDir
+			return nil, err
 		}
+		tm.Merge(trig)
 	}
-	// Load configs from the user's Home directory
-	tm2, err = Load(filepath.Join(home, ".config", "usysconf.d"))
-	if err != nil {
-		return
-	}
-	tm.Merge(tm2)
-CHECK:
-	// check for lack of triggers
-	if len(tm) == 0 {
-		log.Fatalln("No triggers available")
-	}
-	log.Goodf("Found '%d' triggers\n", len(tm))
-	return
+	slog.Info("Total triggers", "count", len(tm))
+	return tm, nil
 }

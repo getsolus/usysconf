@@ -1,4 +1,4 @@
-// Copyright © 2019-2020 Solus Project
+// Copyright © Solus Project
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,9 +16,9 @@ package triggers
 
 import (
 	"fmt"
+	"log/slog"
 	"sort"
 
-	log "github.com/DataDrake/waterlog"
 	"github.com/getsolus/usysconf/deps"
 	"github.com/getsolus/usysconf/state"
 )
@@ -53,9 +53,9 @@ func (tm Map) Print(chroot, live bool) {
 				continue
 			}
 		}
-		log.Printf(f, t.Name, t.Description)
+		fmt.Printf(f, t.Name, t.Description)
 	}
-	log.Println()
+	fmt.Println()
 }
 
 // Graph generates a dependency graph
@@ -82,7 +82,7 @@ func (tm Map) Run(s Scope, names []string) {
 	prev, err := state.Load()
 
 	if err != nil {
-		log.Errorf("Failed to read state file: %s\n", err)
+		slog.Error("Failed to read state file", "reason", err)
 		return
 	}
 
@@ -95,7 +95,7 @@ func (tm Map) Run(s Scope, names []string) {
 		// Get Trigger if available
 		t, ok := tm[name]
 		if !ok {
-			log.Warnf("Could not find trigger %s\n", name)
+			slog.Warn("Could not find trigger", "name", name)
 			continue
 		}
 		// Run Trigger
@@ -104,7 +104,7 @@ func (tm Map) Run(s Scope, names []string) {
 	if !s.DryRun {
 		// Save new State for next run
 		if err := next.Save(); err != nil {
-			log.Errorf("Failed to save next state file, reason: %s\n", err)
+			slog.Error("Failed to save next state file", "reason", err)
 		}
 	}
 }
