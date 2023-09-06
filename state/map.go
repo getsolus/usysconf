@@ -16,6 +16,7 @@ package state
 
 import (
 	"fmt"
+	"io/fs"
 	"log/slog"
 	"os"
 	"path/filepath"
@@ -76,6 +77,7 @@ func (m Map) Save() error {
 // Merge combines two Maps into one
 func (m Map) Merge(other Map) {
 	for k, v := range other {
+		slog.Debug("merging to state", "key", k)
 		m[k] = v
 	}
 }
@@ -166,31 +168,53 @@ func (m Map) Strings() (strs []string) {
 func Scan(filters []string) (m Map, err error) {
 	m = make(Map)
 	var matches []string
+
 	for _, filter := range filters {
 		if matches, err = filepath.Glob(filter); err != nil {
 			err = fmt.Errorf("unable to glob path: %s", filter)
 			return
 		}
+
 		if len(matches) == 0 {
 			continue
 		}
+
 		for _, match := range matches {
-			err = filepath.Walk(filepath.Clean(match), func(path string, info os.FileInfo, err error) error {
+			dirCount := strings.Count(filepath.Clean(match), string(os.PathSeparator))
+
+			err = filepath.WalkDir(filepath.Clean(match), func(path string, d fs.DirEntry, err error) error {
 				if err != nil {
-					err = fmt.Errorf("failed to check path: %s", path)
 					return err
 				}
-				m[filepath.Join(path, info.Name())] = info.ModTime()
+
+				// We do not want to walk the entire tree
+				maxDepth := dirCount + 1
+				if strings.Count(path, string(os.PathSeparator)) > maxDepth {
+					err = fs.SkipDir
+					return err
+				}
+
+				// Get the file info
+				info, err := d.Info()
+				if err != nil {
+					return err
+				}
+
+				// Add it to the state map
+				m[path] = info.ModTime()
 				return nil
 			})
+
 			if err != nil {
 				if os.IsNotExist(err) {
 					err = nil
 					continue
 				}
+
 				return
 			}
 		}
 	}
+
 	return
 }
