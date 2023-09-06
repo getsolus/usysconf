@@ -1,4 +1,4 @@
-// Copyright © 2019-2020 Solus Project
+// Copyright © Solus Project
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,7 +15,8 @@
 package triggers
 
 import (
-	log "github.com/DataDrake/waterlog"
+	"log/slog"
+
 	"github.com/getsolus/usysconf/state"
 )
 
@@ -72,30 +73,30 @@ func (t *Trigger) Finish(s Scope) {
 	// Indicate the worst status for the whole group
 	switch status {
 	case Skipped:
-		log.Debugln(t.Name)
+		slog.Debug(t.Name)
 	case Failure:
-		log.Errorln(t.Name)
+		slog.Error(t.Name)
 	case Success:
-		log.Goodln(t.Name)
+		slog.Info(t.Name)
 	}
 	// Indicate status for sub-tasks
 	for _, out := range t.Output {
 		switch out.Status {
 		case Skipped:
 			if len(out.SubTask) > 0 {
-				log.Debugf("    Skipped for %s due to %s\n", out.SubTask, out.Message)
+				slog.Debug("Skipped", "subtask", out.SubTask, "reason", out.Message)
 			} else if len(out.Message) > 0 {
-				log.Debugf("    Skipped due to %s\n", out.Message)
+				slog.Debug("Skipped", "reason", out.Message)
 			}
 		case Failure:
 			if len(out.SubTask) > 0 {
-				log.Errorf("    Failure for %s due to %s\n", out.SubTask, out.Message)
+				slog.Error("Failed", "subtask", out.SubTask, "reason", out.Message)
 			} else if len(out.Message) > 0 {
-				log.Errorf("    Failure due to %s\n", out.Message)
+				slog.Error("Failed", "reason", out.Message)
 			}
 		case Success:
 			if s.DryRun && len(out.SubTask) > 0 {
-				log.Infof("    %s\n", out.SubTask)
+				slog.Info(out.SubTask)
 			}
 		}
 	}

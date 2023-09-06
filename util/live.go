@@ -1,4 +1,4 @@
-// Copyright © 2019-2020 Solus Project
+// Copyright © Solus Project
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
 package util
 
 import (
-	log "github.com/DataDrake/waterlog"
+	"log/slog"
 	"os"
 )
 
@@ -23,12 +23,14 @@ import (
 func IsLive() bool {
 	var err error
 	if _, err = os.Stat("/run/initramfs/livedev"); err == nil {
-		log.Debugln("Live session detected.")
+		slog.Debug("Live session detected")
 		return true
 	}
 	if os.IsNotExist(err) {
 		return false
 	}
-	log.Fatalf("Could not check for live session, reason: %s\n", err)
-	return false
+	slog.Error("Could not check for live session", "reason", err)
+	// TODO: Return error instead of panicking.
+	panic("Could not check for live session")
+	//return false
 }

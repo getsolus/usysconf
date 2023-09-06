@@ -1,4 +1,4 @@
-// Copyright © 2019-2020 Solus Project
+// Copyright © Solus Project
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,8 +15,8 @@
 package util
 
 import (
-	log "github.com/DataDrake/waterlog"
-	"io/ioutil"
+	"io"
+	"log/slog"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -32,35 +32,39 @@ func IsChroot() bool {
 	var pid int
 	// Try to check for access to the root partition of PID1 (shell?)
 	if _, err := os.Stat("/proc/1/root"); err != nil {
-		log.Warnln("Failed to access '/proc/1/root', assuming chroot and continuing.")
+		slog.Warn("Failed to access, assuming chroot and continuing", "path", "/proc/1/root")
 		return true
 	}
 	// Check /proc/mounts for overlayfs on "/"
 	mounts, err := os.Open("/proc/mounts")
 	if err != nil {
-		log.Warnf("Failed to access '/proc/mounts', reason: %s\n", err)
+		slog.Warn("Failed to access", "path", "/proc/mounts", "reason", err)
 		goto FALLBACK
 	}
-	raw, err = ioutil.ReadAll(mounts)
+	raw, err = io.ReadAll(mounts)
 	if err != nil {
-		log.Warnf("Failed to read '/proc/mounts', reason: %s\n", err)
+		slog.Warn("Failed to read", "path", "/proc/mounts", "reason", err)
 		goto FALLBACK
 	}
 	_ = mounts.Close()
 	if strings.Contains(string(raw), "overlay / overlay") {
-		log.Debugln("Overlayfs for '/' found, assuming chroot.\n")
+		slog.Debug("Overlayfs for '/' found, assuming chroot")
 		return true
 	}
 FALLBACK:
-	log.Debugln("Falling back to rigorous check for chroot")
+	slog.Debug("Falling back to rigorous check for chroot")
 	rootDir, err = os.Stat("/")
 	if err != nil {
-		log.Fatalf("Failed to access '/', reason: %s\n", err)
+		slog.Error("Failed to access", "path", "/", "reason", err)
+		// TODO: Return error instead of panicking.
+		panic("Failed to access")
 	}
 	pid = os.Getpid()
 	chrootDir, err = os.Stat(filepath.Join("/", "proc", strconv.Itoa(pid), "root"))
 	if err != nil {
-		log.Fatalf("Failed to access '/', reason: %s\n", err)
+		slog.Error("Failed to access", "path", "/", "reason", err)
+		// TODO: Return error instead of panicking.
+		panic("Failed to access")
 	}
 	root = rootDir.Sys().(*syscall.Stat_t)
 	chroot = chrootDir.Sys().(*syscall.Stat_t)

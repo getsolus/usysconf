@@ -1,4 +1,4 @@
-// Copyright © 2019-Present Solus Project
+// Copyright © Solus Project
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,7 +19,6 @@ import (
 	"fmt"
 	"os"
 
-	log "github.com/DataDrake/waterlog"
 	"github.com/getsolus/usysconf/config"
 	"github.com/getsolus/usysconf/triggers"
 	"github.com/getsolus/usysconf/util"
@@ -33,9 +32,6 @@ type run struct {
 }
 
 func (r run) Run(flags GlobalFlags) error {
-	log.Debugln("Started usysconf")
-	defer log.Debugln("Exiting usysconf")
-
 	if os.Geteuid() != 0 {
 		return errors.New("you must have root privileges to run triggers")
 	}
