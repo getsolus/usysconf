@@ -34,6 +34,8 @@ func (tm Map) Merge(tm2 Map) {
 }
 
 // Print renders a Map in a human-readable format.
+//
+//nolint:forbidigo
 func (tm Map) Print(chroot, live bool) {
 	keys := make([]string, 0, len(tm))
 	max := 0

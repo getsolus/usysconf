@@ -7,7 +7,6 @@ linters:
     - cyclop
     - forcetypeassert
     - funlen
-    - forbidigo
     - gochecknoglobals
     - gochecknoinits
     - godox

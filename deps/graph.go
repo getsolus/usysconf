@@ -186,6 +186,8 @@ func (g Graph) Resolve(todo []string) (order []string) {
 }
 
 // Print renders this graph to a "dot" format.
+//
+//nolint:forbidigo
 func (g Graph) Print() {
 	names := make([]string, 0, len(g))
 
