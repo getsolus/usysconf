@@ -19,18 +19,19 @@ import (
 	"os"
 )
 
-// IsLive checks is this process is running in a Live install
+// IsLive checks is this process is running in a Live install.
 func IsLive() bool {
 	var err error
 	if _, err = os.Stat("/run/initramfs/livedev"); err == nil {
 		slog.Debug("Live session detected")
 		return true
 	}
+
 	if os.IsNotExist(err) {
 		return false
 	}
+
 	slog.Error("Could not check for live session", "reason", err)
 	// TODO: Return error instead of panicking.
 	panic("Could not check for live session")
-	//return false
 }

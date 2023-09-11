@@ -28,6 +28,7 @@ func main() {
 	if flags.Debug {
 		logOpt.Level = slog.LevelDebug
 	}
+
 	slog.SetDefault(slog.New(slog.NewTextHandler(os.Stderr, logOpt)))
 
 	err := ctx.Run(flags)

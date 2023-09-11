@@ -26,13 +26,15 @@ import (
 	"github.com/fxamacker/cbor/v2"
 )
 
-// Path is the location of the serialized system state directory
+const stateDirPermissions = 0o750
+
+// Path is the location of the serialized system state directory.
 var Path string
 
-// Map contains a list files and their modification times
+// Map contains a list files and their modification times.
 type Map map[string]time.Time
 
-// Load reads in the state if it exists and deserializes it
+// Load reads in the state if it exists and deserializes it.
 func Load() (Map, error) {
 	m := make(Map)
 	sFile, err := os.Open(filepath.Clean(Path))
@@ -58,86 +60,103 @@ func Load() (Map, error) {
 	return m, nil
 }
 
-// Save writes out the current state for future runs
+// Save writes out the current state for future runs.
 func (m Map) Save() error {
-	if err := os.MkdirAll(filepath.Dir(Path), 0750); err != nil {
+	if err := os.MkdirAll(filepath.Dir(Path), stateDirPermissions); err != nil {
 		return err
 	}
+
 	sFile, err := os.Create(filepath.Clean(Path))
 	if err != nil {
 		return err
 	}
+
 	enc := cbor.NewEncoder(sFile)
 	err = enc.Encode(m)
 	_ = sFile.Close()
+
 	return err
 }
 
-// Merge combines two Maps into one
+// Merge combines two Maps into one.
 func (m Map) Merge(other Map) {
 	for k, v := range other {
 		m[k] = v
 	}
 }
 
-// Diff finds all of the Files which were modified or deleted between states
+// Diff finds all of the Files which were modified or deleted between states.
 func (m Map) Diff(curr Map) Map {
 	diff := make(Map)
 	// Check for new or newer
 	for currKey, currVal := range curr {
 		found := false
+
 		for prevKey, prevVal := range m {
 			if currKey == prevKey {
 				found = true
+
 				if currVal.After(prevVal) {
 					diff[currKey] = currVal
 				}
+
 				break
 			}
 		}
+
 		if !found {
 			diff[currKey] = currVal
 		}
 	}
+
 	return diff
 }
 
-// Search finds all of the matching files in a Map
+// Search finds all of the matching files in a Map.
 func (m Map) Search(paths []string) Map {
 	match := make(Map)
+
 	for _, path := range paths {
 		search := strings.ReplaceAll(path, "*", ".*")
 		search = "^" + strings.ReplaceAll(search, string(filepath.Separator), "\\"+string(filepath.Separator))
+
 		regex, err := regexp.Compile(search)
 		if err != nil {
 			slog.Warn("Could not convert to regex", "path", path)
 			continue
 		}
+
 		for k, v := range m {
 			if regex.MatchString(k) {
 				match[k] = v
 			}
 		}
 	}
+
 	return match
 }
 
-// Exclude removes keys from the Map if they match certain patterns
+// Exclude removes keys from the Map if they match certain patterns.
 func (m Map) Exclude(patterns []string) Map {
 	match := make(Map)
 	for k, v := range m {
 		match[k] = v
 	}
-	var regexes []*regexp.Regexp
+
+	regexes := make([]*regexp.Regexp, 0, len(patterns))
+
 	for _, pattern := range patterns {
 		exclude := strings.ReplaceAll(pattern, "*", ".*")
+
 		regex, err := regexp.Compile(exclude)
 		if err != nil {
 			slog.Warn("Could not convert to regex", "pattern", pattern)
 			continue
 		}
+
 		regexes = append(regexes, regex)
 	}
+
 	for k := range m {
 		for _, regex := range regexes {
 			if regex.MatchString(k) {
@@ -146,41 +165,47 @@ func (m Map) Exclude(patterns []string) Map {
 			}
 		}
 	}
+
 	return match
 }
 
-// IsEmpty checkes if the Map has nothing in it
+// IsEmpty checkes if the Map has nothing in it.
 func (m Map) IsEmpty() bool {
 	return len(m) == 0
 }
 
-// Strings gets a list of files from the keys
+// Strings gets a list of files from the keys.
 func (m Map) Strings() (strs []string) {
 	for k := range m {
 		strs = append(strs, k)
 	}
+
 	return
 }
 
-// Scan goes over a set of paths and imports them and their contents to the map
+// Scan goes over a set of paths and imports them and their contents to the map.
 func Scan(filters []string) (m Map, err error) {
 	m = make(Map)
+
 	var matches []string
+
 	for _, filter := range filters {
 		if matches, err = filepath.Glob(filter); err != nil {
-			err = fmt.Errorf("unable to glob path: %s", filter)
-			return
+			return m, fmt.Errorf("unable to glob path %q: %w", filter, err)
 		}
+
 		if len(matches) == 0 {
 			continue
 		}
+
 		for _, match := range matches {
 			err = filepath.Walk(filepath.Clean(match), func(path string, info os.FileInfo, err error) error {
 				if err != nil {
-					err = fmt.Errorf("failed to check path: %s", path)
-					return err
+					return fmt.Errorf("failed to check path %q: %w", path, err)
 				}
+
 				m[filepath.Join(path, info.Name())] = info.ModTime()
+
 				return nil
 			})
 			if err != nil {
@@ -188,9 +213,11 @@ func Scan(filters []string) (m Map, err error) {
 					err = nil
 					continue
 				}
-				return
+
+				return m, err
 			}
 		}
 	}
-	return
+
+	return m, err
 }

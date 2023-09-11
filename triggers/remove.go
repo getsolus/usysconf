@@ -28,24 +28,27 @@ type Remove struct {
 	Exclude []string `toml:"exclude"`
 }
 
-// Remove glob the paths and if it exists it will remove it from the system
+// Remove glob the paths and if it exists it will remove it from the system.
 func (t *Trigger) Remove(s Scope) bool {
 	if s.DryRun {
 		slog.Debug("No Paths will be removed during a dry-run")
 	}
+
 	if len(t.Removals) == 0 {
 		slog.Debug("No Paths to remove")
 		return true
 	}
+
 	for _, remove := range t.Removals {
 		if !t.removeOne(s, remove) {
 			return false
 		}
 	}
+
 	return true
 }
 
-// removeOne carries out removals for a single Remove entry
+// removeOne carries out removals for a single Remove entry.
 func (t *Trigger) removeOne(s Scope, remove Remove) bool {
 	matches, err := state.Scan(remove.Paths)
 	if err != nil {
@@ -54,22 +57,28 @@ func (t *Trigger) removeOne(s Scope, remove Remove) bool {
 			Message: fmt.Sprintf("Failed to remove paths for '%s', reason: %s\n", t.Name, err),
 		}
 		t.Output = append(t.Output, out)
+
 		return false
 	}
+
 	matches = matches.Exclude(remove.Exclude)
 	for path := range matches {
 		slog.Debug("Removing", "path", path)
+
 		if s.DryRun {
 			continue
 		}
+
 		if err := os.Remove(path); err != nil {
 			out := Output{
 				Status:  Failure,
 				Message: fmt.Sprintf("Failed to remove path '%s', reason: %s\n", path, err),
 			}
 			t.Output = append(t.Output, out)
+
 			return false
 		}
 	}
+
 	return true
 }

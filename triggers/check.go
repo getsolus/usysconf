@@ -27,13 +27,15 @@ type Check struct {
 	Paths []string `toml:"paths"`
 }
 
-// CheckMatch will glob the paths and if the path does not exist in the system, an error is returned
+// CheckMatch will glob the paths and if the path does not exist in the system, an error is returned.
 func (t *Trigger) CheckMatch() (m state.Map, ok bool) {
 	ok = true
+
 	if t.Check == nil {
 		slog.Debug("No check paths for trigger", "name", t.Name)
 		return
 	}
+
 	m, err := state.Scan(t.Check.Paths)
 	if err != nil {
 		out := Output{
@@ -42,7 +44,9 @@ func (t *Trigger) CheckMatch() (m state.Map, ok bool) {
 		}
 		t.Output = append(t.Output, out)
 		ok = false
+
 		return
 	}
+
 	return
 }

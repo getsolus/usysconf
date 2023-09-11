@@ -22,9 +22,9 @@ import (
 
 // Trigger contains all the information for a configuration to be executed and output to the user.
 type Trigger struct {
-	Name   string
-	Path   string
-	Output []Output
+	Name   string   `toml:"-"`
+	Path   string   `toml:"-"`
+	Output []Output `toml:"-"`
 
 	Description string            `toml:"description"`
 	Check       *Check            `toml:"check,omitempty"`
@@ -58,6 +58,7 @@ func (t *Trigger) Run(s Scope, prev, next state.Map) (ok bool) {
 	t.ExecuteBins(s)
 FINISH:
 	t.Finish(s)
+
 	return
 }
 

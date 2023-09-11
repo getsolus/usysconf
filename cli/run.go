@@ -26,18 +26,22 @@ import (
 
 type run struct {
 	Force  bool `short:"f" long:"force"   help:"Force run the configuration regardless if it should be skipped."`
-	DryRun bool `short:"n" long:"dry-run" help:"Test the configuration files without executing the specified binaries and arguments."`
+	DryRun bool `short:"n" long:"dry-run" help:"Test the configuration files without executing the specified binaries and arguments."` //nolint:lll
 
 	Triggers []string `arg:"" help:"Names of the triggers to run." optional:""`
 }
 
+var errNeedRoot = errors.New("you must have root privileges to run triggers")
+
 func (r run) Run(flags GlobalFlags) error {
 	if os.Geteuid() != 0 {
-		return errors.New("you must have root privileges to run triggers")
+		return errNeedRoot
 	}
+
 	if util.IsChroot() {
 		flags.Chroot = true
 	}
+
 	if util.IsLive() {
 		flags.Live = true
 	}
@@ -64,5 +68,6 @@ func (r run) Run(flags GlobalFlags) error {
 	}
 	// Run triggers.
 	tm.Run(s, n)
+
 	return nil
 }

@@ -14,7 +14,7 @@
 
 package triggers
 
-// Deps contains a description of the dependencies between triggers
+// Deps contains a description of the dependencies between triggers.
 type Deps struct {
 	After []string `toml:"after"`
 }

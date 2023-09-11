@@ -15,37 +15,43 @@
 package triggers
 
 import (
+	"errors"
 	"fmt"
-	"github.com/BurntSushi/toml"
-	"io/ioutil"
 	"os"
 	"path/filepath"
+
+	"github.com/BurntSushi/toml"
 )
 
-// Load reads a Trigger configuration from a file and parses it
+// Load reads a Trigger configuration from a file and parses it.
 func (t *Trigger) Load(path string) error {
 	// Check if this is a valid file path
 	if _, err := os.Stat(path); os.IsNotExist(err) {
 		return err
 	}
 	// Read the configuration into the program
-	cfg, err := ioutil.ReadFile(filepath.Clean(path))
+	cfg, err := os.ReadFile(filepath.Clean(path))
 	if err != nil {
-		return fmt.Errorf("unable to read config file located at %s", path)
+		return fmt.Errorf("unable to read config file located at %q: %w", path, err)
 	}
 	// Save the configuration into the content structure
 	if err := toml.Unmarshal(cfg, t); err != nil {
-		return fmt.Errorf("unable to read config file located at %s due to %s", path, err.Error())
+		return fmt.Errorf("unable to read config file located at %q: %w", path, err)
 	}
+
 	return nil
 }
 
-// Validate checks for errors in a Trigger configuration
+// ErrNoBin is returned when a trigger does not contain a binary to execute.
+var ErrNoBin = errors.New("triggers must contain at least one [[bin]]")
+
+// Validate checks for errors in a Trigger configuration.
 func (t *Trigger) Validate() error {
 	// Verify that there is at least one binary to execute, otherwise there
 	// is no need to continue
 	if len(t.Bins) == 0 {
-		return fmt.Errorf("triggers must contain at least one [[bin]]")
+		return ErrNoBin
 	}
+
 	return nil
 }

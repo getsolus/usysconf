@@ -18,19 +18,22 @@ import (
 	"path/filepath"
 )
 
-// get a list of files that match the provided filters
+// get a list of files that match the provided filters.
 func match(filters []string) (matches []string) {
 	for _, filter := range filters {
 		partial, err := filepath.Glob(filter)
 		if err != nil {
 			continue
 		}
+
 		matches = append(matches, partial...)
 	}
+
 	return
 }
 
-// FilterPaths will process through globbed paths and remove any paths from the resulting slice if they are present in the excludes slice.
+// FilterPaths will process through globbed paths and remove any paths from the resulting slice
+// if they are present in the excludes slice.
 func FilterPaths(includes []string, excludes []string) (paths []string) {
 	excludePaths := match(excludes)
 	for _, includePath := range match(includes) {
@@ -39,7 +42,9 @@ func FilterPaths(includes []string, excludes []string) (paths []string) {
 				break
 			}
 		}
+
 		paths = append(paths, includePath)
 	}
+
 	return
 }

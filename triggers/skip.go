@@ -16,18 +16,20 @@ package triggers
 
 import (
 	"fmt"
+
 	"github.com/getsolus/usysconf/state"
 )
 
-// Skip contains details for when the configuration will not be executed, due to existing paths, or possible flags passed.
-// This supports globbing.
+// Skip contains details for when the configuration will not be executed due to existing paths,
+// or possible flags passed. This supports globbing.
 type Skip struct {
 	Chroot bool     `toml:"chroot,omitempty"`
 	Live   bool     `toml:"live,omitempty"`
 	Paths  []string `toml:"paths"`
 }
 
-// ShouldSkip will process the skip and check elements of the configuration and see if it should not be executed.
+// ShouldSkip will process the skip and check elements of the configuration and see if
+// it should not be executed.
 func (t *Trigger) ShouldSkip(s Scope, check, diff state.Map) bool {
 	out := Output{
 		Status: Skipped,
@@ -41,6 +43,7 @@ func (t *Trigger) ShouldSkip(s Scope, check, diff state.Map) bool {
 	if s.Forced {
 		return false
 	}
+
 	if t.Skip == nil {
 		return false
 	}
@@ -59,7 +62,9 @@ func (t *Trigger) ShouldSkip(s Scope, check, diff state.Map) bool {
 	for k := range matches {
 		out.Message = fmt.Sprintf("path '%s' found", k)
 		t.Output = append(t.Output, out)
+
 		return true
 	}
+
 	return false
 }
