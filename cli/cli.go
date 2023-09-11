@@ -23,18 +23,18 @@ var Version string = "unknown"
 
 // GlobalFlags contains the flags for all commands.
 type GlobalFlags struct {
-	Debug   bool             `short:"d" long:"debug"  help:"Run in debug mode."`
-	Chroot  bool             `short:"c" long:"chroot" help:"Specify that command is being run from a chrooted environment."` //nolint:lll
-	Live    bool             `short:"l" long:"live"   help:"Specify that command is being run from a live medium."`
-	Version kong.VersionFlag `short:"v" long:"version"   help:"Print version and exit."`
+	Debug   bool             `short:"d" long:"debug"   help:"Run in debug mode."`
+	Chroot  bool             `short:"c" long:"chroot"  help:"Specify that command is being run from a chrooted environment."` //nolint:lll
+	Live    bool             `short:"l" long:"live"    help:"Specify that command is being run from a live medium."`
+	Version kong.VersionFlag `short:"v" long:"version" help:"Print version and exit."`
 }
 
 type arguments struct {
 	GlobalFlags
 
-	Run   run   `cmd:"" aliases:"r" help:"Run specified trigger(s) to update the system configuration."`
+	Run   run   `cmd:"" aliases:"r"  help:"Run specified trigger(s) to update the system configuration."`
 	List  list  `cmd:"" aliases:"ls" help:"List available triggers to run (user-specific)."`
-	Graph graph `cmd:"" aliases:"g" help:"Print the dependencies for all available triggers."`
+	Graph graph `cmd:"" aliases:"g"  help:"Print the dependencies for all available triggers."`
 }
 
 func Parse() (*kong.Context, GlobalFlags) {

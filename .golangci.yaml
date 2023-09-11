@@ -12,7 +12,6 @@ linters:
     - godox
     - revive
     - stylecheck
-    - tagalign
     - wrapcheck
     # Disabled permanently
     - exhaustruct     # structs may be uninitialized
@@ -113,6 +112,10 @@ linters-settings:
       - short
       - long
       - desc
+      - cmd
+      - arg
+      - aliases
+      - help
 
   varnamelen:
     min-name-length: 1
