@@ -3,6 +3,7 @@ xdg_handlers = [
     'gconf',
     'gdk-pixbuf',
     'glib2',
+    'glib2-gio',
     'mime',
     'icon-cache',
     'fonts',
