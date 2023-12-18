@@ -1,3 +1,4 @@
 /build/
 /state
 .cache
+usysconf-*.tar.*
