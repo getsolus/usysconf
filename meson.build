@@ -1,7 +1,7 @@
 project(
     'usysconf',
     ['c'],
-    version: '0.5.6',
+    version: '0.5.7',
     license: [
         'GPL-2.0-only',
     ],
