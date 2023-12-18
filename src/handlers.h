@@ -51,6 +51,7 @@ extern UscHandler usc_handler_apparmor;
 #endif
 
 extern UscHandler usc_handler_glib2;
+extern UscHandler usc_handler_glib2_gio;
 extern UscHandler usc_handler_gdk_pixbuf;
 extern UscHandler usc_handler_fonts;
 extern UscHandler usc_handler_mime;
