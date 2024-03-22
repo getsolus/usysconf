@@ -23,6 +23,7 @@ static const char *boot_paths[] = {
         KERNEL_DIR,
         "/usr/lib/goofiboot",
         "/usr/lib/systemd/boot/efi",
+        "/usr/lib/shim/",
 };
 
 /**
