@@ -84,6 +84,7 @@ static const UscHandler *usc_handlers[] = {
         &usc_handler_desktop_files,
         &usc_handler_gconf,
         &usc_handler_dconf,
+        &usc_handler_vlc,
 
         /* GTK immodules */
         &usc_handler_gtk2_immodules,

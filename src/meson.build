@@ -19,6 +19,7 @@ handlers = [
     'mandb',
     'ssl',
     'udev-rules',
+    'vlc',
 ]
 
 kernel_handlers = [
