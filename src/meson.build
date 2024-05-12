@@ -17,6 +17,7 @@ handlers = [
     'ldconfig',
     'hwdb',
     'mandb',
+    'fix-merge',
     'ssl',
     'udev-rules',
 ]
