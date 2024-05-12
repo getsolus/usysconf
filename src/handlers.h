@@ -64,6 +64,7 @@ extern UscHandler usc_handler_gtk2_immodules;
 extern UscHandler usc_handler_gtk3_immodules;
 
 extern UscHandler usc_handler_mandb;
+extern UscHandler usc_handler_merge;
 extern UscHandler usc_handler_ssl_certs;
 
 #ifdef HAVE_MONO_CERTS
