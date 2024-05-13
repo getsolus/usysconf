@@ -459,45 +459,78 @@ static UscHandlerStatus usc_handler_merge_exec(UscContext *ctx, __usc_unused__ c
         struct stat lstat_result;
 
         usc_context_emit_task_start(ctx, "Ensuring usr-merge consistency");
+
         lstat ("/bin", &lstat_result);
-        if (! S_ISLNK(lstat_result.st_mode)) {
-            for(size_t i = 0; i < ARRAY_SIZE(bin_paths); i++)
+        if (S_ISLNK(lstat_result.st_mode)) {
+            int result = unlink("/bin");
+
+            if (result != 0)
             {
-                struct stat s;
-                if (stat(bin_paths[i].source, &s) == -1)
+                fprintf(stderr, "Error removing '/bin' symlink: %s\n", strerror(errno));
+                return USC_HANDLER_FAIL|USC_HANDLER_BREAK;
+            }
+
+            result = mkdir("/bin", 00755);
+
+            if (result != 0)
+            {
+                fprintf(stderr, "Error remaking '/bin' directory: %s\n", strerror(errno));
+                return USC_HANDLER_FAIL|USC_HANDLER_BREAK;
+            }
+        }
+
+        for(size_t i = 0; i < ARRAY_SIZE(bin_paths); i++)
+        {
+            struct stat s;
+            if (stat(bin_paths[i].source, &s) == -1)
+            {
+                struct stat t;
+                if (stat(bin_paths[i].destination, &t) == 0)
                 {
-                    struct stat t;
-                    if (stat(bin_paths[i].destination, &t) == 0)
-                    {
-                        char link_path[80] = "..";
-                        strcat(link_path, bin_paths[i].destination);
-                        int sl = symlink(link_path, bin_paths[i].source);
-                        if (sl != 0) {
-                            // Note that we're not stopping on failure, we want to try to create as many symlinks as we can
-                            fprintf(stderr, "Error creating link %s: %s\n", bin_paths[i].source, strerror(errno));
-                        }
+                    char link_path[80] = "..";
+                    strcat(link_path, bin_paths[i].destination);
+                    int sl = symlink(link_path, bin_paths[i].source);
+                    if (sl != 0) {
+                        // Note that we're not stopping on failure, we want to try to create as many symlinks as we can
+                        fprintf(stderr, "Error creating link %s: %s\n", bin_paths[i].source, strerror(errno));
                     }
                 }
             }
         }
 
         lstat ("/sbin", &lstat_result);
-        if (! S_ISLNK(lstat_result.st_mode)) {
-            for(size_t i = 0; i < ARRAY_SIZE(sbin_paths); i++)
+        if (S_ISLNK(lstat_result.st_mode)) {
+            int result = unlink("/sbin");
+
+            if (result != 0)
             {
-                struct stat s;
-                if (stat(sbin_paths[i].source, &s) == -1)
+                fprintf(stderr, "Error removing '/sbin' symlink: %s\n", strerror(errno));
+                return USC_HANDLER_FAIL|USC_HANDLER_BREAK;
+            }
+
+            result = mkdir("/sbin", 00755);
+
+            if (result != 0)
+            {
+                fprintf(stderr, "Error remaking '/sbin' directory: %s\n", strerror(errno));
+                return USC_HANDLER_FAIL|USC_HANDLER_BREAK;
+            }
+        }
+
+        for(size_t i = 0; i < ARRAY_SIZE(sbin_paths); i++)
+        {
+            struct stat s;
+            if (stat(sbin_paths[i].source, &s) == -1)
+            {
+                struct stat t;
+                if (stat(sbin_paths[i].destination, &t) == 0)
                 {
-                    struct stat t;
-                    if (stat(sbin_paths[i].destination, &t) == 0)
-                    {
-                        char link_path[80] = "..";
-                        strcat(link_path, sbin_paths[i].destination);
-                        int sl = symlink(link_path, sbin_paths[i].source);
-                        if (sl != 0) {
-                            // Note that we're not stopping on failure, we want to try to create as many symlinks as we can
-                            fprintf(stderr, "Error creating link %s: %s\n", sbin_paths[i].source, strerror(errno));
-                        }
+                    char link_path[80] = "..";
+                    strcat(link_path, sbin_paths[i].destination);
+                    int sl = symlink(link_path, sbin_paths[i].source);
+                    if (sl != 0) {
+                        // Note that we're not stopping on failure, we want to try to create as many symlinks as we can
+                        fprintf(stderr, "Error creating link %s: %s\n", sbin_paths[i].source, strerror(errno));
                     }
                 }
             }
