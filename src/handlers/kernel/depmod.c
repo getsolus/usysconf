@@ -20,9 +20,18 @@
 
 static const char *module_paths[] = {
         /* Glob all module directories and track individually */
-        KERNEL_MODULES_DIR "/*",
-        KERNEL_MODULES_DIR "/*/*",                /* ./extra/ */
-        KERNEL_MODULES_DIR "/*/kernel/drivers/*/*", /* i.e. nvidia in video dir */
+        "/lib/modules/*",
+        "/lib/modules/*/*",                /* ./extra/ */
+        "/lib/modules/*/kernel/drivers/*/*", /* i.e. nvidia in video dir */
+        "/lib64/modules/*",
+        "/lib64/modules/*/*",                /* ./extra/ */
+        "/lib64/modules/*/kernel/drivers/*/*", /* i.e. nvidia in video dir */
+        "/usr/lib/modules/*",
+        "/usr/lib/modules/*/*",                /* ./extra/ */
+        "/usr/lib/modules/*/kernel/drivers/*/*", /* i.e. nvidia in video dir */
+        "/usr/lib64/modules/*",
+        "/usr/lib64/modules/*/*",                /* ./extra/ */
+        "/usr/lib64/modules/*/kernel/drivers/*/*", /* i.e. nvidia in video dir */
 };
 
 /**

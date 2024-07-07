@@ -8,11 +8,6 @@ option('with-qol-assist', type: 'boolean', value: 'true', description: 'Enable q
 option('with-systemd', type: 'boolean', value: 'true', description: 'Enable systemd support')
 option('with-systemd-reexec', type: 'boolean', value: 'true', description: 'Enable systemd re-exec support')
 
-# Used for boot management bits (like depmod)
-option('with-kernel-modules-dir', type: 'string', value: '/lib/modules', description: 'Path to the kernel module base tree')
-# clr-boot-manager specific currently
-option('with-kernel-dir', type: 'string', value: '/usr/lib/kernel', description: 'Path to the vendor kernel tree')
-
 option('with-log-dir', type: 'string', value: '/var/log', description: 'Logging directory for usysconf')
 
 # This is useful for virtualbox upgrades

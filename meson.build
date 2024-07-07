@@ -103,11 +103,6 @@ if with_systemd == true
     endif
 endif
 
-with_kernel_modules_dir = get_option('with-kernel-modules-dir')
-with_kernel_dir = get_option('with-kernel-dir')
-cdata.set_quoted('KERNEL_MODULES_DIR', with_kernel_modules_dir)
-cdata.set_quoted('KERNEL_DIR', with_kernel_dir)
-
 # Tracking files
 cdata.set_quoted('USYSCONF_TRACK_DIR', path_vardir)
 with_status_file = join_paths(path_vardir, 'status')
@@ -166,12 +161,6 @@ report = [
     '    systemd support:                        @0@'.format(with_systemd),
     '    apparmor (aa-lsm-hook)                  @0@'.format(with_apparmor),
     '    mono-certs (cert-sync)                  @0@'.format(with_mono_certs),
-    '',
-    '    Kernel configuration:',
-    '    =====================',
-    '',
-    '    modules directory:                      @0@'.format(with_kernel_dir),
-    '    kernel directory:                       @0@'.format(with_kernel_modules_dir),
 ]
 
 if with_systemd == true

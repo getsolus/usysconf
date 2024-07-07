@@ -20,7 +20,8 @@
  * Paths that trigger a clr-boot-manager update
  */
 static const char *boot_paths[] = {
-        KERNEL_DIR,
+        "/usr/lib/kernel",
+        "/usr/lib64/kernel",
         "/usr/lib/goofiboot",
         "/usr/lib/systemd/boot/efi",
         "/usr/lib/shim/",
