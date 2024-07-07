@@ -21,7 +21,7 @@
 static const char *driver_paths[] = {
         "/usr/lib/glx-provider",   "/usr/lib/glx-provider/*",       "/usr/lib/nvidia",
         "/usr/lib32/glx-provider", "/usr/lib32/glx-provider/*",     "/usr/lib32/nvidia",
-        "/usr/lib/nvidia/modules", "/usr/lib/xorg/modules/drivers", "/usr/share/glvnd/egl_vendor.d",
+        "/usr/lib64/nvidia/modules", "/usr/lib/xorg/modules/drivers", "/usr/share/glvnd/egl_vendor.d",
 };
 
 /**
