@@ -32,7 +32,7 @@ static const char *library_paths[] = {
 static UscHandlerStatus usc_handler_ldconfig_exec(UscContext *ctx, const char *path)
 {
         char *command[] = {
-                "/sbin/ldconfig",
+                "/usr/sbin/ldconfig",
                 "-X", /* don't update symlinks */
                 NULL, /* Terminator */
         };
@@ -55,7 +55,7 @@ static UscHandlerStatus usc_handler_ldconfig_exec(UscContext *ctx, const char *p
 const UscHandler usc_handler_ldconfig = {
         .name = "ldconfig",
         .description = "Update dynamic library cache",
-        .required_bin = "/sbin/ldconfig",
+        .required_bin = "/usr/sbin/ldconfig",
         .exec = usc_handler_ldconfig_exec,
         .paths = library_paths,
         .n_paths = ARRAY_SIZE(library_paths),

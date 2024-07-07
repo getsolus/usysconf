@@ -34,7 +34,7 @@ static UscHandlerStatus usc_handler_depmod_exec(UscContext *ctx, const char *pat
         autofree(char) *kern_dir = NULL;
         autofree(char) *kernel_nom = NULL;
         char *command[] = {
-                "/sbin/depmod",
+                "/usr/sbin/depmod",
                 "-a", /* probe all fellers */
                 NULL, /* The path we're depmodding */
                 NULL, /* Terminator */
@@ -82,7 +82,7 @@ static UscHandlerStatus usc_handler_depmod_exec(UscContext *ctx, const char *pat
 const UscHandler usc_handler_depmod = {
         .name = "depmod",
         .description = "Run depmod for each kernel",
-        .required_bin = "/sbin/depmod",
+        .required_bin = "/usr/sbin/depmod",
         .exec = usc_handler_depmod_exec,
         .paths = module_paths,
         .n_paths = ARRAY_SIZE(module_paths),
