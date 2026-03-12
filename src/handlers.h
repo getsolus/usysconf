@@ -34,6 +34,8 @@ extern UscHandler usc_handler_ldm;
 #endif
 
 #ifdef HAVE_SYSTEMD
+extern UscHandler usc_handler_system_presets;
+extern UscHandler usc_handler_user_presets;
 extern UscHandler usc_handler_sysusers;
 extern UscHandler usc_handler_tmpfiles;
 extern UscHandler usc_handler_systemd_reload;
