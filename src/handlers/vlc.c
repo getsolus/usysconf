@@ -25,21 +25,18 @@ static const char *vlc_modules_paths[] = {
  */
 static UscHandlerStatus usc_handler_vlc_exec(UscContext *ctx, const char *path)
 {
-        autofree(char) *fp = NULL;
-        char *command[] = {
-                "/usr/lib64/vlc/vlc-cache-gen",
-                NULL, /* /usr/lib64/vlc/plugins/ */
-                NULL, /* Terminator */
-        };
-
         if (!usc_file_is_dir(path)) {
                 return USC_HANDLER_SKIP;
         }
 
-        command[1] = (char *)path,
+        const char *command[] = {
+                "/usr/lib64/vlc/vlc-cache-gen",
+                path, /* /usr/lib64/vlc/plugins/ */
+                NULL, /* Terminator */
+        };
 
         usc_context_emit_task_start(ctx, "Creating VLC plugins cache");
-        int ret = usc_exec_command(command);
+        int ret = usc_exec_command((char **) command);
         if (ret != 0) {
                 usc_context_emit_task_finish(ctx, USC_HANDLER_FAIL);
                 return USC_HANDLER_FAIL | USC_HANDLER_BREAK;
