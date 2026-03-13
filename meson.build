@@ -5,34 +5,12 @@ project(
     license: [
         'GPL-2.0-only',
     ],
+    meson_version: '>= 0.57.0',
     default_options: [
-        'c_std=c11',
-        'prefix=/usr',
-        'sysconfdir=/etc',
-        'localstatedir=/var',
         'default_library=static',
+        'warning_level=3',
     ],
 )
-
-am_cflags = [
-    '-fstack-protector',
-    '-Wall',
-    '-pedantic',
-    '-Wstrict-prototypes',
-    '-Wundef',
-    '-fno-common',
-    '-Werror-implicit-function-declaration',
-    '-Wformat',
-    '-Wformat-security',
-    '-Werror=format-security',
-    '-Wconversion',
-    '-Wunused-variable',
-    '-Wunreachable-code',
-    '-W',
-]
-
-# Add our main flags
-add_global_arguments(am_cflags, language: 'c')
 
 # Get configuration bits together
 path_prefix = get_option('prefix')
@@ -83,10 +61,10 @@ if with_systemd == true
 
     message('Asking pkg-config for systemd\'s directories')
     dep_systemd = dependency('systemd')
-    systemd_unit_dir = dep_systemd.get_pkgconfig_variable('systemdsystemunitdir')
-    systemd_tmpfiles_dir = dep_systemd.get_pkgconfig_variable('tmpfilesdir')
-    systemd_sysusers_dir = dep_systemd.get_pkgconfig_variable('sysusersdir')
-    systemd_util_dir = dep_systemd.get_pkgconfig_variable('systemdutildir')
+    systemd_unit_dir = dep_systemd.get_variable(pkgconfig : 'systemdsystemunitdir')
+    systemd_tmpfiles_dir = dep_systemd.get_variable(pkgconfig : 'tmpfilesdir')
+    systemd_sysusers_dir = dep_systemd.get_variable(pkgconfig : 'sysusersdir')
+    systemd_util_dir = dep_systemd.get_variable(pkgconfig : 'systemdutildir')
     cdata.set_quoted('SYSTEMD_UNIT_DIR', systemd_unit_dir)
     cdata.set_quoted('SYSTEMD_TMPFILES_DIR', systemd_tmpfiles_dir)
     cdata.set_quoted('SYSTEMD_SYSUSERS_DIR', systemd_sysusers_dir)
@@ -125,7 +103,6 @@ config_h_dir = include_directories('.')
 # Get libuf built to provide convenience functions
 libuf = subproject('libuf',
     default_options: [
-        'c_std=c11',
         'with-tests=false',
         'with-static=true',
     ]
