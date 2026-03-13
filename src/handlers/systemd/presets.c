@@ -15,6 +15,7 @@
 #include "files.h"
 #include "util.h"
 
+#include <libgen.h>
 #include <string.h>
 
 static const char *system_presets_paths[] = {
