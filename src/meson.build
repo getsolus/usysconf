@@ -20,6 +20,7 @@ handlers = [
     'fix-merge',
     'ssl',
     'udev-rules',
+    'vlc',
 ]
 
 kernel_handlers = [
