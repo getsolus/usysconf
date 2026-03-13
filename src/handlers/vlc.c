@@ -23,7 +23,7 @@ static const char *vlc_modules_paths[] = {
 /**
  * Create a VLC plugin cache
  */
-static UscHandlerStatus usc_handler_vlc_exec(__usc_unused__ UscContext *ctx, const char *path)
+static UscHandlerStatus usc_handler_vlc_exec(UscContext *ctx, const char *path)
 {
         autofree(char) *fp = NULL;
         char *command[] = {
