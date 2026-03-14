@@ -19,13 +19,17 @@
 #include <string.h>
 
 static const char *system_presets_paths[] = {
-    "/usr/lib32/systemd/system/*.service",
-    "/usr/lib64/systemd/system/*.service"
+    "/usr/lib/systemd/system/*.path",
+    "/usr/lib/systemd/system/*.service",
+    "/usr/lib/systemd/system/*.socket",
+    "/usr/lib/systemd/system/*.timer",
 };
 
 static const char *user_presets_paths[] = {
-    "/usr/lib32/systemd/user/*.service",
-    "/usr/lib64/systemd/user/*.service"
+    "/usr/lib/systemd/user/*.path",
+    "/usr/lib/systemd/user/*.service",
+    "/usr/lib/systemd/user/*.socket",
+    "/usr/lib/systemd/user/*.timer",
 };
 
 static UscHandlerStatus usc_handler_system_presets_exec(UscContext *context, const char *path) {
@@ -33,9 +37,9 @@ static UscHandlerStatus usc_handler_system_presets_exec(UscContext *context, con
         return USC_HANDLER_SKIP;
     }
 
-    usc_context_emit_task_start(context, "Updating systemd system service presets");
+    const char *service_name = basename((char *) path);
 
-    const char *service_name = basename(path);
+    usc_context_emit_task_start(context, "Updating systemd system service preset: %s", service_name);
 
     const char *command[] = {
         "/usr/bin/systemctl",
@@ -50,12 +54,12 @@ static UscHandlerStatus usc_handler_system_presets_exec(UscContext *context, con
 
     if (ret != 0) {
         usc_context_emit_task_finish(context, USC_HANDLER_FAIL);
-        return USC_HANDLER_FAIL | USC_HANDLER_BREAK;
+        return USC_HANDLER_FAIL;
     }
 
     usc_context_emit_task_finish(context, USC_HANDLER_SUCCESS);
     /* Only want to run once for all of our globs */
-    return USC_HANDLER_SUCCESS | USC_HANDLER_BREAK;
+    return USC_HANDLER_SUCCESS;
 }
 
 static UscHandlerStatus usc_handler_user_presets_exec(UscContext *context, const char *path) {
@@ -63,9 +67,9 @@ static UscHandlerStatus usc_handler_user_presets_exec(UscContext *context, const
         return USC_HANDLER_SKIP;
     }
 
-    usc_context_emit_task_start(context, "Updating systemd user service presets");
+    const char *service_name = basename((char *) path);
 
-    const char *service_name = basename(path);
+    usc_context_emit_task_start(context, "Updating systemd user service preset: %s", service_name);
 
     const char *command[] = {
         "/usr/bin/systemctl",
@@ -73,7 +77,7 @@ static UscHandlerStatus usc_handler_user_presets_exec(UscContext *context, const
         service_name,
         "--root=/", /* Ensure no tom-foolery with dbus */
         "--force",
-        "--global",
+        "--global", /* Enable for all logins of all users */
         NULL        /* Terminator */
     };
 
@@ -81,12 +85,11 @@ static UscHandlerStatus usc_handler_user_presets_exec(UscContext *context, const
 
     if (ret != 0) {
         usc_context_emit_task_finish(context, USC_HANDLER_FAIL);
-        return USC_HANDLER_FAIL | USC_HANDLER_BREAK;
+        return USC_HANDLER_FAIL;
     }
 
     usc_context_emit_task_finish(context, USC_HANDLER_SUCCESS);
-    /* Only want to run once for all of our globs */
-    return USC_HANDLER_SUCCESS | USC_HANDLER_BREAK;
+    return USC_HANDLER_SUCCESS;
 }
 
 const UscHandler usc_handler_system_presets = {
