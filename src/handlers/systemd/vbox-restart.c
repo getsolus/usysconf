@@ -13,7 +13,6 @@
 
 #include "config.h"
 #include "context.h"
-#include "files.h"
 #include "util.h"
 
 static const char *unit_paths[] = {
@@ -40,6 +39,21 @@ static UscHandlerStatus usc_handler_vbox_restart_exec(UscContext *ctx,
         }
 
         int ret = usc_exec_command((char **)command);
+        if (ret != 0) {
+                usc_context_emit_task_finish(ctx, USC_HANDLER_FAIL);
+                return USC_HANDLER_FAIL | USC_HANDLER_BREAK;
+        }
+
+        const char *preset_command[] = {
+                "/usr/bin/systemctl",
+                "preset",
+                "vboxdrv.service",
+                "--root=/", /* Ensure no tom-foolery with dbus */
+                "--force",
+                NULL /* Terminator */
+        };
+
+        ret = usc_exec_command((char **)preset_command);
         if (ret != 0) {
                 usc_context_emit_task_finish(ctx, USC_HANDLER_FAIL);
                 return USC_HANDLER_FAIL | USC_HANDLER_BREAK;

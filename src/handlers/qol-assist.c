@@ -12,7 +12,6 @@
 #define _GNU_SOURCE
 
 #include "context.h"
-#include "files.h"
 #include "util.h"
 
 /**
@@ -34,7 +33,8 @@ static const char *qol_paths[] = {
  * This will follow a versioned migration, and will happily ignore any
  * migrations that already happened.
  */
-static UscHandlerStatus usc_handler_qol_assist_exec(UscContext *ctx, const char *path)
+static UscHandlerStatus usc_handler_qol_assist_exec(UscContext *ctx,
+                                                    __usc_unused__ const char *path)
 {
         char *command[] = {
                 "/usr/sbin/qol-assist",
@@ -55,6 +55,22 @@ static UscHandlerStatus usc_handler_qol_assist_exec(UscContext *ctx, const char 
                 usc_context_emit_task_finish(ctx, USC_HANDLER_FAIL);
                 return USC_HANDLER_FAIL | USC_HANDLER_BREAK;
         }
+
+        const char *preset_command[] = {
+                "/usr/bin/systemctl",
+                "preset",
+                "qol-assist-migration.service",
+                "--root=/", /* Ensure no tom-foolery with dbus */
+                "--force",
+                NULL /* Terminator */
+        };
+
+        ret = usc_exec_command((char **)preset_command);
+        if (ret != 0) {
+                usc_context_emit_task_finish(ctx, USC_HANDLER_FAIL);
+                return USC_HANDLER_FAIL | USC_HANDLER_BREAK;
+        }
+
         usc_context_emit_task_finish(ctx, USC_HANDLER_SUCCESS);
         /* Only want to run once for all of our globs */
         return USC_HANDLER_SUCCESS | USC_HANDLER_BREAK;
