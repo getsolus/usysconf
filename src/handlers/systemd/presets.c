@@ -19,9 +19,8 @@
 #include <string.h>
 
 static const char *system_presets_paths[] = {
-        "/usr/lib/systemd/system/*.path",
-        "/usr/lib/systemd/system/*.service",
-        "/usr/lib/systemd/system/*.socket",
+        "/usr/lib/systemd/system/*.path",   "/usr/lib/systemd/system/*.service",
+        "/usr/lib/systemd/system/*.socket", "/usr/lib/systemd/system/*.target",
         "/usr/lib/systemd/system/*.timer",
 };
 
