@@ -22,13 +22,12 @@ static const char *gdk_pixbuf_loaders[] = {
 /**
  * Compile gdk-pixbuf cache whenever the directory is updated
  */
-static UscHandlerStatus usc_handler_gdk_pixbuf_exec(__usc_unused__ UscContext *ctx, const char *path)
+static UscHandlerStatus usc_handler_gdk_pixbuf_exec(__usc_unused__ UscContext *ctx,
+                                                    __usc_unused__ const char *path)
 {
         autofree(char) *fp = NULL;
         char *command[] = {
-                "/usr/bin/gdk-pixbuf-query-loaders",
-                "--update-cache",
-                NULL, /* Terminator */
+                "/usr/bin/gdk-pixbuf-query-loaders", "--update-cache", NULL, /* Terminator */
         };
 
         usc_context_emit_task_start(ctx, "Compiling gdk-pixbuf cache");
