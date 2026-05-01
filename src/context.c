@@ -125,7 +125,7 @@ struct UscContext {
         bool failed; /**Only marked once */
 };
 
-UscContext *usc_context_new()
+UscContext *usc_context_new(void)
 {
         UscContext *ret = NULL;
 
