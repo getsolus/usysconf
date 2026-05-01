@@ -17,7 +17,7 @@
 
 static const char *dconf_paths[] = { "/etc/dconf/db/*",
                                      "/etc/dconf/profile/*",
-                                     "/usr/share/dconf/db/*"
+                                     "/usr/share/dconf/db/*",
                                      "/usr/share/dconf/profile/*" };
 
 /**
