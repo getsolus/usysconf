@@ -20,7 +20,7 @@
 #include "files.h"
 #include "util.h"
 
-bool usc_is_chrooted()
+bool usc_is_chrooted(void)
 {
         struct stat root_stat = { 0 };
         struct stat proc_stat = { 0 };
@@ -43,7 +43,7 @@ bool usc_is_chrooted()
         return false;
 }
 
-bool usc_is_proc_mounted()
+bool usc_is_proc_mounted(void)
 {
         struct mntent *ent = NULL;
         struct mntent mnt = { 0 };
