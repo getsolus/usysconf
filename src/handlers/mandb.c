@@ -26,6 +26,10 @@ static const char *manpage_paths[] = {
 static UscHandlerStatus usc_handler_mandb_exec(UscContext *ctx, const char *path)
 {
         char *command[] = {
+                "/usr/bin/systemd-run",
+                "--unit=mandb-trigger",
+                "--nice=19", /* avoids the system feeling unnecessarily sluggish */
+                "--collect",
                 "/usr/bin/mandb",
                 "-q", /* keep it quiet */
                 NULL, /* Terminator */
