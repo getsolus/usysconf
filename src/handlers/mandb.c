@@ -39,6 +39,11 @@ static UscHandlerStatus usc_handler_mandb_exec(UscContext *ctx, const char *path
                 return USC_HANDLER_SKIP;
         }
 
+        if (usc_context_has_flag(ctx, USC_FLAGS_CHROOTED)) {
+                usc_context_emit_task_finish(ctx, USC_HANDLER_SKIP);
+                return USC_HANDLER_SKIP | USC_HANDLER_BREAK;
+        }
+
         usc_context_emit_task_start(ctx, "Updating manpages database");
         int ret = usc_exec_command(command);
         if (ret != 0) {
