@@ -18,6 +18,8 @@
 static const char *font_paths[] = {
         "/usr/share/fonts/*/*",
         "/usr/share/fonts/*",
+        "/usr/share/fontconfig/conf.avail/*",
+        "/usr/share/fontconfig/conf.default/*",
 };
 
 /**
